@@ -57,6 +57,9 @@ height: 1rem;
     justify-content: space-between;
 }
 
+.chat-item button {
+    padding-right: 0;
+}
 .chat-item button > img {
     height: 1rem;
 }
@@ -142,7 +145,7 @@ height: 1rem;
 
     aside.aside-expanded {
         position: sticky;
-        width: 20%;
+        width: 300px;
     }
 }
 
