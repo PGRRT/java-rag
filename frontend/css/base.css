@@ -16,6 +16,8 @@
     --color-text: #D9D9D9;
     --color-text-muted: #999999;
     --color-accent: #999999;
+    --background-color-secondary: #111111;
+    --stroke-color-primary: #3C3C3C;
     --spacing-xss: 0.5rem;
     --spacing-xs: 0.75rem;
     --spacing-sm: 1rem;
@@ -45,15 +47,31 @@ body {
 }
 
 h1 {
-
+    font-family: "Tai Heritage Pro", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 4rem;
+    color: var(--color-primary);
 }
 
 h2 {
-
+    font-family: "Tai Heritage Pro", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.5rem;
+    color: var(--color-primary);
 }
 
 h3 {
 
+}
+
+p {
+    color: var(--color-text-muted);
+}
+
+strong {
+    color: var(--color-text);
 }
 
 /* Buttons */
@@ -158,4 +176,68 @@ height: 1rem;
     aside {
         border-right: 3px solid #111111;
     }
+}
+
+
+
+/* Main */
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top: var(--spacing-vlg);
+}
+
+#search-bar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#search-bar {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--background-color-secondary);
+    border: 1px solid var(--stroke-color-primary);
+    border-radius: 4rem;
+    width: 40%;
+}
+
+#attach-button > img {
+    height: 1.5rem;
+}
+
+#send-button {
+    padding: var(--spacing-xss);
+    margin-left: auto;
+}
+
+#search-input-text {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: var(--color-text);
+    width: 100%;
+}
+
+#search-input-text::placeholder {
+    color: var(--color-text-muted);
+}
+
+#send-button > img {
+    height: 3rem;
+}
+
+
+
+
+/* Footer */
+footer {
+    bottom: 0;
+    position: sticky;
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-vlg) 0;
 }
