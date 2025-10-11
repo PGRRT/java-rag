@@ -57,6 +57,11 @@ height: 1rem;
     justify-content: space-between;
 }
 
+.chat-item:hover {
+    background-color: var(--background-color-secondary);
+    cursor: pointer;
+}
+
 .chat-item button {
     padding-right: 0;
 }
