@@ -52,6 +52,7 @@ h1 {
     font-style: normal;
     font-size: 4rem;
     color: var(--color-primary);
+    letter-spacing: normal;
 }
 
 h2 {
@@ -60,10 +61,16 @@ h2 {
     font-style: normal;
     font-size: 1.5rem;
     color: var(--color-primary);
+    letter-spacing: normal;
 }
 
 h3 {
-
+    font-family: "Tai Heritage Pro", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.25rem;
+    color: var(--color-primary);
+    letter-spacing: normal;
 }
 
 p {
@@ -95,6 +102,17 @@ button > img {
     background-color: var(--color-primary);
     border: none;
     border-radius: 4rem;
+}
+
+.ghost-button {
+    background-color: transparent;
+    border: 1px solid var(--stroke-color-primary);
+    border-radius: 4rem;
+    color: var(--color-text);
+}
+
+.ghost-button:hover {
+    background-color: var(--background-color-secondary);
 }
 
 .text-button {
@@ -187,6 +205,7 @@ main {
     align-items: center;
     flex-direction: column;
     padding-top: var(--spacing-vlg);
+    margin-left: -4rem; /* Compensate for aside width */
 }
 
 #search-bar-container {
@@ -198,11 +217,22 @@ main {
 
 #search-bar {
     display: flex;
+    position: fixed;
+    bottom: var(--spacing-md);
     flex-direction: row;
     background-color: var(--background-color-secondary);
     border: 1px solid var(--stroke-color-primary);
     border-radius: 4rem;
-    width: 40%;
+    width: 90%;
+}
+
+#search-bar-tools {
+    display: flex;
+    gap: var(--spacing-xss);
+    padding: 0 var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
 #attach-button > img {
@@ -230,14 +260,89 @@ main {
     height: 3rem;
 }
 
+#recent-chats-container {
+    padding-top: var(--spacing-vlg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#recent-chats-header {
+    width: 100%;
+}
+
+#recent-chats {
+    display: flex;
+    gap: var(--spacing-xs);
+    padding-top: var(--spacing-xs);
+}
+
+.chat-item {
+    display: flex;
+    gap: var(--spacing-sm);
+    max-width: 400px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+}
+
+.chat-item > img {
+    height: 7rem;
+    border-radius: 9px;
+}
+
+.chat-item-text-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+@media screen and (min-width: 580px) {
+    #search-bar {
+        position: static;
+        width: 80%;
+    }
+
+    main {
+        margin-left: 0;
+    }
+
+    #search-bar-tools {
+        padding: var(--spacing-sm) var(--spacing-sm);
+    }
+}
+
+@media screen and (min-width: 780px) {
+    #search-bar {
+        width: 70%;
+    }
+}
+
+@media screen and (min-width: 950px) {
+    #search-bar {
+        position: static;
+        width: 700px;
+    }
+}
 
 
 
 /* Footer */
 footer {
     bottom: 0;
-    position: sticky;
     display: flex;
     justify-content: center;
-    padding: var(--spacing-vlg) 0;
+    width: calc(100% + 4rem); /* Compensate for aside width */
+    padding: var(--spacing-vlg);
+    text-align: center;
+    margin-left: -4rem; /* Compensate for aside width */
+}
+
+@media screen and (min-width: 580px) {
+    footer {
+        margin-left: 0;
+        width: 100%;
+    }
 }
