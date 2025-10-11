@@ -73,6 +73,14 @@ h3 {
     letter-spacing: normal;
 }
 
+h4 {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 400;  
+    font-size: 1rem;
+    color: var(--color-primary);
+}
+
 p {
     color: var(--color-text-muted);
 }
@@ -155,7 +163,12 @@ header {
 }
 
 #control-panel {
+    display: flex;
+    flex-direction: row;
+}
 
+#new-chat-button {
+    color: var(--color-text-muted);
 }
 
 #auth-panel {
@@ -168,33 +181,6 @@ header {
     }
 }
 
-
-
-
-/* Aside */
-aside {
-    height: 100vh;
-    min-width: 4rem;
-    position: sticky;
-    padding: var(--spacing-sm) 0;
-    top: 0;
-}
-
-#aside-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#aside-header > button > img {
-height: 1rem;
-}
-
-@media screen and (min-width: 580px) {
-    aside {
-        border-right: 3px solid #111111;
-    }
-}
 
 
 

@@ -6,13 +6,56 @@
         <title>MedAI - Healthcare Assistance for Everyone</title>
         <!-- CSS -->
         <link rel="stylesheet" href="css/base.css">
+        <link rel="stylesheet" href="css/aside.css">
+        <!-- Scripts -->
+        <script src="js/main.js" defer></script>
     </head>
     <body>
         <aside>
             <div id="aside-header">
-                <button class="toggle-button">
-                    <img src="images/menu-icon.png" alt="Menu">
+                <button class="toggle-button" id="menu-button">
+                    <div id="menu-button-image">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
                 </button>
+            </div>
+            <div id="aside-content">
+                <div id="chats-control-panel">
+                    <button class="text-button">
+                        <img src="images/search-icon.png" alt="Delete chat">
+                        Search
+                    </button>
+                    <button class="text-button">
+                        <img src="images/delete-icon.png" alt="Delete chat">
+                        Delete all chats
+                    </button>
+                </div>
+                <div id="chat-list-container">
+                    <h3 id="chat-list-header">Chats</h3>
+                    <div id="chat-list">
+                        <div class="chat-item">
+                            <h4>How to how to</h4>
+                            <button class="toggle-button">
+                                 <img src="images/delete-icon.png" alt="Delete chat">
+                            </button>
+                        </div>
+                        <div class="chat-item">
+                            <h4>How to how to</h4>
+                            <button class="toggle-button">
+                                 <img src="images/delete-icon.png" alt="Delete chat">
+                            </button>
+                        </div>
+                        <div class="chat-item">
+                            <h4>How to how to</h4>
+                            <button class="toggle-button">
+                                 <img src="images/delete-icon.png" alt="Delete chat">
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </aside>
         <div id="landing-page">
@@ -21,6 +64,9 @@
                 <button class="toggle-button">
                     Classical RAG
                     <img src="images/arrow-down-icon.png" alt="Arrow down">
+                </button>
+                <button class="text-button" id="new-chat-button">
+                    New chat
                 </button>
             </div>
             <div id="auth-panel">
