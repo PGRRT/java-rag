@@ -1,4 +1,5 @@
-from typing import List, TypedDict, Annotated
+from typing import List, Annotated
+from typing_extensions import TypedDict
 from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
