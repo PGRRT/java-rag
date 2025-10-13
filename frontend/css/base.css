@@ -97,6 +97,7 @@ button {
     font-family: 'Inter', sans-serif;
     font-weight: 400;
     letter-spacing: -0.04cap;
+    font-size: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;

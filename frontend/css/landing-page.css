@@ -52,6 +52,7 @@ main {
     border: none;
     outline: none;
     color: var(--color-text);
+    font-size: 1rem;
     width: 100%;
 }
 
