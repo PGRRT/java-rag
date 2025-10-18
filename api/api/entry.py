@@ -1,6 +1,15 @@
-def example() -> int:
+from fastapi import FastAPI
+
+
+def create_api() -> FastAPI:
     """
-    Example function
+    creates API entry point.
     """
 
-    return 69
+    api = FastAPI()
+
+    from api.routes import rag_router
+
+    api.include_router(rag_router)
+
+    return api

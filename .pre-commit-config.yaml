@@ -12,16 +12,14 @@ repos:
     rev: v1.18.2
     hooks:
       - id: mypy
-        args: [--config-file, ./api/pyproject.toml]
         name: mypy Static Checker
-        additional_dependencies:
-          - types-requests
+        args: [--config-file, ./api/pyproject.toml]
+        language: system
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
       - id: trailing-whitespace
-      - id: end-of-file-fixer
       - id: check-yaml
       - id: check-toml
 

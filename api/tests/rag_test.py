@@ -1,4 +1,4 @@
-from api.entry import example
+from rag.example import example
 
 
 def test_example():
