@@ -17,7 +17,6 @@ repos:
         additional_dependencies:
           - fastapi
           - django
-          - django-types
           - django-stubs
           - httpx
 
@@ -33,12 +32,12 @@ repos:
     hooks:
       - id: pytest
         name: Run pytest
-        entry: pytest -v --maxfail=1 --disable-warnings
+        entry: pytest ./api -v --maxfail=1 --disable-warnings
         language: python
         pass_filenames: false
         types: [python]
         additional_dependencies:
           - pytest
+          - python-multipart
           - fastapi
           - httpx
-          - python-multipart

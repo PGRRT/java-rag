@@ -50,8 +50,6 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.mypy]
 strict = true
-plugins = mypy_django_plugin.main
-django_settings_module = "frontend.ragapp.settings"
 
 [[tool.mypy.overrides]]
 
