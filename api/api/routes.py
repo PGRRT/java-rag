@@ -4,8 +4,9 @@ from fastapi import APIRouter, UploadFile, File
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import Optional
+from rag.rag import RAG
 
-
+from pymupdf import Document
 import logging
 
 logger = logging.getLogger("routes")
@@ -24,6 +25,8 @@ logger.addHandler(console_handler)
 logger.propagate = False
 
 rag_router = APIRouter()
+
+rag = RAG()
 
 
 def dummy_rag_response(
@@ -79,6 +82,7 @@ async def query(conversation_id: int, params: QueryParams) -> JSONResponse:
 
     try:
         rag_response, contexts = dummy_rag_response(conversation_id, query, history)
+        rag_response = rag.process_query(query, conversation_id)
 
         response["message"] = rag_response
         response["contexts"] = contexts
@@ -123,6 +127,9 @@ async def upload_documents(
         logger.info(
             f"Processing file: {file.filename} for conversation {conversation_id}"
         )
+        files_bytes = await file.read()
+        doc = Document(stream=files_bytes, filetype="pdf")
+        rag.process_document(doc, conversation_id)
 
     return JSONResponse(content=response, status_code=201)
 

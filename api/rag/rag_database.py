@@ -16,9 +16,8 @@ class RAGDatabase:
 
         collection_name = self.__get_collection_name_by_id(conversation_d)
 
-        # Remove the collection if it already exists
         if self.client.has_collection(collection_name):
-            self.remove_collection(conversation_d)
+            return
 
         self.client.create_collection(collection_name, self.embedding_dim, schema=self.__create_schema(self.embedding_dim))
         self.client.create_index(collection_name, index_params=self.__create_index())

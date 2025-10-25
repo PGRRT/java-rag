@@ -3,3 +3,5 @@
 __pycache__
 .idea
 .env
+milvus_database.db
+.milvus_database.db.lock

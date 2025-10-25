@@ -1,6 +1,6 @@
-from rag_database import RAGDatabase
-from llm import LLM
-from document_parser import parse_to_markdown
+from rag.rag_database import RAGDatabase
+from rag.llm import LLM
+from rag.document_parser import parse_to_markdown
 
 from sentence_transformers import SentenceTransformer
 
