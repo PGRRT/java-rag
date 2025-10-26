@@ -1,11 +1,12 @@
 import type { Action, ThunkAction } from "@reduxjs/toolkit";
 import { combineSlices, configureStore } from "@reduxjs/toolkit";
-import authReducer from "./slices/authSlice";
+// import authReducer from "./slices/authSlice";
 // everything is a template from https://github.dev/vercel/next.js/tree/canary/examples/with-redux
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
-const rootReducer = combineSlices({ auth: authReducer });
+// { auth: authReducer }
+const rootReducer = combineSlices();
 // Infer the `RootState` type from the root reducer
 export type RootState = ReturnType<typeof rootReducer>;
 

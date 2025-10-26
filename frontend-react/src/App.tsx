@@ -1,14 +1,11 @@
-import { useState } from "react";
-import { Toaster, toast } from "sonner";
+import { Outlet } from "react-router-dom";
+import { Toaster } from "sonner";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
       <Toaster />
-
-
+      <Outlet />
     </>
   );
 }
