@@ -1,8 +1,39 @@
-$light-gray: #f5f5f5;
-$medium-gray: #c6c6c6;
-$dark-gray: #374151;
+// SCSS color variables copied from :root in main.scss
+$background-color: #0A0A0A;
+$color-primary: #D9D9D9;
+$color-text: #D9D9D9;
+$color-text-active: #FFFFFF;
+$color-text-muted: #999999;
+$color-accent: #999999;
+$background-color-secondary: #111111;
+$background-color-tertiary: #3C3C3C;
+$stroke-color-primary: #3C3C3C;
+$spacing-xss: 0.5rem;
+$spacing-xs: 0.75rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.5rem;
+$spacing-lg: 2rem;
+$spacing-vlg: 3rem;
 
 
+// Expose CSS custom properties for runtime usage (keeps compatibility with existing code)
+:root {
+	--background-color: #{$background-color};
+	--color-primary: #{$color-primary};
+	--color-text: #{$color-text};
+	--color-text-active: #{$color-text-active};
+	--color-text-muted: #{$color-text-muted};
+	--color-accent: #{$color-accent};
+	--background-color-secondary: #{$background-color-secondary};
+	--background-color-tertiary: #{$background-color-tertiary};
+	--stroke-color-primary: #{$stroke-color-primary};
 
-$primary: #1f76e7;
-$border: #0000001F;
+  --spacing-xss: #{$spacing-xss};
+  --spacing-xs: #{$spacing-xs};
+  --spacing-sm: #{$spacing-sm};
+  --spacing-md: #{$spacing-md};
+  --spacing-lg: #{$spacing-lg};
+  --spacing-vlg: #{$spacing-vlg};
+}
+
+

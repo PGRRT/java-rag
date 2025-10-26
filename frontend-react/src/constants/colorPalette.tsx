@@ -1,9 +1,16 @@
 export const colorPalette = {
-  white: "#ffffff",
+  background: "#0A0A0A",
+  primary: "#D9D9D9",
+  text: "#D9D9D9",
+  textActive: "#FFFFFF",
+  textMuted: "#999999",
+  accent: "#999999",
+  backgroundSecondary: "#111111",
+  backgroundTertiary: "#3C3C3C",
+  strokePrimary: "#3C3C3C",
+  // legacy convenience colors
+  white: "#FFFFFF",
   black: "#000000",
-  lightGray: "var(--light-gray)", // #f9fafb
-  darkGray: "var(--dark-gray)", // #374151
-  mediumGray: "var(--medium-gray)", // #c0c0c0
-  border: "var(--border)", // #0000001F
-  primary: "var(--primary)", // #0053A9
 };
+
+export default colorPalette;
