@@ -26,7 +26,6 @@ const SelectInput = ({
   const [open, setOpen] = useState(false);
 
   const currentLabel = options?.find((option) => option.value === value)?.label;
-  const { isMobile } = useViewport();
 
   return (
     <CustomPopover
@@ -47,6 +46,8 @@ const SelectInput = ({
               font-weight: 500;
               color: ${colorPalette.text};
               background: transparent;
+
+              padding: 0 ${styles.padding.small};
 
               user-select: none;
               border-radius: ${styles.borderRadius.medium};
