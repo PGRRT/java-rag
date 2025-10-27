@@ -27,6 +27,7 @@ Pre commit is used to automatically run linters, formatters and ensures that all
 2. Create virtual environment (optional) ```python -m venv .venv && source ./.venv/bin/activate```
 3. install requirements ```pip install -r requirements.txt```
 4. Run the development API ```fastapi dev --entrypoint api.entry:create_api --port 8081```
+(On windows small change in second step, use: .venv\Scripts\activate.bat)
 
 
 ### Running frontend Web application (django)
