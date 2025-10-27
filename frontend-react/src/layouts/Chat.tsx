@@ -78,6 +78,7 @@ const Chat = () => {
           gap="0.5rem"
           width="100%"
           justify="center"
+          wrap="wrap"
         >
           <Button variant="outline">Ingredient Checker</Button>
           <Button variant="outline">BMI Calculator</Button>
@@ -85,7 +86,14 @@ const Chat = () => {
         </ContentWrapper>
 
         <ContentWrapper width="100%" justify="center">
-          <p className={cx(typography.textS)}>
+          <p
+            className={cx(
+              typography.textS,
+              css`
+                text-align: center;
+              `
+            )}
+          >
             Remember to always{" "}
             <span className={cx(typography.textBold)}>
               verify the information

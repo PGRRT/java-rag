@@ -6,6 +6,7 @@ import { useState } from "react";
 import colorPalette from "@/constants/colorPalette";
 import CustomPopover from "@/components/ui/CustomPopover";
 import { styles } from "@/constants/styles";
+import useViewport from "@/hooks/useViewport";
 
 interface options {
   label: string;
@@ -25,6 +26,7 @@ const SelectInput = ({
   const [open, setOpen] = useState(false);
 
   const currentLabel = options?.find((option) => option.value === value)?.label;
+  const { isMobile } = useViewport();
 
   return (
     <CustomPopover
@@ -43,13 +45,10 @@ const SelectInput = ({
               height: 36px;
               cursor: pointer;
               font-weight: 500;
-              height: 36px;
               color: ${colorPalette.text};
               background: transparent;
-              overflow: hidden;
 
               user-select: none;
-              padding: 0 ${styles.padding.medium};
               border-radius: ${styles.borderRadius.medium};
               &:hover {
                 background: ${colorPalette.backgroundTertiary};
@@ -57,7 +56,17 @@ const SelectInput = ({
             `
           )}
         >
-          {currentLabel ?? "Classical Rag"}
+          <span
+            className={css`
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              max-width: 100%;
+              display: inline-block;
+              overflow: hidden;
+            `}
+          >
+            {currentLabel ?? "Classical Rag"}
+          </span>
           <IconWrapper
             Icon={ChevronDown}
             // className="ml-auto"

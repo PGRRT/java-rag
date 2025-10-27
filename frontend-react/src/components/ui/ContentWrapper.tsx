@@ -19,6 +19,7 @@ const ContentWrapper = ({
   border,
   borderRadius,
   backgroundColor,
+  wrap,
   customCss,
   onClick,
 }: {
@@ -38,6 +39,7 @@ const ContentWrapper = ({
   flexValue?: string;
   backgroundColor?: string;
   border?: string;
+  wrap?: string;
   borderRadius?: string;
   customCss?: ClassNamesArg;
   onClick?: () => void;
@@ -66,6 +68,7 @@ const ContentWrapper = ({
              ${backgroundColor ? `background-color: ${backgroundColor};` : ""}
 
              ${flexValue ? `flex: ${flexValue};` : ""}
+             ${wrap ? `flex-wrap: ${wrap};` : ""}
 
              ${align || justify || flex || gap || direction ? `display: flex;` : ""}
             `

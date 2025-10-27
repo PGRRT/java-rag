@@ -12,6 +12,7 @@ import { Menu, TextAlignJustify, X } from "lucide-react";
 import colorPalette from "@/constants/colorPalette";
 import IconWrapper from "@/components/ui/IconWrapper";
 import { styles } from "@/constants/styles";
+import useViewport from "@/hooks/useViewport";
 
 const buttonsStyle = css`
   display: flex;
@@ -21,7 +22,8 @@ const buttonsStyle = css`
 
   position: absolute;
   top: 0;
-  padding: ${styles.padding.xs};
+  // height: 36px;
+  padding: 6px;
   border-radius: ${styles.borderRadius.small};
 
   &:hover {
@@ -31,7 +33,8 @@ const buttonsStyle = css`
 
 export default function Sidebar() {
   const [expanded, setExpanded] = useState(false);
-  const sidebarWidth = expanded ? 280 : 70;
+  const { isMobile } = useViewport();
+  const sidebarWidth = expanded ? 240 : 70;
 
   const menuItems = [
     // to be added
@@ -49,6 +52,25 @@ export default function Sidebar() {
         display: flex;
         flex-direction: column;
         padding: 1rem;
+
+        ${isMobile &&
+        css`
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          z-index: 1000;
+
+          background-color: transparent;
+          border-right: none;
+
+
+          ${expanded &&
+          css`
+            background-color: ${colorPalette.backgroundSecondary};
+            border-right: 1px solid ${colorPalette.strokePrimary};
+          `}
+        `}
       `}
     >
       <div
