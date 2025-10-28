@@ -16,7 +16,6 @@ authors = [
 readme = "README.md"
 
 
-
 [tool.ruff]
 # Files to include
 include = ["./**/*.py"]
@@ -42,16 +41,17 @@ docstring-code-line-length = "dynamic"
 select = ["ALL"]
 ignore = ["D100","D104","D203","D213","D400","D415","D401","COM812"]
 per-file-ignores = { "tests/*" = ["S101","PLR2004","D103","ANN201"] }
-fixable = ["ALL"]
+fixable = []
 unfixable = []
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 
 
 [tool.mypy]
+
 strict = true
+ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-
 module = "tests.*"
 ignore_errors = true

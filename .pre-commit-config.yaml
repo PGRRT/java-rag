@@ -12,16 +12,24 @@ repos:
     rev: v1.18.2
     hooks:
       - id: mypy
-        args: [--config-file, ./api/pyproject.toml]
         name: mypy Static Checker
+        args: [--config-file, ./api/pyproject.toml, ./api/api, ./api/rag]
+        pass_filenames: false
         additional_dependencies:
-          - types-requests
+          - fastapi
+          - python-multipart
+          - httpx
+          - pymilvus
+          - openai
+          - sentence_transformers
+          - pymupdf
+          - pymupdf4llm
+
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
       - id: trailing-whitespace
-      - id: end-of-file-fixer
       - id: check-yaml
       - id: check-toml
 
@@ -29,7 +37,17 @@ repos:
     hooks:
       - id: pytest
         name: Run pytest
-        entry: pytest -v --maxfail=1 --disable-warnings
-        language: system
+        entry: pytest --rootdir=api -v --maxfail=1 --disable-warnings
+        language: python
         pass_filenames: false
         types: [python]
+        additional_dependencies:
+          - pytest
+          - python-multipart
+          - fastapi
+          - httpx
+          - pymilvus[milvus_lite]
+          - openai
+          - sentence_transformers
+          - pymupdf
+          - pymupdf4llm
