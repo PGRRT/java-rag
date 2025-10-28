@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MedAI - Healthcare Assistance for Everyone</title>
+        <!-- CSS -->
+        <link rel="stylesheet" href="css/base.css">
+        <link rel="stylesheet" href="css/aside.css">
+        <link rel="stylesheet" href="css/landing-page.css">
+        <!-- Scripts -->
+        <script src="js/main.js" defer></script>
+    </head>
+    <body>
+        <aside>
+            <div id="aside-header">
+                <button class="toggle-button" id="menu-button">
+                    <div id="menu-button-image">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+            </div>
+            <div id="aside-content">
+                <div id="chats-control-panel">
+                    <button class="text-button">
+                        <img src="images/search-icon.png" alt="Delete chat">
+                        Search
+                    </button>
+                    <button class="text-button">
+                        <img src="images/delete-icon.png" alt="Delete chat">
+                        Delete all chats
+                    </button>
+                </div>
+                <div id="chat-list-container">
+                    <h4 id="chat-list-header">Chats</h4>
+                    <div id="chat-list">
+                        <div class="chat-item">
+                            <h4>How to how to</h4>
+                            <button class="toggle-button">
+                                 <img src="images/delete-icon.png" alt="Delete chat">
+                            </button>
+                        </div>
+                        <div class="chat-item">
+                            <h4>How to how to</h4>
+                            <button class="toggle-button">
+                                 <img src="images/delete-icon.png" alt="Delete chat">
+                            </button>
+                        </div>
+                        <div class="chat-item">
+                            <h4>How to how to</h4>
+                            <button class="toggle-button">
+                                 <img src="images/delete-icon.png" alt="Delete chat">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <div id="landing-page">
+            <header>
+            <div id="control-panel">
+                <button class="toggle-button">
+                    Classical RAG
+                    <img src="images/arrow-down-icon.png" alt="Arrow down">
+                </button>
+                <button class="text-button" id="new-chat-button">
+                    New chat
+                </button>
+            </div>
+            <div id="auth-panel">
+                <button class="filled-button">
+                    Sign up
+                </button>
+                <button class="text-button">
+                    Sign in
+                </button>
+            </div>
+        </header>
+        <main>
+            <div id="search-bar-container">
+                <h1>MedAI</h1>
+                <div id="search-bar">
+                    <button class="toggle-button" id="attach-button">
+                        <img src="images/attach-icon.png" alt="Attach">
+                    </button>
+                    <input type="search" name="query" id="search-input-text" placeholder="What's Up, Doc?">
+                    <button type="submit" class="toggle-button" id="send-button">
+                        <img src="images/send-icon.png" alt="Send">
+                    </button>
+                </div>
+                <div id="search-bar-tools">
+                    <button class="ghost-button">
+                        Ingredient Checker
+                    </button>
+                    <button class="ghost-button">
+                        BMI Calculator
+                    </button>
+                    <button class="ghost-button">
+                        Brain Fixer
+                    </button>
+                </div>
+            </div>
+            <!-- <div id="recent-chats-container">
+                <div id="recent-chats-header">
+                    <h2>Recent chats</h2>
+                </div>
+                <div id="recent-chats">
+                    <div class="chat-item">
+                        <img src="images/placholder-image.png" alt="Placeholder image">
+                        <div class="chat-item-text-container">
+                            <h3>Drugs</h3>
+                            <p>Please provide a detailed description of cocaine, including its chemical composition, physical forms...</p>
+                        </div>
+                    </div>
+                    <div class="chat-item">
+                        <img src="images/placholder-image.png" alt="Placeholder image">
+                        <div class="chat-item-text-container">
+                            <h3>Drugs</h3>
+                            <p>Please provide a detailed description of cocaine, including its chemical composition, physical forms...</p>
+                        </div>
+                    </div>
+                    <div class="chat-item">
+                        <img src="images/placholder-image.png" alt="Placeholder image">
+                        <div class="chat-item-text-container">
+                            <h3>Drugs</h3>
+                            <p>Please provide a detailed description of cocaine, including its chemical composition, physical forms...</p>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </main>
+        <footer>
+            <p>Remember to always <strong>verify the information</strong> received from AI.</p>
+        </footer>
+        </div>
+    </body>
+</html>
