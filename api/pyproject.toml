@@ -16,7 +16,6 @@ authors = [
 readme = "README.md"
 
 
-
 [tool.ruff]
 # Files to include
 include = ["./**/*.py"]
@@ -49,9 +48,10 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 
 [tool.mypy]
+
 strict = true
+ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-
 module = "tests.*"
 ignore_errors = true

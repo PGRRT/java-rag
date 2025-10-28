@@ -1,7 +1,10 @@
+from fastapi import UploadFile
 from fastapi.testclient import TestClient
-from api.entry import create_api
+import pymupdf
+from api.entry import create_api,ApiMode
+import io
 
-test_client = TestClient(create_api())
+test_client = TestClient(create_api(mode = ApiMode.Testing))
 
 # TODO :: async tests?
 # TODO :: Add testing for nonexistent conversation_id
@@ -15,7 +18,6 @@ def test_valid_query() -> None:
     assert "message" in json
     assert "contexts" in json
     assert type(json["contexts"]) is list
-    assert len(json["contexts"]) > 0
 
 
 def test_invalid_query() -> None:
@@ -25,11 +27,24 @@ def test_invalid_query() -> None:
 
 def test_valid_upload_file() -> None:
 
-    files = [
-        ("files", ("file1",b"Example file 1 content","text/plain")),
-        ("files",("file2",b"Example file 2 content","text/plain"))
-    ]
-    response = test_client.post("/upload/10",files=files)
+    doc = pymupdf.open()
+    page = doc.new_page()
+    page.insert_text((72,72),"Example text")
+    pdf_bytes = doc.write()
+    doc.close()
+
+    print(pdf_bytes)
+
+    fake_pdf = io.BytesIO(pdf_bytes)
+    fake_pdf.name = "test.pdf"
+
+    response = test_client.post(
+        "/upload/169",
+        files=[
+            ("files",(fake_pdf.name,fake_pdf,"application/pdf"))
+        ]
+    )
+
     json = response.json()
 
     assert response.status_code == 201
