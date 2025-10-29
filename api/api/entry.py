@@ -2,7 +2,9 @@ from fastapi import FastAPI
 from starlette.datastructures import State
 from enum import Enum
 
+import os
 from rag.rag import RAG, MockRAG, ClassicRAG
+from rag.llm import BielikLLM
 
 
 class ApiMode(Enum):
@@ -27,7 +29,13 @@ def create_api(mode: ApiMode = ApiMode.Development) -> FastAPI:
     if mode == ApiMode.Testing:
         rag = MockRAG()
     else:
-        rag = ClassicRAG()
+        rag = ClassicRAG(
+            llm=BielikLLM(
+                api_url=os.getenv("PG_API_URL") or "",
+                username=os.getenv("PG_API_USERNAME") or "",
+                password=os.getenv("PG_API_PASSWORD") or "",
+            )
+        )
 
     api.state = ApiState()
     api.state.rag = rag
