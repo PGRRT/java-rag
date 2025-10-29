@@ -1,13 +1,17 @@
+from abc import ABC, abstractmethod
+from typing_extensions import override
 from openai import OpenAI
 from dotenv import load_dotenv
+import httpx
 import os
 
 
-class LLM:
-    def __init__(self: "LLM"):
-        load_dotenv()
-        self.client: OpenAI = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        self.system_prompt: str = """Odpowiadaj na pytania użytkownika dotyczące potencjalnych źródeł danych wymienionych w wiadomości.
+class LLM(ABC):
+    @abstractmethod
+    def generate_response(self, prompt: str) -> str:
+        pass
+
+    system_prompt = """Odpowiadaj na pytania użytkownika dotyczące potencjalnych źródeł danych wymienionych w wiadomości.
 
 Jeśli wiadomość NIE zawiera żadnych informacji na temat źródeł danych (lub nie wynika z niej, o jakie źródła chodzi), odpowiedz wyłącznie:
 **Masz za mało kontekstu, by udzielić rekomendacji.**
@@ -59,6 +63,13 @@ W innych wypadkach: ustrukturyzowana, podzielona odpowiedź (z sekcjami).
 W pierwszej kolejności sprawdź, czy wiadomość zawiera informacje o źródłach danych. Jeśli nie, odpowiedz: “Masz za mało kontekstu, by udzielić rekomendacji.”
 W przeciwnym razie: rozumowanie → rekomendacje źródeł, zgodnie z instrukcją."""
 
+
+class OpenAILLM(LLM):
+    def __init__(self) -> None:
+        load_dotenv()
+        self.client: OpenAI = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+    @override
     def generate_response(self, prompt: str) -> str:
         response = self.client.responses.create(
             model="gpt-4.1-mini",
@@ -76,7 +87,59 @@ W przeciwnym razie: rozumowanie → rekomendacje źródeł, zgodnie z instrukcj�
             return "Generation failed"
 
 
+class BielikLLM(LLM):
+    def __init__(
+        self,
+        api_url: str,
+        username: str,
+        password: str,
+        max_response_length: int = 4096,
+        temperature: float = 0.7,
+    ) -> None:
+        self.client = httpx.Client(auth=(username, password), verify=False)
+        """HTTP client"""
+
+        self.api_url: str = api_url
+        """Bielik API URL"""
+
+        self.max_response_length: int = max_response_length
+        """Number of characters to ouput for the llm"""
+
+        self.temperature: float = temperature
+        """LLM Temperature"""
+
+    @override
+    def generate_response(self, prompt: str) -> str:
+        response = self.client.put(
+            url=self.api_url,
+            headers={"Accept": "application/json", "Content-Type": "application/json"},
+            json={
+                "messages": [
+                    {"role": "system", "content": self.system_prompt},
+                    {"role": "user", "content": prompt},
+                ],
+                "temperature": self.temperature,
+                "max_length": self.max_response_length,
+            },
+            timeout=60 * 60,
+        )
+
+        response = response.json()
+        print(response)
+
+        return str(response)
+
+
 if __name__ == "__main__":
-    llm = LLM()
+    # openai = OpenAILLM()
+    # prompt = "What is your name?"
+    # openai.generate_response(prompt)
+
+    bielik = BielikLLM(
+        api_url=os.getenv("PG_API_URL") or "",
+        username=os.getenv("PG_API_USERNAME") or "",
+        password=os.getenv("PG_API_PASSWORD") or "",
+    )
+
     prompt = "What is your name?"
-    llm.generate_response(prompt)
+    bielik.generate_response(prompt)

@@ -31,9 +31,9 @@ class MockRAG(RAG):
 
 
 class ClassicRAG(RAG):
-    def __init__(self, chunk_size: int = 1024):
+    def __init__(self, llm: LLM, chunk_size: int = 1024):
         self.client: RAGDatabase = RAGDatabase(embedding_dim=768)
-        self.llm: LLM = LLM()
+        self.llm: LLM = llm
         self.embedder: SentenceTransformer = SentenceTransformer("all-mpnet-base-v2")
         self.chunk_size: int = chunk_size
 
