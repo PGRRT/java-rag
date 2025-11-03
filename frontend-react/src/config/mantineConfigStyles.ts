@@ -8,7 +8,7 @@ const primaryColor: MantineColorsTuple = [
   "#FFFFFF", // lightest
   "#F5F5F5",
   "#E5E5E5",
-  "#D9D9D9", 
+  "#D9D9D9",
   "#C0C0C0",
   "#999999", // your accent
   "#808080",
@@ -36,7 +36,7 @@ export const mantineTheme = createTheme({
   primaryColor: "primary",
   primaryShade: 0, // index 0 = #FFFFFF
   // primaryShade: 3, // index 3 = #D9D9D9
-  
+
   colors: {
     primary: primaryColor,
     dark: darkColor,
@@ -98,7 +98,7 @@ export const mantineTheme = createTheme({
             },
           };
         }
-        
+
         if (props.variant === 'outline') {
           return {
             root: {
@@ -110,7 +110,7 @@ export const mantineTheme = createTheme({
             },
           };
         }
-        
+
         if (props.variant === 'subtle') {
           return {
             root: {
@@ -120,7 +120,7 @@ export const mantineTheme = createTheme({
             },
           };
         }
-        
+
         if (props.variant === 'light') {
           return {
             root: {
@@ -141,11 +141,11 @@ export const mantineTheme = createTheme({
           backgroundColor: colorPalette.backgroundSecondary,
           borderColor: colorPalette.strokePrimary,
           color: colorPalette.text,
-          
+
           "&:focus": {
             borderColor: colorPalette.accent,
           },
-          
+
           "&::placeholder": {
             color: colorPalette.textMuted,
           },
@@ -159,7 +159,7 @@ export const mantineTheme = createTheme({
           backgroundColor: colorPalette.backgroundSecondary,
           borderColor: colorPalette.strokePrimary,
           color: colorPalette.text,
-          
+
           "&:focus": {
             borderColor: colorPalette.accent,
           },
@@ -176,7 +176,7 @@ export const mantineTheme = createTheme({
           backgroundColor: colorPalette.backgroundSecondary,
           borderColor: colorPalette.strokePrimary,
           color: colorPalette.text,
-          
+
           "&:focus": {
             borderColor: colorPalette.accent,
           },
@@ -193,7 +193,7 @@ export const mantineTheme = createTheme({
           backgroundColor: colorPalette.backgroundSecondary,
           borderColor: colorPalette.strokePrimary,
           color: colorPalette.text,
-          
+
           "&:focus": {
             borderColor: colorPalette.accent,
           },
@@ -204,7 +204,7 @@ export const mantineTheme = createTheme({
         },
         option: {
           color: colorPalette.text,
-          
+
           "&[data-hovered]": {
             backgroundColor: colorPalette.backgroundTertiary,
           },
@@ -266,7 +266,7 @@ export const mantineTheme = createTheme({
         },
         item: {
           color: colorPalette.text,
-          
+
           "&[data-hovered]": {
             backgroundColor: colorPalette.backgroundTertiary,
           },
@@ -302,7 +302,7 @@ export const mantineTheme = createTheme({
   // Other settings
   black: colorPalette.black,
   white: colorPalette.white,
-  
+
   other: {
     // Custom values you can access via theme.other
     colorPalette,
