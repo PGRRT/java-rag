@@ -2,6 +2,7 @@ import ContentWrapper from "@/components/ui/ContentWrapper";
 import IconWrapper from "@/components/ui/IconWrapper";
 import { styles } from "@/constants/styles";
 import { typography } from "@/constants/typography";
+import useChat from "@/hooks/useChat";
 import { css, cx } from "@emotion/css";
 import {
   Button,
@@ -15,7 +16,7 @@ import { ChevronUp, MoveUp, Paperclip } from "lucide-react";
 import { useState } from "react";
 
 const Chat = () => {
-  const [file, setFile] = useState<File | null>(null);
+  const { file, setFile, message, setMessage, sendMessage } = useChat();
   return (
     <ContentWrapper justify="center" height="100%">
       <ContentWrapper
@@ -33,6 +34,8 @@ const Chat = () => {
 
         <ContentWrapper>
           <TextInput
+            value={message}
+            onChange={(e) => setMessage(e.currentTarget.value)}
             className={css`
               .mantine-TextInput-section[data-position="left"] {
                 width: 50px;
@@ -64,6 +67,7 @@ const Chat = () => {
                   align-items: center;
                   justify-content: center;
                 `}
+                onClick={sendMessage}
               >
                 <IconWrapper Icon={ChevronUp} color="black" />
               </div>
