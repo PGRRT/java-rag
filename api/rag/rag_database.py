@@ -113,7 +113,12 @@ class RAGDatabase:
         :return: Search results
         """
 
+
         collection_name = self.__get_collection_name_by_id(conversation_id)
+
+        if not self.client.has_collection(collection_name):
+            return []
+
         self.client.load_collection(collection_name)
         search_params = {
             "metric_type": "COSINE",

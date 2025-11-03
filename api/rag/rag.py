@@ -111,6 +111,9 @@ class ClassicRAG(RAG):
         # Search the vector database
         results = self.client.search(conversation_id, query_embedding.tolist())
 
+        if not results:
+            return []
+
         # Create a list of relevant documents (text only)
         result = []
         for i in results[0]:
