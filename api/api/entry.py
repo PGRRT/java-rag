@@ -1,12 +1,44 @@
 from fastapi import FastAPI
+from starlette.datastructures import State
+from enum import Enum
+
+import os
+from rag.rag import RAG, MockRAG, ClassicRAG
+from rag.llm import BielikLLM
 
 
-def create_api() -> FastAPI:
+class ApiMode(Enum):
+    Production = 0
+    Development = 1
+    Testing = 2
+
+
+class ApiState(State):
+    rag: RAG
+
+
+def create_api(mode: ApiMode = ApiMode.Development) -> FastAPI:
     """
     creates API entry point.
     """
 
     api = FastAPI()
+
+    rag: RAG
+    # Initializing rag
+    if mode == ApiMode.Testing:
+        rag = MockRAG()
+    else:
+        rag = ClassicRAG(
+            llm=BielikLLM(
+                api_url=os.getenv("PG_API_URL") or "",
+                username=os.getenv("PG_API_USERNAME") or "",
+                password=os.getenv("PG_API_PASSWORD") or "",
+            )
+        )
+
+    api.state = ApiState()
+    api.state.rag = rag
 
     from api.routes import rag_router
 
@@ -19,7 +51,6 @@ if __name__ == "__main__":
     import logging
 
     logging.basicConfig(level=logging.DEBUG)
-    app = create_api()
 
     # Uvicorn isn't in requirements.txt so make sure you install it before running this file
 
