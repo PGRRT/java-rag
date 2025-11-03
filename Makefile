@@ -4,6 +4,10 @@ build-dev:
 start-dev:
 	docker compose -f compose.dev.yaml up
 
+restart-dev:
+	docker compose -f compose.dev.yaml down
+	docker compose -f compose.dev.yaml up
+
 stop-dev:
 	docker compose -f compose.dev.yaml down 
 

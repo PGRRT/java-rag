@@ -44,10 +44,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        log.warn("to sa originy: " + allowedOriginsConfig.allowedOrigins().toString());
-
 //        allowedOriginsConfig.allowedOrigins()
-        List<String> origins = List.of("localhost:3000", "http://localhost:3000");
+        List<String> origins = List.of("localhost:5173", "http://localhost:5173");
         configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));

@@ -5,7 +5,7 @@ import backendApi from "@/api/backendApi";
 
 export const userApi = {
   postChatMessage: async (message: string): Promise<void> =>
-    backendApi.post("/api/v1/chat/message", { message }),
+    backendApi.post("/api/v1/chats/message", { message }),
 
   // getUserClient: async () => apiClientBrowser.get("/api/v1/auth/me"),
 
