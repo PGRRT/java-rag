@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class CreateChatResponse {
-    private UUID chatId;
-}
+
+
+public record CreateChatResponse (
+        UUID id
+){}

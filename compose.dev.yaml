@@ -22,10 +22,12 @@ services:
   #   networks:
   #     - app_network
   #   depends_on:
-  #     user-service:
+  #     gateway:
   #       condition: service_healthy
-  #     chat-service:
-  #       condition: service_healthy
+  #     # user-service:
+  #     #   condition: service_healthy
+  #     # chat-service:
+  #     #   condition: service_healthy
     
   # api:
   #   container_name: api

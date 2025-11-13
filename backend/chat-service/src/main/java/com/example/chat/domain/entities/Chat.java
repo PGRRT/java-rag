@@ -7,9 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "chats")
@@ -24,13 +22,13 @@ public class Chat extends BaseClass<UUID> {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    // Application will have also global chats that does not require user association
+    @Column(name="user_id")
+    private UUID userId;
 
     @Builder.Default
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    Set<Message> messages = new HashSet<>();
+    List<Message> messages = new ArrayList<>();
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

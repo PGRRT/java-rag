@@ -1,4 +1,4 @@
-package com.example.chat.domain.response;
+package com.example.user.domain.dto.error.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

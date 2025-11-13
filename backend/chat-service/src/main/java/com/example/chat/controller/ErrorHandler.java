@@ -1,7 +1,7 @@
-package com.example.chat.controllers;
+package com.example.chat.controller;
 
-import com.example.chat.domain.response.ApiErrorResponse;
-import com.example.chat.domain.response.FieldError;
+import com.example.chat.domain.dto.error.response.ApiErrorResponse;
+import com.example.chat.domain.dto.error.response.FieldError;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestControllerAdvice
 @Slf4j
-public class ErrorController {
+public class ErrorHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiErrorResponse> handleException(Exception e) {
@@ -87,18 +87,7 @@ public class ErrorController {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({
-            JwtException.class,
-            UsernameNotFoundException.class,
-    })
-    public ResponseEntity<ApiErrorResponse> handleCustomExceptions(RuntimeException e) {
-        log.error("Error: {}", e.getMessage());
-        ApiErrorResponse error = ApiErrorResponse.builder()
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message(e.getMessage())
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
+
 
 
 }

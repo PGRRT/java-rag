@@ -46,6 +46,11 @@
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
+			<groupId>io.soabase.record-builder</groupId>
+			<artifactId>record-builder-core</artifactId>
+			<version>51</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>

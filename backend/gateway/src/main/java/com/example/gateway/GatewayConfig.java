@@ -11,10 +11,10 @@ public class GatewayConfig {
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("user-service", r -> r
-                        .path("/api/v1/user/**", "/api/v1/user","/api/v1/users/**", "/api/v1/users")
+                        .path("/api/v1/users/**")
                         .uri("lb://user-service"))
                 .route("chat-service", r -> r
-                        .path("/api/v1/chat/**", "/api/v1/chat","/api/v1/chats/**", "/api/v1/chats")
+                        .path("/api/v1/chats/**")
                         .uri("lb://chat-service"))
                 .build();
     }

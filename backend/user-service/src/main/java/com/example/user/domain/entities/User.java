@@ -1,4 +1,4 @@
-package com.example.chat.domain.entities;
+package com.example.user.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,9 +42,9 @@ public class User extends BaseClass<UUID> {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    Set<Chat> chats = new HashSet<>();
+//    @Builder.Default
+//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    Set<Chat> chats = new HashSet<>();
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

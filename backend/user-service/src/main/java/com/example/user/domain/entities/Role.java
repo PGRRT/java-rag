@@ -1,5 +1,6 @@
-package com.example.chat.domain.entities;
+package com.example.user.domain.entities;
 
+import com.example.user.domain.entities.BaseClass;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class Role extends BaseClass<Long> {
+public class Role extends com.example.user.domain.entities.BaseClass<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

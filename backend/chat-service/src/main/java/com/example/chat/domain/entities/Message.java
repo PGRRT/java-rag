@@ -30,6 +30,10 @@ public class Message extends BaseClass<UUID> {
     @Column(nullable = false)
     private Sender sender;
 
+    // Application will have global chat that does not require user association
+    @Column(name = "user_id")
+    private UUID userId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
