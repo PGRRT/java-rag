@@ -6,6 +6,8 @@ from pydantic import BaseModel
 from typing import Optional
 from api.entry import ApiState
 
+from uuid import UUID
+
 from pymupdf import Document
 import logging
 
@@ -47,7 +49,7 @@ class QueryParams(BaseModel):
 
 @rag_router.post("/query/{conversation_id}")
 async def query(
-    request: Request, conversation_id: int, params: QueryParams
+    request: Request, conversation_id: UUID, params: QueryParams
 ) -> JSONResponse:
     """
     Query the RAG system.
@@ -89,7 +91,7 @@ class UploadResponse(TypedDict):
 @rag_router.post("/upload/{conversation_id}")
 async def upload_documents(
     request: Request,
-    conversation_id: int,
+    conversation_id: UUID,
     files: Annotated[List[UploadFile], File(...)] = [],
 ) -> JSONResponse:
     """
@@ -127,7 +129,7 @@ class DeleteResponse(TypedDict):
 
 
 @rag_router.delete("/delete/{converastion_id}")
-async def delete_conversation(converastion_id: int) -> DeleteResponse:
+async def delete_conversation(converastion_id: UUID) -> DeleteResponse:
     """
     Delete all conversation data.
     """

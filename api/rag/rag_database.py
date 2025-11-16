@@ -2,13 +2,15 @@ from typing import Any
 from pymilvus import MilvusClient, CollectionSchema, DataType
 from pymilvus.milvus_client import IndexParams
 
+from uuid import UUID
+
 
 class RAGDatabase:
     def __init__(self, embedding_dim: int = 2):
         self.client: MilvusClient = MilvusClient("./milvus_database.db")
         self.embedding_dim: int = embedding_dim
 
-    def __create_collection(self, conversation_d: int) -> None:
+    def __create_collection(self, conversation_d: UUID) -> None:
         """
         This function creates a collection in the vector database. If the collection already exists, it removes it first.
 
@@ -28,7 +30,7 @@ class RAGDatabase:
         )
         self.client.create_index(collection_name, index_params=self.__create_index())
 
-    def __get_collection_name_by_id(self, conversation_id: int) -> str:
+    def __get_collection_name_by_id(self, conversation_id: UUID) -> str:
         """
         This function generates a collection name based on the conversation ID.
 
@@ -72,7 +74,7 @@ class RAGDatabase:
 
         return index_params
 
-    def remove_collection(self, conversation_id: int) -> None:
+    def remove_collection(self, conversation_id: UUID) -> None:
         """
         This function removes a collection from the vector database.
 
@@ -87,7 +89,7 @@ class RAGDatabase:
         else:
             return
 
-    def insert_data(self, conversation_id: int, data: list[Any]) -> None:
+    def insert_data(self, conversation_id: UUID, data: list[Any]) -> None:
         """
         This function inserts data into the vector database. Collection will be created if it doesn't exist (for conversation_id).
 
@@ -102,7 +104,7 @@ class RAGDatabase:
         self.client.flush(collection_name)
 
     def search(
-        self, conversation_id: int, query_embedding: list[int]
+        self, conversation_id: UUID, query_embedding: list[int]
     ) -> list[list[dict[Any, Any]]]:
         """
         This function searches for similar data in the vector database.

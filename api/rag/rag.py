@@ -7,26 +7,28 @@ from rag.llm import LLM
 from rag.document_parser import parse_to_markdown
 from abc import ABC, abstractmethod
 
+from uuid import UUID
+
 from sentence_transformers import SentenceTransformer
 
 
 class RAG(ABC):
     @abstractmethod
-    def process_document(self, document: Document, conversation_id: int) -> None:
+    def process_document(self, document: Document, conversation_id: UUID) -> None:
         pass
 
     @abstractmethod
-    def process_query(self, query: str, conversation_id: int) -> str:
+    def process_query(self, query: str, conversation_id: UUID) -> str:
         pass
 
 
 class MockRAG(RAG):
     @override
-    def process_document(self, document: Document, conversation_id: int) -> None:
+    def process_document(self, document: Document, conversation_id: UUID) -> None:
         pass
 
     @override
-    def process_query(self, query: str, conversation_id: int) -> str:
+    def process_query(self, query: str, conversation_id: UUID) -> str:
         return "Mock process query"
 
 
@@ -38,7 +40,7 @@ class ClassicRAG(RAG):
         self.chunk_size: int = chunk_size
 
     @override
-    def process_document(self, document: Document, conversation_id: int) -> None:
+    def process_document(self, document: Document, conversation_id: UUID) -> None:
         parsed_document = parse_to_markdown(document)
 
         embeddings_with_text_pairs = (
@@ -47,7 +49,7 @@ class ClassicRAG(RAG):
         self.client.insert_data(conversation_id, embeddings_with_text_pairs)
 
     @override
-    def process_query(self, query: str, conversation_id: int) -> str:
+    def process_query(self, query: str, conversation_id: UUID) -> str:
         relevant_documents = self.__get_relevant_documents_by_query(
             conversation_id, query
         )
@@ -95,7 +97,7 @@ class ClassicRAG(RAG):
         ]
 
     def __get_relevant_documents_by_query(
-        self, conversation_id: int, query: str
+        self, conversation_id: UUID, query: str
     ) -> list[str]:
         """
         Get relevant documents by processing the query and searching the vector database.
