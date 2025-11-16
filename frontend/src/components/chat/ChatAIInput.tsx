@@ -15,8 +15,10 @@ import {
 import { ChevronUp, MoveUp, Paperclip } from "lucide-react";
 import { useState } from "react";
 
-const ChatAIInput = () => {
-  const { file, setFile, message, setMessage, sendMessage } = useChatInput();
+const ChatAIInput = ({ chatId }: { chatId?: string }) => {
+  const { file, setFile, message, setMessage, sendMessage } = useChatInput({
+    chatId,
+  });
 
   return (
     <form

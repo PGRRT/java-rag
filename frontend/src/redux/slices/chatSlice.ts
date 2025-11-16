@@ -3,6 +3,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import { User, AuthState, Credentials, RegisterData } from '@/types/user';
 import { userApi } from "@/api/userApi";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import type { ChatType } from "@/api/enums/ChatType";
+import exceptionWrapper from "@/utils/exceptionWrapper";
 
 const initialState = {
   chats: [] as Array<{ id: string; title: string }>,
@@ -13,12 +15,31 @@ const initialState = {
 export const fetchChatsAction = createAsyncThunk(
   "chat/fetchChats",
   async (_, { rejectWithValue }) => {
-    try {
-      const response = await userApi.getChats();
-      return response.data;
-    } catch (error: any) {
-      return true;
+    const response = await exceptionWrapper(async () => {
+      return userApi.getChats();
+    });
+
+    if (!response.success) {
+      return rejectWithValue("Failed to fetch chats");
     }
+    return response.data;
+  }
+);
+
+export const createChatAction = createAsyncThunk(
+  "chat/createChat",
+  async (
+    { message, chatType }: { message: string; chatType: ChatType },
+    { rejectWithValue }
+  ) => {
+    const response = await exceptionWrapper(async () => {
+      return userApi.createChat(message, chatType);
+    }, "Chat created successfully");
+
+    if (!response.success) {
+      return rejectWithValue("Failed to create chat");
+    }
+    return response.data;
   }
 );
 

@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { userApi } from "@/api/userApi";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import exceptionWrapper from "@/utils/exceptionWrapper";
+import type { MessageResponse } from "@/api/schemas/message";
 
 interface Message {
   id: string;
@@ -11,7 +13,7 @@ interface Message {
 }
 
 interface MessagesState {
-  messages: Message[];
+  messages: MessageResponse[];
   isLoading: boolean;
   error: string | null;
 }
@@ -22,16 +24,34 @@ const initialState: MessagesState = {
   error: null,
 };
 
-// 1️⃣ AsyncThunk do pobierania wiadomości dla konkretnego chatId
 export const fetchMessagesAction = createAsyncThunk(
   "messages/fetchMessages",
   async (chatId: string, { rejectWithValue }) => {
-    try {
-      const response = await userApi.getMessagesForChat(chatId);
-      return response.data; // zakładamy, że API zwraca listę wiadomości
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    const response = await exceptionWrapper(async () => {
+      return userApi.getMessagesForChat(chatId);
+    });
+
+    if (!response.success) {
+      return rejectWithValue("Failed to fetch chats");
     }
+    return response.data;
+  }
+);
+
+export const postMessagesAction = createAsyncThunk(
+  "messages/postMessage",
+  async (
+    { chatId, content }: { chatId: string; content: string },
+    { rejectWithValue }
+  ) => {
+    const response = await exceptionWrapper(async () => {
+      return userApi.postMessageForChat(chatId, content, "USER");
+    });
+
+    if (!response.success) {
+      return rejectWithValue("Failed to post message");
+    }
+    return response.data;
   }
 );
 
@@ -43,7 +63,7 @@ const messagesSlice = createSlice({
       state.messages.push(action.payload);
     },
     deleteMessage: (state, action: PayloadAction<string>) => {
-      state.messages = state.messages.filter(m => m.id !== action.payload);
+      state.messages = state.messages.filter((m) => m.id !== action.payload);
     },
   },
   extraReducers: (builder) => {

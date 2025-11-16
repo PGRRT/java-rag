@@ -5,8 +5,9 @@ import com.example.chat.domain.enums.Sender;
 
 import java.util.UUID;
 
-public record MessageResponse (
+public record MessageResponse(
         UUID id,
         String content,
         Sender sender
-){}
+) {
+}

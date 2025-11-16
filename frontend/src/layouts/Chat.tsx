@@ -33,7 +33,7 @@ const Chat = () => {
           width="100%"
           margin="30px 0"
         >
-          <ChatContainer />
+          <ChatContainer chatId={chatId} />
         </ContentWrapper>
       ) : (
         <ContentWrapper

@@ -3,6 +3,8 @@ package com.example.chat.controller;
 import com.example.chat.domain.dto.message.request.CreateMessageRequest;
 import com.example.chat.domain.dto.message.response.CreateMessageResponse;
 import com.example.chat.domain.dto.message.response.MessageResponse;
+import com.example.chat.domain.enums.Sender;
+import com.example.chat.service.AiService;
 import com.example.chat.service.ChatService;
 import com.example.chat.service.impl.MessageServiceImpl;
 import jakarta.validation.Valid;
@@ -20,6 +22,7 @@ import java.util.UUID;
 public class MessageController {
     private final MessageServiceImpl messageService;
     private final ChatService chatService;
+    private final AiService aiService;
 
     @GetMapping
     public ResponseEntity<List<MessageResponse>> getAllMessages(
@@ -44,6 +47,11 @@ public class MessageController {
             @Valid @RequestBody CreateMessageRequest createMessageRequest
     ) {
         CreateMessageResponse created = messageService.createMessage(chatId, createMessageRequest);
+
+        // generating response from AI service
+        String generatedResponse = aiService.generateResponse(123, createMessageRequest.content());
+        messageService.createMessage(chatId, new CreateMessageRequest(generatedResponse, Sender.BOT));
+
         return ResponseEntity.ok(created);
     }
 
