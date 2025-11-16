@@ -1,3 +1,17 @@
+import { useState } from "react";
+
+const useUser = () => {
+  // to do
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  return {
+    isLoggedIn,
+    setIsLoggedIn,
+  }
+}
+
+export default useUser;
+
 // import { userApi } from "@/lib/api/userApi";
 // import useSWR from "swr";
 

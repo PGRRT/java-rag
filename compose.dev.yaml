@@ -7,6 +7,7 @@ services:
 
     environment:
       WATCHPACK_POLLING: true
+      CHOKIDAR_USEPOLLING: true
     init: true
     env_file:
       - .env
@@ -14,8 +15,6 @@ services:
     volumes:
       - ./frontend/src:/app/src
       - ./frontend/public:/app/public
-      - /app/node_modules
-      - /app/.next
     restart: unless-stopped
     ports:
       - 5173:5173

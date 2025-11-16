@@ -1,16 +1,18 @@
 import { showToast } from "@/utils/showToast";
 
-const exceptionWrapper = async (fn: () => Promise<void>) => {
+const exceptionWrapper = async <T>(fn: () => Promise<T>, message: string) => {
   try {
     const data = await fn();
-    showToast.info("Message sent successfully");
+    if (message) {
+      showToast.info(message);
+    }
 
     return data;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      showToast.error(`Failed to send message: ${error.message}`);
+      showToast.error(`Failed: ${error.message}`);
     } else {
-      showToast.error("Failed to send message");
+      showToast.error("Operation failed due to an unknown error.");
     }
   }
 };
