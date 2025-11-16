@@ -1,14 +1,16 @@
-export interface Chat {
-  /** UUID */
+import type { SenderType } from "@/api/enums/SenderType";
+import type { MessageResponse } from "@/api/schemas/message";
+
+export interface ChatResponse {
   id: string;
-  /** Owner user UUID */
-  userId: string;
-  /** ISO timestamp */
-  createdAt: string;
-  /** ISO timestamp, optional */
-  updatedAt?: string | null;
-  /** Optional human-friendly title */
-  title?: string | null;
-  /** Optional metadata bag */
-  metadata?: Record<string, any> | null;
+  title: string;
+}
+export interface ChatWithMessagesResponse {
+  id: string;
+  title: string;
+  messages: MessageResponse[];
+}
+export interface CreateChatResponse {
+  id: string;
+  title: string;
 }

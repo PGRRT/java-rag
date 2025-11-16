@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public record CreateMessageRequest(
         String content,
-        Sender sender,
-        UUID userId
+        Sender sender
+//        UUID userId
 ) {
 }

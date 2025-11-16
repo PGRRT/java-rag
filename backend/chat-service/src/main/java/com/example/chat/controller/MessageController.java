@@ -29,14 +29,14 @@ public class MessageController {
         return ResponseEntity.ok(messages);
     }
 
-    @GetMapping("/{messageId}")
-    public ResponseEntity<MessageResponse> getMessageById(
-            @PathVariable("chatId") UUID chatId,
-            @PathVariable("messageId") UUID messageId
-    ) {
-        MessageResponse message = messageService.getMessageById(chatId, messageId);
-        return ResponseEntity.ok(message);
-    }
+//    @GetMapping("/{messageId}")
+//    public ResponseEntity<MessageResponse> getMessageById(
+//            @PathVariable("chatId") UUID chatId,
+//            @PathVariable("messageId") UUID messageId
+//    ) {
+//        MessageResponse message = messageService.getMessageById(chatId, messageId);
+//        return ResponseEntity.ok(message);
+//    }
 
     @PostMapping
     public ResponseEntity<CreateMessageResponse> createMessage(

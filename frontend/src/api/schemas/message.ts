@@ -1,24 +1,12 @@
-export type MessageRole = "system" | "user" | "assistant" | "tool";
+import type { SenderType } from "@/api/enums/SenderType";
 
-export interface Message {
-  /** UUID */
-  id: string;
-  /** Chat UUID this message belongs to */
-  chatId: string;
-  /** Sender role */
-  role: MessageRole;
-  /** Optional sender user id (for role 'user') */
-  userId?: string | null;
-  /** Message text */
+export interface MessageResponse {
+  id: string;        // UUID jako string
   content: string;
-  /** Optional structured content (e.g., blocks, embeds) */
-  contentStructured?: unknown | null;
-  /** ISO timestamp */
-  createdAt: string;
-  /** Optional ISO timestamp */
-  updatedAt?: string | null;
-  /** Whether the message is final (assistant finished) */
-  isFinal?: boolean;
-  /** Optional metadata (e.g., model, finish_reason) */
-  metadata?: Record<string, any> | null;
+  sender: SenderType;
+}
+
+export interface CreateMessageResponse {
+  id: string;
+  content: string;
 }

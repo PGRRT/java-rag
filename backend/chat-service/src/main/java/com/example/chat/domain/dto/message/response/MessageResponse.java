@@ -7,5 +7,6 @@ import java.util.UUID;
 
 public record MessageResponse (
         UUID id,
-        String content
+        String content,
+        Sender sender
 ){}
