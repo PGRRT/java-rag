@@ -46,6 +46,10 @@
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>io.soabase.record-builder</groupId>
 			<artifactId>record-builder-core</artifactId>
 			<version>51</version>

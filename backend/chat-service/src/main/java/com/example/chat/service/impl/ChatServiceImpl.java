@@ -1,15 +1,20 @@
 package com.example.chat.service.impl;
 
+import com.example.chat.domain.dto.ai.request.ChatMessage;
 import com.example.chat.domain.dto.chat.request.CreateChatRequest;
 import com.example.chat.domain.dto.chat.response.ChatResponse;
 import com.example.chat.domain.dto.chat.response.ChatWithMessagesResponse;
 import com.example.chat.domain.dto.chat.response.CreateChatResponse;
+import com.example.chat.domain.dto.message.request.CreateMessageRequest;
 import com.example.chat.domain.dto.message.response.MessageResponse;
 import com.example.chat.domain.entities.Chat;
+import com.example.chat.domain.enums.Sender;
 import com.example.chat.mapper.ChatMapper;
 import com.example.chat.mapper.MessageMapper;
 import com.example.chat.repository.ChatRepository;
+import com.example.chat.service.AiService;
 import com.example.chat.service.ChatService;
+import com.example.chat.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -56,6 +61,7 @@ public class ChatServiceImpl implements ChatService {
         Chat savedChat = chatRepository.save(chat);
         return chatMapper.toCreateChatResponse(savedChat);
     }
+
 
     public List<MessageResponse> getAllMessagesInChat(UUID chatId) {
         Chat chat = chatRepository.findChatWithMessagesById(chatId).orElseThrow(() -> {

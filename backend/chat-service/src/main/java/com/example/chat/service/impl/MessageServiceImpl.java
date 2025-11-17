@@ -1,16 +1,19 @@
 package com.example.chat.service.impl;
 
+import com.example.chat.config.RabbitMqConfig;
 import com.example.chat.domain.dto.message.request.CreateMessageRequest;
 import com.example.chat.domain.dto.message.response.CreateMessageResponse;
 import com.example.chat.domain.dto.message.response.MessageResponse;
 import com.example.chat.domain.entities.Chat;
 import com.example.chat.domain.entities.Message;
+import com.example.chat.domain.enums.Sender;
 import com.example.chat.mapper.MessageMapper;
 import com.example.chat.repository.MessageRepository;
 import com.example.chat.service.ChatService;
 import com.example.chat.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -39,6 +42,9 @@ public class MessageServiceImpl implements MessageService {
         Message message = messageMapper.toEntity(createMessageRequest);
         message.setChat(chat);
         Message save = messageRepository.save(message);
+
+
+
         return messageMapper.toCreateMessageResponse(save);
     }
 

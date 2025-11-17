@@ -14,6 +14,11 @@ spring:
       ddl-auto: update
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  rabbitmq:
+    host: rabbitmq
+    username: ${RABBITMQ_DEFAULT_USER}
+    password: ${RABBITMQ_DEFAULT_PASS}
+    port: 5672
 
 app:
   allowed-origins: ${ALLOWED_ORIGINS}
@@ -22,4 +27,3 @@ eureka:
   client:
     service-url:
       defaultZone: http://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@eureka:8761/eureka/
-

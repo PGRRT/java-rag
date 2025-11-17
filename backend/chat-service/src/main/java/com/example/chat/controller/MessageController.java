@@ -1,14 +1,17 @@
 package com.example.chat.controller;
 
+import com.example.chat.config.RabbitMqConfig;
 import com.example.chat.domain.dto.message.request.CreateMessageRequest;
 import com.example.chat.domain.dto.message.response.CreateMessageResponse;
 import com.example.chat.domain.dto.message.response.MessageResponse;
 import com.example.chat.domain.enums.Sender;
 import com.example.chat.service.AiService;
+import com.example.chat.service.ChatMessagePublisher;
 import com.example.chat.service.ChatService;
 import com.example.chat.service.impl.MessageServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +25,7 @@ import java.util.UUID;
 public class MessageController {
     private final MessageServiceImpl messageService;
     private final ChatService chatService;
-    private final AiService aiService;
+    private final ChatMessagePublisher chatMessagePublisher;
 
     @GetMapping
     public ResponseEntity<List<MessageResponse>> getAllMessages(
@@ -49,8 +52,7 @@ public class MessageController {
         CreateMessageResponse created = messageService.createMessage(chatId, createMessageRequest);
 
         // generating response from AI service
-        String generatedResponse = aiService.generateResponse(123, createMessageRequest.content());
-        messageService.createMessage(chatId, new CreateMessageRequest(generatedResponse, Sender.BOT));
+        chatMessagePublisher.publishMessage(chatId, created.content());
 
         return ResponseEntity.ok(created);
     }
