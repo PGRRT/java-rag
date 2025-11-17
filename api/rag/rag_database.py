@@ -37,8 +37,9 @@ class RAGDatabase:
         :param conversation_id: ID of the conversation
         :return: Collection name
         """
+        clean_id = str(conversation_id).replace("-", "")
 
-        return f"conversation_{conversation_id}"
+        return f"conversation_{clean_id}"
 
     def __create_schema(self, dimension: int) -> CollectionSchema:
         """

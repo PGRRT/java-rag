@@ -24,7 +24,7 @@ public class ChatMessageProcessorImpl implements ChatMessageProcessor {
         log.info("Received chat message from RabbitMQ: {}", chatMessage);
         UUID chatId = chatMessage.chatId();
 
-        String generatedResponse = aiService.generateResponse(123, chatMessage.content());
+        String generatedResponse = aiService.generateResponse(chatMessage.chatId(), chatMessage.content());
         messageService.createMessage(chatId, new CreateMessageRequest(generatedResponse, Sender.BOT));
     }
 }

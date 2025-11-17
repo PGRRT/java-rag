@@ -68,7 +68,8 @@ async def query(
     try:
         rag_response = state.rag.process_query(query, conversation_id)
 
-        response["message"] = rag_response
+        response["message"] = rag_response 
+        # response["message"] = rag_response
         # TODO :: Add contexts
         response["contexts"] = ["Contexts not implemented yet"]
 

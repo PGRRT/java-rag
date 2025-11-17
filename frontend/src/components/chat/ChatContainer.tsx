@@ -3,6 +3,8 @@ import ChatAIInput from "@/components/chat/ChatAIInput";
 import ContentWrapper from "@/components/ui/ContentWrapper";
 import useChat from "@/hooks/useChat";
 import { css } from "@emotion/css";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const ChatContainer = ({ chatId }: { chatId: string }) => {
   const { messages } = useChat({ chatId });
@@ -20,15 +22,18 @@ const ChatContainer = ({ chatId }: { chatId: string }) => {
           <ContentWrapper
             key={msg.id}
             width="100%"
+            direction="column"
+            // justify={msg.sender === "USER" ? "flex-end" : "flex-start"}
             customCss={css`
               border-bottom: 1px solid #e0e0e0;
               overflow-y: auto;
               padding-bottom: 1rem;
             `}
           >
-            Sender: {msg.sender}
+            <div>{msg.sender}:</div>
+
             <br />
-            Message: {msg.content}
+            <Markdown remarkPlugins={[remarkGfm]}>{msg.content}</Markdown>
           </ContentWrapper>
         ))}
       </ContentWrapper>

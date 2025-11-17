@@ -2,6 +2,8 @@ package com.example.chat.service.impl;
 
 import com.example.chat.domain.dto.ai.response.AiResponse;
 import com.example.chat.service.AiService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -21,7 +23,7 @@ import java.util.UUID;
 public class AiServiceImpl implements AiService {
     private final RestTemplate restTemplate;
 
-    public String generateResponse(int chatId, String prompt) {
+    public String generateResponse(UUID chatId, String prompt) {
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("query", prompt);
 
@@ -37,7 +39,19 @@ public class AiServiceImpl implements AiService {
             log.error("AI service returned an error for chatId {}: {}", chatId, response.message());
             throw new RuntimeException("AI service error");
         }
-        return response.message();
-    }
 
+        return response.message();
+
+        // aiResponse is a JSON stringified object from AI (e.g., '{"response": "### Medicine..."}')
+        // We need to parse it to extract the actual "response" text
+//        String aiResponse = response.message();
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        try {
+//            JsonNode messageNode =  objectMapper.readTree(aiResponse);
+//            return messageNode.get("response").asText();
+//        } catch (Exception e) {
+//            log.error("Failed to parse AI response for chatId {}: {}", chatId, aiResponse);
+//            throw new RuntimeException("Failed to parse AI response");
+//        }
+    }
 }

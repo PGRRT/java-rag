@@ -127,7 +127,8 @@ class BielikLLM(LLM):
         response = response.json()
         print(response)
 
-        return str(response)
+        return response["response"]
+        # return str(response)
 
 
 if __name__ == "__main__":

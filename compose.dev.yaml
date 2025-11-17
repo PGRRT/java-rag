@@ -39,8 +39,7 @@ services:
     ports:
       - 9000:9000
     volumes:
-      - ./api/app:/app/app
-      - ./api/requirements.txt:/app/requirements.txt
+      - ./api:/app
     environment:
       - WATCHFILES_FORCE_POLLING=1  # This forces file watching (solves issues with hot reloading on windows)
       - WATCHFILES_POLLING_INTERVAL=1  # Check every 1 second
