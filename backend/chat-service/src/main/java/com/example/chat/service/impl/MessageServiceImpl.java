@@ -6,21 +6,19 @@ import com.example.chat.domain.dto.message.response.CreateMessageResponse;
 import com.example.chat.domain.dto.message.response.MessageResponse;
 import com.example.chat.domain.entities.Chat;
 import com.example.chat.domain.entities.Message;
-import com.example.chat.domain.enums.ChatEvent;
 import com.example.chat.domain.enums.Sender;
 import com.example.chat.events.BotMessageEvent;
 import com.example.chat.mapper.MessageMapper;
 import com.example.chat.repository.MessageRepository;
 import com.example.chat.service.ChatService;
 import com.example.chat.service.MessageService;
-import com.example.chat.service.SseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -31,6 +29,7 @@ public class MessageServiceImpl implements MessageService {
     private final ChatService chatService;
     private final MessageMapper messageMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
+    private final RabbitTemplate rabbitTemplate;
 
     public MessageResponse getMessageById(UUID chatId, UUID messageId) {
         Message message = messageRepository.findById(messageId).orElseThrow(() -> {

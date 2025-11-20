@@ -1,7 +1,7 @@
 //package com.example.chat.service.impl;
 //
 //import com.example.chat.config.RabbitMqConfig;
-//import com.example.chat.domain.dto.ai.request.ChatMessage;
+//import com.example.chat.events.ChatMessage;
 //import com.example.chat.service.ChatMessagePublisher;
 //import lombok.RequiredArgsConstructor;
 //import lombok.extern.slf4j.Slf4j;

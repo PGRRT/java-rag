@@ -1,6 +1,6 @@
 //package com.example.chat.service.impl;
 //
-//import com.example.chat.domain.dto.ai.request.ChatMessage;
+//import com.example.chat.events.ChatMessage;
 //import com.example.chat.domain.dto.message.request.CreateMessageRequest;
 //import com.example.chat.domain.enums.Sender;
 //import com.example.chat.service.AiService;

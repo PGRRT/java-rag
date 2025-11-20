@@ -1,66 +1,66 @@
 services:
-  # frontend:
-  #   container_name: frontend
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: docker/dev.Dockerfile
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: docker/dev.Dockerfile
 
-  #   environment:
-  #     WATCHPACK_POLLING: true
-  #     CHOKIDAR_USEPOLLING: true
-  #   init: true
-  #   env_file:
-  #     - .env
-  #     - .env.dev.local
-  #   volumes:
-  #     - ./frontend/src:/app/src
-  #     - ./frontend/public:/app/public
-  #   restart: unless-stopped
-  #   ports:
-  #     - 5173:5173
-  #   networks:
-  #     - app_network
+    environment:
+      WATCHPACK_POLLING: true
+      CHOKIDAR_USEPOLLING: true
+    init: true
+    env_file:
+      - .env
+      - .env.dev.local
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    restart: unless-stopped
+    ports:
+      - 5173:5173
+    networks:
+      - app_network
     # depends_on:
-      # gateway:
-        # condition: service_healthy
-      # user-service:
-      #   condition: service_healthy
-      # chat-service:
-      #   condition: service_healthy
+    #   gateway:
+    #     condition: service_healthy
+    #   user-service:
+    #     condition: service_healthy
+    #   chat-service:
+    #     condition: service_healthy
     
-  # api:
-  #   container_name: api
-  #   build:
-  #     context: ./api
-  #     dockerfile: docker/devPure.Dockerfile
-  #   env_file:
-  #       - .env
-  #       - .env.dev.local
-  #   ports:
-  #     - 9000:9000
-  #   volumes:
-  #     - ./api:/app
-  #   environment:
-  #     - WATCHFILES_FORCE_POLLING=1  # This forces file watching (solves issues with hot reloading on windows)
-  #     - WATCHFILES_POLLING_INTERVAL=1  # Check every 1 second
-  #     - PYTHONUNBUFFERED=1
-  #     - PYTHONPATH=/app/app
+  api:
+    container_name: api
+    build:
+      context: ./api
+      dockerfile: docker/devPure.Dockerfile
+    env_file:
+        - .env
+        - .env.dev.local
+    ports:
+      - 9000:9000
+    volumes:
+      - ./api:/app
+    environment:
+      - WATCHFILES_FORCE_POLLING=1  # This forces file watching (solves issues with hot reloading on windows)
+      - WATCHFILES_POLLING_INTERVAL=1  # Check every 1 second
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app/app
 
-  #     # ✅ GPU environment variables
-  #     - NVIDIA_VISIBLE_DEVICES=all
-  #     - NVIDIA_DRIVER_CAPABILITIES=compute,utility
-  #     # ✅ Force TensorFlow to use GPU
-  #     - CUDA_VISIBLE_DEVICES=0
-  #   networks:
-  #     - app_network
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             count: all
-  #             capabilities: [ gpu ]
-  #   restart: unless-stopped
+      # ✅ GPU environment variables
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      # ✅ Force TensorFlow to use GPU
+      - CUDA_VISIBLE_DEVICES=0
+    networks:
+      - app_network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+    restart: unless-stopped
     
   eureka:
     container_name: eureka
@@ -86,33 +86,33 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      # rabbitmq:
-        # condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
-  # user-service:
-  #   container_name: user-service
-  #   build:
-  #     context: ./backend/user-service
-  #     dockerfile: docker/dev.Dockerfile
-  #   env_file:
-  #     - .env
-  #     - .env.dev.local
-  #   ports:
-  #     - 8081:8081
-  #   volumes:
-  #     - ./backend/user-service:/app
-  #     - ~/.m2:/root/.m2
-  #   networks:
-  #     - app_network
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1"]
-  #     interval: 10s
-  #     retries: 10
-  #     start_period: 30s
-  #     timeout: 5s
-  #   depends_on:
-  #     eureka:
-  #       condition: service_healthy
+  user-service:
+    container_name: user-service
+    build:
+      context: ./backend/user-service
+      dockerfile: docker/dev.Dockerfile
+    env_file:
+      - .env
+      - .env.dev.local
+    ports:
+      - 8081:8081
+    volumes:
+      - ./backend/user-service:/app
+      - ~/.m2:/root/.m2
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1"]
+      interval: 10s
+      retries: 10
+      start_period: 30s
+      timeout: 5s
+    depends_on:
+      eureka:
+        condition: service_healthy
       # redis:
       #   condition: service_healthy 
   chat-service:
@@ -142,30 +142,30 @@ services:
       # redis:
       #   condition: service_healthy   
 
-  # gateway:
-  #   container_name: gateway
-  #   build:
-  #     context: ./backend/gateway
-  #     dockerfile: docker/dev.Dockerfile
-  #   env_file:
-  #     - .env
-  #     - .env.dev.local
-  #   ports:
-  #     - 8080:8080
-  #   volumes:
-  #     - ./backend/gateway:/app
-  #     - ~/.m2:/root/.m2
-  #   networks:
-  #     - app_network
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
-  #     interval: 10s
-  #     retries: 10
-  #     start_period: 30s
-  #     timeout: 5s
-  #   depends_on:
-  #     - chat-service
-  #     - user-service
+  gateway:
+    container_name: gateway
+    build:
+      context: ./backend/gateway
+      dockerfile: docker/dev.Dockerfile
+    env_file:
+      - .env
+      - .env.dev.local
+    ports:
+      - 8080:8080
+    volumes:
+      - ./backend/gateway:/app
+      - ~/.m2:/root/.m2
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      retries: 10
+      start_period: 30s
+      timeout: 5s
+    depends_on:
+      - chat-service
+      - user-service
 
       # chat-service:
         # condition: service_healthy
@@ -216,24 +216,24 @@ services:
   #     retries: 10
   #     start_period: 5s
 
-  # rabbitmq:
-  #   container_name: rabbitmq
-  #   image: rabbitmq:4.2-alpine
-  #   restart: unless-stopped
-  #   env_file:
-  #     - .env
-  #     - .env.dev.local
-  #   healthcheck:
-  #     test: ["CMD", "rabbitmqctl", "status"]
-  #     interval: 10s
-  #     retries: 10
-  #     timeout: 5s
-  #   ports:
-  #     - "5672:5672"
-  #   networks:
-  #     - app_network
-  #   volumes:
-  #     - rabbitmq-data:/var/lib/rabbitmq
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:4.2-alpine
+    restart: unless-stopped
+    env_file:
+      - .env
+      - .env.dev.local
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      retries: 10
+      timeout: 5s
+    ports:
+      - "5672:5672"
+    networks:
+      - app_network
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
 
 volumes:
   pgdata:

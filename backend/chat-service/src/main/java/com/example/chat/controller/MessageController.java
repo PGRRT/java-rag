@@ -48,10 +48,7 @@ public class MessageController {
 //        return ResponseEntity.ok(message);
 //    }
 
-    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter streamChat(@PathVariable("chatId") UUID chatId) {
-        return sseService.createEmitter(chatId);
-    }
+
 
     @PostMapping
     public ResponseEntity<CreateMessageResponse> createMessage(

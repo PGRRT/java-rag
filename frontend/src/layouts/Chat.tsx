@@ -26,14 +26,13 @@ const Chat = () => {
       {chatId ? (
         // We are in a specific chat
         <ContentWrapper
-          key={chatId}
           direction="column"
           gap="1rem"
           maxWidth="750px"
           width="100%"
           margin="30px 0"
         >
-          <ChatContainer chatId={chatId} />
+          <ChatContainer key={chatId} chatId={chatId} />
         </ContentWrapper>
       ) : (
         <ContentWrapper

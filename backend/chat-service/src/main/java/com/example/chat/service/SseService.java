@@ -11,4 +11,5 @@ public interface SseService {
     SseEmitter createEmitter(UUID chatId);
     SseEmitter getEmitter(UUID chatId);
     void emit(UUID chatId, ChatEvent eventName, String message);
+    boolean hasEmitter(UUID chatId);
 }

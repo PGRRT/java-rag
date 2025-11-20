@@ -1,6 +1,5 @@
 package com.example.chat.service.impl;
 
-import com.example.chat.domain.dto.ai.request.ChatMessage;
 import com.example.chat.domain.dto.chat.request.CreateChatRequest;
 import com.example.chat.domain.dto.chat.response.ChatResponse;
 import com.example.chat.domain.dto.chat.response.ChatWithMessagesResponse;

@@ -1,6 +1,7 @@
 package com.example.chat.service.impl;
 
 import com.example.chat.domain.enums.ChatEvent;
+import com.example.chat.service.ChatBindingService;
 import com.example.chat.service.SseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,33 +18,49 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SseServiceImpl implements SseService {
     private final Map<UUID, SseEmitter> emitters = new ConcurrentHashMap<>();
     private static final long DEFAULT_TIMEOUT = 60 * 60 * 1000L; // 1 hour
+    private final ChatBindingService chatBindingService;
 
     public SseEmitter getEmitter(UUID chatId) {
         return emitters.get(chatId);
     }
 
+    public boolean hasEmitter(UUID chatId) {
+        return emitters.containsKey(chatId);
+    }
+
     public SseEmitter createEmitter(UUID chatId) {
+        if (hasEmitter(chatId)) {
+            return emitters.get(chatId);
+        }
+
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
 
         emitter.onTimeout(() -> {
-            emitters.remove(chatId);
+            cleanUpEmitter(chatId);
             log.info("Emitter timed out for chat {}", chatId);
         });
 
         emitter.onError((Throwable e) -> {
-            emitters.remove(chatId);
+            cleanUpEmitter(chatId);
             log.error("Emitter error for chat " + chatId, e);
         });
 
         emitter.onCompletion(() -> {
-            emitters.remove(chatId);
+            cleanUpEmitter(chatId);
             log.info("Emitter completed for chat {}", chatId);
         });
 
         emitters.put(chatId, emitter);
         log.info("Created emitter for chat {}", chatId);
 
+        chatBindingService.bindChat(chatId);
+
         return emitter;
+    }
+
+    public void cleanUpEmitter(UUID chatId) {
+        emitters.remove(chatId);
+        chatBindingService.unBindChat(chatId);
     }
 
     public void emit(UUID chatId, ChatEvent eventName, String message) {

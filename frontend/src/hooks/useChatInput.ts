@@ -21,6 +21,7 @@ const useChatInput = ({ chatId = "" }: { chatId?: string }) => {
   const dispatch = useAppDispatch();
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
     let tempChatId: string = chatId;
 
     if (!message.trim()) {
@@ -52,6 +53,7 @@ const useChatInput = ({ chatId = "" }: { chatId?: string }) => {
       }, 1000);
     }
 
+    
     const messageResponse = await dispatch(
       postMessagesAction({ chatId: tempChatId, content: message })
     );
