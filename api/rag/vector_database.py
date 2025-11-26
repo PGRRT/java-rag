@@ -91,6 +91,14 @@ class VectorDatabase:
         else:
             return
 
+    def remove_all_collections(self) -> None:
+        """
+        This function removes all collections from the vector database.
+        """
+        collections = self.client.list_collections()
+        for collection in collections:
+            self.client.drop_collection(collection)
+
     def insert_data(self, conversation_id: UUID, data: list[Any]) -> None:
         """
         This function inserts data into the vector database. Collection will be created if it doesn't exist (for conversation_id).
@@ -137,6 +145,9 @@ class VectorDatabase:
                 limit=5,
                 output_fields=["text"],
             )
+
+            results = results[0]
+            results = [result.get("entity").get("text") for result in results]
         finally:
             self.client.release_collection(collection_name)
 
