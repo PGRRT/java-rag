@@ -9,7 +9,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public interface SseService {
     SseEmitter createEmitter(UUID chatId);
-    SseEmitter getEmitter(UUID chatId);
+    boolean hasEmitters(UUID chatId);
     void emit(UUID chatId, ChatEvent eventName, String message);
-    boolean hasEmitter(UUID chatId);
 }

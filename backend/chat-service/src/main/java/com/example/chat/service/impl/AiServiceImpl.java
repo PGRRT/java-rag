@@ -33,6 +33,7 @@ public class AiServiceImpl implements AiService {
     private final MessageService messageService;
     private final SseService sseService;
 
+    @Override
     public String generateResponse(UUID chatId, String prompt) {
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("query", prompt);
@@ -53,6 +54,7 @@ public class AiServiceImpl implements AiService {
         return response.message();
     }
 
+    @Override
     @Async
     public void processAiResponseAsync(UUID chatId, String message) {
         try {

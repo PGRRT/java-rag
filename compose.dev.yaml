@@ -146,7 +146,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8761/actuator/health || exit 1"]
       interval: 10s
-      retries: 10
+      retries: 25
       start_period: 30s
       timeout: 5s
     depends_on:
@@ -173,8 +173,8 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1"]
       interval: 10s
-      retries: 10
-      start_period: 30s
+      retries: 25
+      start_period: 60s
       timeout: 5s
     depends_on:
       eureka:
@@ -199,8 +199,8 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8082/actuator/health || exit 1"]
       interval: 10s
-      retries: 10
-      start_period: 30s
+      retries: 25
+      start_period: 60s
       timeout: 5s
     depends_on:
       eureka:
@@ -226,8 +226,8 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
       interval: 10s
-      retries: 10
-      start_period: 30s
+      retries: 25
+      start_period: 40s
       timeout: 5s
     depends_on:
       - chat-service

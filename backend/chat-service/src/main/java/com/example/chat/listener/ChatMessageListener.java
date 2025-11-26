@@ -18,11 +18,11 @@ public class ChatMessageListener {
 
     @RabbitListener(queues = RabbitMqConfig.PRIVATE_QUEUE)
     public void onMessage(BotMessageEvent event) {
-        if (!sseService.hasEmitter(event.chatId())) {
+        if (!sseService.hasEmitters(event.chatId())) {
             log.debug("No active SSE emitter for chatId {}, skipping message", event.chatId());
             return;
         }
 
-        sseService.emit(event.chatId(), ChatEvent.CHAT_MESSAGE, event.message());
+        sseService.emit(event.chatId(), ChatEvent.BOT_MESSAGE, event.message());
     }
 }

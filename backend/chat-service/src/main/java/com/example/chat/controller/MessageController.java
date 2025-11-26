@@ -4,6 +4,7 @@ package com.example.chat.controller;
 import com.example.chat.domain.dto.message.request.CreateMessageRequest;
 import com.example.chat.domain.dto.message.response.CreateMessageResponse;
 import com.example.chat.domain.dto.message.response.MessageResponse;
+import com.example.chat.domain.enums.ChatEvent;
 import com.example.chat.domain.enums.Sender;
 import com.example.chat.service.AiService;
 import com.example.chat.service.ChatMessagePublisher;
@@ -57,7 +58,10 @@ public class MessageController {
     ) {
         CreateMessageResponse created = messageService.createMessage(chatId, createMessageRequest);
 
-        // generating response from AI service
+        // emit new user message to SSE subscribers
+        sseService.emit(chatId, ChatEvent.USER_MESSAGE, created.content());
+
+        // generating response from AI service and emitting it asynchronously
         aiService.processAiResponseAsync(chatId, created.content());
         return ResponseEntity.ok(created);
     }

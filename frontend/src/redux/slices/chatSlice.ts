@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import { User, AuthState, Credentials, RegisterData } from '@/types/user';
 import { userApi } from "@/api/userApi";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { ChatType } from "@/api/enums/ChatType";
+import type { ChatRoomType } from "@/api/enums/ChatRoom";
 import exceptionWrapper from "@/utils/exceptionWrapper";
 
 const initialState = {
@@ -29,7 +29,7 @@ export const fetchChatsAction = createAsyncThunk(
 export const createChatAction = createAsyncThunk(
   "chat/createChat",
   async (
-    { message, chatType }: { message: string; chatType: ChatType },
+    { message, chatType }: { message: string; chatType: ChatRoomType },
     { rejectWithValue }
   ) => {
     const response = await exceptionWrapper(async () => {

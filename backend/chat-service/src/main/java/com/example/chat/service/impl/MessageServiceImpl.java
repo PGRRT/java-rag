@@ -59,8 +59,6 @@ public class MessageServiceImpl implements MessageService {
         applicationEventPublisher.publishEvent(new BotMessageEvent(chatId, generatedResponse));
     }
 
-
-
     @Transactional
     public void deleteMessage(UUID chatId, UUID messageId) {
         Message message = messageRepository.findById(messageId).orElseThrow(() -> {

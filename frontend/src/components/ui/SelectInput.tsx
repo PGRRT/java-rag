@@ -58,13 +58,16 @@ const SelectInput = ({
           )}
         >
           <span
-            className={css`
-              text-overflow: ellipsis;
-              white-space: nowrap;
-              max-width: 100%;
-              display: inline-block;
-              overflow: hidden;
-            `}
+            className={cx(
+              typography.textM,
+              css`
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 100%;
+                display: inline-block;
+                overflow: hidden;
+              `
+            )}
           >
             {currentLabel ?? "Classical Rag"}
           </span>

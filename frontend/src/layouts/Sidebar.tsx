@@ -13,6 +13,7 @@ import colorPalette from "@/constants/colorPalette";
 import IconWrapper from "@/components/ui/IconWrapper";
 import { styles } from "@/constants/styles";
 import useViewport from "@/hooks/useViewport";
+import { navbarHeight } from "@/layouts/Navbar";
 
 const buttonsStyle = css`
   display: flex;
@@ -21,9 +22,10 @@ const buttonsStyle = css`
   transition: all 0.2s;
 
   position: absolute;
-  top: 0;
-  // height: 36px;
+
+  top: 50%;
   padding: 6px;
+
   border-radius: ${styles.borderRadius.small};
 
   &:hover {
@@ -31,10 +33,13 @@ const buttonsStyle = css`
   }
 `;
 
+export const notActiveSidebarWidth = 70;
+export const activeSidebarWidth = 240;
+
 export default function Sidebar() {
   const [expanded, setExpanded] = useState(false);
   const { isMobile } = useViewport();
-  const sidebarWidth = expanded ? 240 : 70;
+  const sidebarWidth = expanded ? activeSidebarWidth : notActiveSidebarWidth;
 
   const menuItems = [
     // to be added
@@ -42,20 +47,24 @@ export default function Sidebar() {
 
   return (
     <div
+      id="sidebar"
       css={css`
         width: ${sidebarWidth}px;
         transition: width 0.3s;
         background-color: ${colorPalette.backgroundSecondary};
         border-right: 1px solid ${colorPalette.strokePrimary};
         color: white;
-        min-height: 100vh;
+        // min-height: 100vh;
         display: flex;
         flex-direction: column;
-        padding: 1rem;
+        // padding: 1rem;
+
+        position: sticky;
+        top: 0;
 
         ${isMobile &&
         css`
-          position: absolute;
+          position: fixed;
           left: 0;
           top: 0;
           bottom: 0;
@@ -63,7 +72,6 @@ export default function Sidebar() {
 
           background-color: transparent;
           border-right: none;
-
 
           ${expanded &&
           css`
@@ -75,8 +83,21 @@ export default function Sidebar() {
     >
       <div
         css={css`
-          width: 100%;
           position: relative;
+          width: 100%;
+          height: ${navbarHeight}px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: ${colorPalette.backgroundSecondary};
+
+          ${isMobile &&
+          !expanded &&
+          css`
+            background-color: ${colorPalette.background};
+
+            border-bottom: 1px solid ${colorPalette.strokePrimary};
+          `}
         `}
       >
         <div
@@ -86,7 +107,8 @@ export default function Sidebar() {
             ${buttonsStyle}
 
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%);
+
             opacity: 1;
             pointer-events: auto;
             cursor: pointer;
@@ -112,8 +134,9 @@ export default function Sidebar() {
             ${buttonsStyle}
 
             right: 0;
-            top: 0;
+            transform: translateY(-50%);
             opacity: 0;
+            margin-right: 15px;
 
             pointer-events: none;
             cursor: pointer;

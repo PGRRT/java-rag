@@ -1,7 +1,7 @@
-import type { SenderType } from "@/api/enums/SenderType";
+import type { SenderType } from "@/api/enums/Sender";
 
 export interface MessageResponse {
-  id: string;        // UUID jako string
+  id: string; // UUID jako string
   content: string;
   sender: SenderType;
 }

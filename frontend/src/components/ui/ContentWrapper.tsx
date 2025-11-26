@@ -3,6 +3,7 @@ import type { ClassNamesArg } from "@emotion/react";
 
 const ContentWrapper = ({
   children,
+  id,
   position,
   align,
   justify,
@@ -13,7 +14,7 @@ const ContentWrapper = ({
   minHeight,
   height,
   gap,
-  direction = "row",
+  direction,
   flex,
   flexValue,
   border,
@@ -24,6 +25,7 @@ const ContentWrapper = ({
   onClick,
 }: {
   children: React.ReactNode;
+  id?: string;
   position?: string;
   align?: string;
   justify?: string;
@@ -44,11 +46,20 @@ const ContentWrapper = ({
   customCss?: ClassNamesArg;
   onClick?: () => void;
 }) => {
+  if (id == "123") {
+    console.log("align",align);
+    console.log("justify",justify);
+    console.log("flex",flex);
+    console.log("gap",gap);
+    console.log("direction",direction);
+
+  }
   return (
     <ClassNames>
       {({ css, cx }) => (
         <div
           onClick={onClick}
+          id={id}
           className={cx(
             customCss ,
             css`
