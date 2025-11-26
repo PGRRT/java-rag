@@ -1,15 +1,24 @@
+import uuid
 from typing import Any
 from typing_extensions import override
-
-from pymupdf import Document
-from rag.rag_database import RAGDatabase
-from rag.llm import LLM
-from rag.document_parser import parse_to_markdown
 from abc import ABC, abstractmethod
-
 from uuid import UUID
+from transformers import DPRQuestionEncoder, DPRContextEncoder, DPRQuestionEncoderTokenizer
+from transformers.utils import logging
+from dotenv import load_dotenv
+import os
+import time
+import torch
+import torch.nn.functional as F
+from tqdm import tqdm
 
-from sentence_transformers import SentenceTransformer
+from rag.document import Document, DocumentLoaderFactory
+from rag.vector_database import VectorDatabase
+from rag.llm_client import LLM
+from rag.llm_client import BielikLLM
+
+
+logging.set_verbosity_debug()
 
 
 class RAG(ABC):
@@ -33,92 +42,98 @@ class MockRAG(RAG):
 
 
 class ClassicRAG(RAG):
-    def __init__(self, llm: LLM, chunk_size: int = 1024):
-        self.client: RAGDatabase = RAGDatabase(embedding_dim=768)
-        self.llm: LLM = llm
-        self.embedder: SentenceTransformer = SentenceTransformer("all-mpnet-base-v2")
-        self.chunk_size: int = chunk_size
+    def __init__(self, llm: LLM):
+        self.client = VectorDatabase(embedding_dim=768)
+        self.llm = llm
+        self.question_encoder = DPRQuestionEncoder.from_pretrained("facebook/dpr-question_encoder-single-nq-base")
+        self.context_encoder = DPRContextEncoder.from_pretrained("facebook/dpr-ctx_encoder-single-nq-base")
+        self.tokenizer = DPRQuestionEncoderTokenizer.from_pretrained("facebook/dpr-question_encoder-single-nq-base")
+        self.chunk_size = 100
+
+        self.question_encoder.eval() # Evaluation mode on
+        self.context_encoder.eval() # Evaluation mode on
+
 
     @override
     def process_document(self, document: Document, conversation_id: UUID) -> None:
-        parsed_document = parse_to_markdown(document)
+        document_content = document.text
+        chunks_with_embeddings = self.__get_chunks_with_embeddings(document_content)
 
-        embeddings_with_text_pairs = (
-            self.__prepare_document_embeddings_with_corresponding_text(parsed_document)
-        )
-        self.client.insert_data(conversation_id, embeddings_with_text_pairs)
+        self.client.insert_data(conversation_id, chunks_with_embeddings)
+
+
+    def __text_splitter(self, text:str):
+        words = text.split()
+        chunks = []
+
+        for i in range(0, len(words), self.chunk_size):
+            chunk = " ".join(words[i:i + self.chunk_size])
+            chunks.append(chunk)
+
+        return chunks
+
+
+    def __get_chunks_embeddings(self, chunks, batch_size=16):
+        embeddings = []
+
+        for i in tqdm(range(0, len(chunks), batch_size), desc="Generating embeddings"):
+            batch = chunks[i:i + batch_size]
+
+            inputs = self.tokenizer(
+                batch,
+                return_tensors="pt",
+                padding=True,
+            )
+
+            with torch.no_grad():
+                emb = self.context_encoder(**inputs).pooler_output  # [B, 768]
+
+            emb = F.normalize(emb, p=2, dim=1)
+
+            embeddings.append(emb)
+
+        return torch.cat(embeddings, dim=0)
+
+
+    def __get_chunks_with_embeddings(self, text, batch_size=16):
+        chunks = self.__text_splitter(text)
+        embeddings = self.__get_chunks_embeddings(chunks, batch_size=batch_size)
+
+        result = [{"embedding": emb.tolist(), "text": chunk} for emb, chunk in zip(embeddings, chunks)]
+
+        return result
+
 
     @override
     def process_query(self, query: str, conversation_id: UUID) -> str:
-        relevant_documents = self.__get_relevant_documents_by_query(
-            conversation_id, query
-        )
-        prompt = f"Pytanie: {query} \n \n {relevant_documents}"
-
+        query_embedding = self.__get_query_embedding(query)
+        contexts = self.client.search(conversation_id, query_embedding)
+        prompt = self.__create_prompt(query, contexts)
         response = self.llm.generate_response(prompt)
 
         return response
 
-    def __prepare_document_embeddings_with_corresponding_text(
-        self, document: str
-    ) -> list[dict[Any, Any]]:
-        """
-        Prepare document embeddings by splitting the document into fragments and vectorizing them.
 
-        :param document: Document to be embedded
-        :return: List of document fragments
-        """
+    def __get_query_embedding(self, query: str):
+        inputs = self.tokenizer(
+                query,
+                return_tensors="pt",
+                padding=True,
+                truncation=True,
+        )
 
-        # Split the document into fragments
-        fragments = self.__tokenize(document)
+        with torch.no_grad():
+            emb = self.question_encoder(**inputs).pooler_output
 
-        # Vectorize the fragments
-        embeddings = self.embedder.encode(fragments, show_progress_bar=True)
+        emb = F.normalize(emb, p=2, dim=1)
 
-        # Create a list of dictionaries with text and embedding
-        embeddings_with_text_pairs = [
-            {"text": fragment, "embedding": embedding.tolist()}
-            for fragment, embedding in zip(fragments, embeddings)
-        ]
+        return emb.tolist()
 
-        return embeddings_with_text_pairs
 
-    def __tokenize(self, text: str) -> list[str]:
-        """
-        Tokenize the input text into fixed-size tokens.
+    def __create_prompt(self, query: str, contexts: list):
+        contexts = "\n".join(contexts)
 
-        :param text: Input text to be tokenized
-        :return: List of fixed-size tokens
-        """
+        return f"""Pytanie użytkownika: "{query}"\nŹródła wymienione przez użytkownika: "{contexts}"\n"""
 
-        # Create fixed-size tokens
-        return [
-            text[i : i + self.chunk_size] for i in range(0, len(text), self.chunk_size)
-        ]
 
-    def __get_relevant_documents_by_query(
-        self, conversation_id: UUID, query: str
-    ) -> list[str]:
-        """
-        Get relevant documents by processing the query and searching the vector database.
 
-        :param conversation_id: ID of the conversation
-        :param query: Query to be processed
-        :return: List of relevant documents
-        """
-
-        # Embedding
-        query_embedding = self.embedder.encode([query], show_progress_bar=True)
-
-        # Search the vector database
-        results = self.client.search(conversation_id, query_embedding.tolist())
-
-        if not results:
-            return []
-
-        # Create a list of relevant documents (text only)
-        result = []
-        for i in results[0]:
-            result.append(i["entity"]["text"])
-
-        return result
