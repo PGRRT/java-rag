@@ -5,9 +5,9 @@ from pymilvus.milvus_client import IndexParams
 from uuid import UUID
 
 
-class RAGDatabase:
+class VectorDatabase:
     def __init__(self, embedding_dim: int = 768):
-        self.client: MilvusClient = MilvusClient("./milvus_database.db")
+        self.client: MilvusClient = MilvusClient(host="milvus-standalone",  port=19530)
         self.embedding_dim: int = embedding_dim
 
     def __create_collection(self, conversation_d: UUID) -> None:
@@ -140,4 +140,4 @@ class RAGDatabase:
         finally:
             self.client.release_collection(collection_name)
 
-        return results  # type: ignore
+        return results
