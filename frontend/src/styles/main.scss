@@ -1,5 +1,12 @@
-@use "variables";
-@use "colors";
+
+
+@use 'variables/root';
+@use 'variables/colors';
+@use 'variables/spacing';
+@use 'variables/radius';
+@use 'variables/breakPoints';
+@use 'scrollbar';
+
 @use "mixins";
 
 @import url('https://fonts.googleapis.com/css2?family=Tai+Heritage+Pro&display=swap');
@@ -41,3 +48,4 @@ button {
    font: inherit;
    cursor: pointer;
 }
+

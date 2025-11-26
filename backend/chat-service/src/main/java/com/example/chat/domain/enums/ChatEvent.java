@@ -1,6 +1,7 @@
 package com.example.chat.domain.enums;
 
 public enum ChatEvent {
-    CHAT_MESSAGE,
+    USER_MESSAGE,
+    BOT_MESSAGE,
     ERROR
 }

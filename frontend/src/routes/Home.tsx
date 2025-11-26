@@ -7,13 +7,9 @@ import Sidebar from "@/layouts/Sidebar";
 
 export default function Home() {
   return (
-    <ContentWrapper direction="row">
+    <ContentWrapper direction="row" minHeight="100vh">
       <Sidebar />
-      <ContentWrapper
-        padding="1rem 1.2rem"
-        flexValue="1 1 auto"
-        direction="column"
-      >
+      <ContentWrapper width="100%" direction="column">
         <Navbar />
         <Chat />
       </ContentWrapper>

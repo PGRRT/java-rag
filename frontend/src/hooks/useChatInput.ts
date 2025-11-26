@@ -3,7 +3,7 @@ import useUser from "@/hooks/useUser";
 import exceptionWrapper from "@/utils/exceptionWrapper";
 import { showToast } from "@/utils/showToast";
 import { useState } from "react";
-import type { SenderType } from "@/api/enums/SenderType";
+import type { SenderType } from "@/api/enums/Sender";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { createChatAction } from "@/redux/slices/chatSlice";
@@ -21,7 +21,7 @@ const useChatInput = ({ chatId = "" }: { chatId?: string }) => {
   const dispatch = useAppDispatch();
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     let tempChatId: string = chatId;
 
     if (!message.trim()) {
@@ -53,7 +53,6 @@ const useChatInput = ({ chatId = "" }: { chatId?: string }) => {
       }, 1000);
     }
 
-    
     const messageResponse = await dispatch(
       postMessagesAction({ chatId: tempChatId, content: message })
     );
@@ -71,7 +70,7 @@ const useChatInput = ({ chatId = "" }: { chatId?: string }) => {
   const cleanUp = () => {
     setMessage("");
     setFile(null);
-  }
+  };
 
   return {
     file,

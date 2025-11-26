@@ -22,18 +22,10 @@ const Chat = () => {
   console.log("chatId", chatId);
 
   return (
-    <ContentWrapper justify="center" height="100%">
+    <ContentWrapper justify="center" position="relative" height="100%">
       {chatId ? (
         // We are in a specific chat
-        <ContentWrapper
-          direction="column"
-          gap="1rem"
-          maxWidth="750px"
-          width="100%"
-          margin="30px 0"
-        >
-          <ChatContainer key={chatId} chatId={chatId} />
-        </ContentWrapper>
+        <ChatContainer key={chatId} chatId={chatId} />
       ) : (
         <ContentWrapper
           direction="column"
