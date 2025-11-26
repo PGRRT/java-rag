@@ -12,10 +12,10 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-from rag.document import Document, DocumentLoaderFactory
-from rag.vector_database import VectorDatabase
-from rag.llm_client import LLM
-from rag.llm_client import BielikLLM
+from document import Document, DocumentLoaderFactory
+from vector_database import VectorDatabase
+from llm_client import LLM
+from llm_client import BielikLLM
 
 
 logging.set_verbosity_debug()
@@ -136,3 +136,17 @@ class ClassicRAG(RAG):
         contexts = "\n".join(contexts)
 
         return f"""Pytanie użytkownika: "{query}"\nŹródła wymienione przez użytkownika: "{contexts}"\n"""
+
+
+if __name__ == "__main__":
+    load_dotenv()
+
+    bielik = BielikLLM(
+        api_url=os.getenv("PG_API_URL") or "",
+        username=os.getenv("PG_API_USERNAME") or "",
+        password=os.getenv("PG_API_PASSWORD") or "",
+    )
+
+    rag = ClassicRAG(bielik)
+
+    print(rag.process_query("Ile lat ma 5 letni pies?", 1234))
