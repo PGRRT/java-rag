@@ -94,7 +94,7 @@ class BielikLLM(LLM):
         username: str,
         password: str,
         max_response_length: int = 4096,
-        temperature: float = 0.7,
+        temperature: float = 0.0,
     ) -> None:
         self.client = httpx.Client(auth=(username, password), verify=False)
         """HTTP client"""
@@ -135,6 +135,8 @@ if __name__ == "__main__":
     # openai = OpenAILLM()
     # prompt = "What is your name?"
     # openai.generate_response(prompt)
+
+    load_dotenv()
 
     bielik = BielikLLM(
         api_url=os.getenv("PG_API_URL") or "",
