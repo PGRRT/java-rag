@@ -8,7 +8,7 @@ from api.entry import ApiState
 
 from uuid import UUID
 
-from pymupdf import Document
+from ..rag.document import Document
 import logging
 
 logger = logging.getLogger("routes")
@@ -118,7 +118,7 @@ async def upload_documents(
             f"Processing file: {file.filename} for conversation {conversation_id}"
         )
         files_bytes = await file.read()
-        doc = Document(stream=files_bytes, filetype="pdf")
+        doc = Document("Przykladowy dokument")
         state.rag.process_document(doc, conversation_id)
 
     return JSONResponse(content=response, status_code=201)
