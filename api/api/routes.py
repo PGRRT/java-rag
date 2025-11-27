@@ -8,7 +8,7 @@ from api.entry import ApiState
 
 from uuid import UUID
 
-from ..rag.document import Document
+from rag.document import Document
 import logging
 
 logger = logging.getLogger("routes")

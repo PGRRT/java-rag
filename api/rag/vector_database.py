@@ -7,7 +7,10 @@ from uuid import UUID
 
 class VectorDatabase:
     def __init__(self, embedding_dim: int = 768):
-        self.client: MilvusClient = MilvusClient(host="milvus-standalone",  port=19530)
+        # self.client: MilvusClient = MilvusClient(host="standalone",  port=19530)
+        self.client = MilvusClient(
+            uri="tcp://standalone:19530"   # <--- to JEDYNE które działa
+        )
         self.embedding_dim: int = embedding_dim
 
     def __create_collection(self, conversation_d: UUID) -> None:

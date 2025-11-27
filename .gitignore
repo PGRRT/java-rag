@@ -5,7 +5,7 @@ __pycache__
 .env
 milvus_database.db
 .milvus_database.db.lock
-
+volumes/
 
 .env
 # local env files
