@@ -60,8 +60,10 @@ services:
       - "19530:19530"
       - "9091:9091"
     depends_on:
-      - "etcd"
-      - "minio"
+      etcd:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     networks:
       - app_network
 
@@ -127,6 +129,9 @@ services:
     #           count: all
     #           capabilities: [ gpu ]
     restart: unless-stopped
+    depends_on:
+      standalone:
+        condition: service_healthy
     
   eureka:
     container_name: eureka

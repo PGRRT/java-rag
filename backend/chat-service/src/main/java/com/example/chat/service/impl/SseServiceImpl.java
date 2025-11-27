@@ -6,6 +6,7 @@ import com.example.chat.service.SseService;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -30,7 +31,9 @@ public class SseServiceImpl implements SseService {
 //    private final ScheduledExecutorService scheduler =
 //            Executors.newScheduledThreadPool(2);
 //    Executor for ping tasks: virtual thread per task executor (requires VT enabled in JVM)
-    private final ExecutorService pingExecutor;
+
+//    @Qualifier("pingExecutor")
+//    private final ExecutorService pingExecutor;
 
     private static final long DEFAULT_TIMEOUT = 0L; // no timeout, emitter can be detected closed via pings
     private static final long PING_INTERVAL_MS = 5 * 60 * 1000L; // each 5 minutes send a ping to check connection liveness
@@ -85,7 +88,8 @@ public class SseServiceImpl implements SseService {
             log.info("Emitter error for chat {}: {}", chatId, e.getClass().getSimpleName());
         });
 
-        Future<?> future = startPing(chatId, emitter);
+        Future<?> future = null;
+//        Future<?> future = startPing(chatId, emitter);
 
         if (future != null) {
             pingTasks.put(emitter, future);
@@ -106,50 +110,50 @@ public class SseServiceImpl implements SseService {
     // start periodic pings to keep connection alive and detect closed connections
     // returns Future representing the ping task
     // we use a normal ExecutorService with virtual threads
-    private Future<?> startPing(UUID chatId, SseEmitter emitter) {
-        try {
-            return pingExecutor.submit(() -> {
-                try {
-                    Thread.sleep(PING_DELAY_MS);
-                }   catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                }
-
-               while(!Thread.currentThread().isInterrupted()) {
-                   try {
-                       emitter.send(SseEmitter.event().name(ChatEvent.PING.name()).data("ping"));
-
-                       log.debug("Sent PING to emitter for chat {}", chatId);
-                   } catch (IOException e) {
-                       log.debug("Failed to send to emitter for chat {} — removing emitter", chatId);
-                       handleEmitterError(chatId, emitter, e);
-                       break;
-                   } catch (Exception e) {
-                       log.debug("Unexpected exception sending to emitter for chat {}", chatId);
-                       handleEmitterError(chatId, emitter, e);
-                       break;
-                   }
-                   try {
-                       Thread.sleep(PING_INTERVAL_MS);
-                   } catch (InterruptedException ie) {
-                       // interrupted during sleep -> time to stop
-                       Thread.currentThread().interrupt();
-                       break;
-                   }
-               }
-
-            });
-
-//            return scheduler.scheduleAtFixedRate(() -> {
+//    private Future<?> startPing(UUID chatId, SseEmitter emitter) {
+//        try {
+//            return pingExecutor.submit(() -> {
+//                try {
+//                    Thread.sleep(PING_DELAY_MS);
+//                }   catch (InterruptedException ie) {
+//                    Thread.currentThread().interrupt();
+//                }
 //
+//               while(!Thread.currentThread().isInterrupted()) {
+//                   try {
+//                       emitter.send(SseEmitter.event().name(ChatEvent.PING.name()).data("ping"));
 //
-//            }, PING_DELAY_MS, PING_INTERVAL_MS, TimeUnit.MILLISECONDS);
-        } catch (RejectedExecutionException rex) {
-            log.warn("Ping executor rejected task for chat {} — cleaning up emitter", chatId);
-            cleanupEmitter(chatId, emitter, rex);
-            return null;
-        }
-    }
+//                       log.debug("Sent PING to emitter for chat {}", chatId);
+//                   } catch (IOException e) {
+//                       log.debug("Failed to send to emitter for chat {} — removing emitter", chatId);
+//                       handleEmitterError(chatId, emitter, e);
+//                       break;
+//                   } catch (Exception e) {
+//                       log.debug("Unexpected exception sending to emitter for chat {}", chatId);
+//                       handleEmitterError(chatId, emitter, e);
+//                       break;
+//                   }
+//                   try {
+//                       Thread.sleep(PING_INTERVAL_MS);
+//                   } catch (InterruptedException ie) {
+//                       // interrupted during sleep -> time to stop
+//                       Thread.currentThread().interrupt();
+//                       break;
+//                   }
+//               }
+//
+//            });
+//
+////            return scheduler.scheduleAtFixedRate(() -> {
+////
+////
+////            }, PING_DELAY_MS, PING_INTERVAL_MS, TimeUnit.MILLISECONDS);
+//        } catch (RejectedExecutionException rex) {
+//            log.warn("Ping executor rejected task for chat {} — cleaning up emitter", chatId);
+//            cleanupEmitter(chatId, emitter, rex);
+//            return null;
+//        }
+//    }
 
     private void cleanupEmitter(UUID chatId, SseEmitter emitter, Throwable cause) {
         Future<?> f = pingTasks.remove(emitter);
