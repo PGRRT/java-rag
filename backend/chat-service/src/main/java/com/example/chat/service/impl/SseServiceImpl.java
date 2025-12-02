@@ -65,7 +65,6 @@ public class SseServiceImpl implements SseService {
                 log.info("Bound chat {} to exchange (first local subscriber)", chatId);
             } catch (Exception e) {
                 log.error("Failed to bind chat {} on createEmitter", chatId, e);
-                // decide: rethrow or continue; here we continue but log
             }
         }
 
@@ -90,7 +89,6 @@ public class SseServiceImpl implements SseService {
             log.info("Emitter error for chat {}: {}", chatId, e.getClass().getSimpleName());
         });
 
-//        Future<?> future = null;
         Future<?> future = startPing(chatId, emitter);
 
         if (future != null) {
@@ -146,10 +144,6 @@ public class SseServiceImpl implements SseService {
 
             });
 
-//            return scheduler.scheduleAtFixedRate(() -> {
-//
-//
-//            }, PING_DELAY_MS, PING_INTERVAL_MS, TimeUnit.MILLISECONDS);
         } catch (RejectedExecutionException rex) {
             log.warn("Ping executor rejected task for chat {} — cleaning up emitter", chatId);
             cleanupEmitter(chatId, emitter, rex);
