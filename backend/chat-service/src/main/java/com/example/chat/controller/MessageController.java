@@ -5,19 +5,14 @@ import com.example.chat.domain.dto.message.request.CreateMessageRequest;
 import com.example.chat.domain.dto.message.response.CreateMessageResponse;
 import com.example.chat.domain.dto.message.response.MessageResponse;
 import com.example.chat.domain.enums.ChatEvent;
-import com.example.chat.domain.enums.Sender;
 import com.example.chat.service.AiService;
-import com.example.chat.service.ChatMessagePublisher;
 import com.example.chat.service.ChatService;
 import com.example.chat.service.SseService;
 import com.example.chat.service.impl.MessageServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +23,6 @@ import java.util.UUID;
 public class MessageController {
     private final MessageServiceImpl messageService;
     private final ChatService chatService;
-//    private final ChatMessagePublisher chatMessagePublisher;
     private final SseService sseService;
     private final AiService aiService;
 

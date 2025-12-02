@@ -42,10 +42,6 @@ public class User extends BaseClass<UUID> {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-//    @Builder.Default
-//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    Set<Chat> chats = new HashSet<>();
-
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

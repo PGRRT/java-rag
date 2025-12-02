@@ -41,13 +41,15 @@ services:
   standalone:
     container_name: milvus-standalone
     image: milvusdb/milvus:v2.6.6
-    command: [ "milvus", "run", "standalone" ]
+    # command: [ "milvus", "run", "standalone" ]
+    command: sh -c "milvus run standalone > /dev/null 2>&1"
     security_opt:
       - seccomp:unconfined
     environment:
       ETCD_ENDPOINTS: etcd:2379
       MINIO_ADDRESS: minio:9000
       MQ_TYPE: woodpecker
+      MILVUS_LOG_LEVEL: error
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
     healthcheck:
@@ -159,6 +161,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      redis:
+        condition: service_healthy
 
   user-service:
     container_name: user-service
@@ -268,24 +272,24 @@ services:
     networks:
       - app_network
 
-  # redis:
-  #   container_name: redis
-  #   image: redis:8.0-alpine
-  #   restart: unless-stopped
-  #   ports:
-  #     - "6379:6379"
-  #   env_file:
-  #    - .env
-  #    - .env.dev.local
-  #   command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
-  #   networks:
-  #     - app_network
-  #   healthcheck:
-  #     test: ["CMD", "redis-cli", "ping"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 10
-  #     start_period: 5s
+  redis:
+    container_name: redis
+    image: redis:8.0-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    env_file:
+     - .env
+     - .env.dev.local
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
 
   rabbitmq:
     container_name: rabbitmq
