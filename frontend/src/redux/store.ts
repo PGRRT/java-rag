@@ -2,6 +2,7 @@ import type { Action, ThunkAction } from "@reduxjs/toolkit";
 import { combineSlices, configureStore } from "@reduxjs/toolkit";
 import chatReducer from "./slices/chatSlice";
 import messageReducer from "./slices/messageSlice";
+import authReducer from "./slices/authSlice";
 // import authReducer from "./slices/authSlice";
 // everything is a template from https://github.dev/vercel/next.js/tree/canary/examples/with-redux
 
@@ -18,6 +19,7 @@ export const makeStore = () => {
     reducer: {
       chat: chatReducer,
       message: messageReducer,
+      auth: authReducer,
     },
     // Adding the api middleware enables caching, invalidation, polling,
     // and other useful features of `rtk-query`.

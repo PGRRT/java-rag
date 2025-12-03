@@ -1,7 +1,7 @@
 // src/redux/slices/authSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import { User, AuthState, Credentials, RegisterData } from '@/types/user';
-import { userApi } from "@/api/userApi";
+import { chatApi } from "@/api/chatApi";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { ChatRoomType } from "@/api/enums/ChatRoom";
 import exceptionWrapper from "@/utils/exceptionWrapper";
@@ -16,7 +16,7 @@ export const fetchChatsAction = createAsyncThunk(
   "chat/fetchChats",
   async (_, { rejectWithValue }) => {
     const response = await exceptionWrapper(async () => {
-      return userApi.getChats();
+      return chatApi.getChats();
     });
 
     if (!response.success) {
@@ -33,7 +33,7 @@ export const createChatAction = createAsyncThunk(
     { rejectWithValue }
   ) => {
     const response = await exceptionWrapper(async () => {
-      return userApi.createChat(message, chatType);
+      return chatApi.createChat(message, chatType);
     }, "Chat created successfully");
 
     if (!response.success) {

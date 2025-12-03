@@ -1,5 +1,5 @@
 import { Sender } from "@/api/enums/Sender";
-import type { MessageResponse } from "@/api/schemas/message";
+import type { MessageResponse } from "@/types/message";
 import ChatAIInput from "@/components/chat/ChatAIInput";
 import ContentWrapper from "@/components/ui/ContentWrapper";
 import colorPalette from "@/constants/colorPalette";

@@ -1,4 +1,3 @@
-import { userApi } from "@/api/userApi";
 import useUser from "@/hooks/useUser";
 import exceptionWrapper from "@/utils/exceptionWrapper";
 import { showToast } from "@/utils/showToast";
@@ -9,7 +8,6 @@ import { useDispatch } from "react-redux";
 import { createChatAction } from "@/redux/slices/chatSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import {
-  fetchMessagesAction,
   postMessagesAction,
 } from "@/redux/slices/messageSlice";
 
@@ -33,7 +31,7 @@ const useChatInput = ({ chatId = "" }: { chatId?: string }) => {
       const res = await dispatch(
         createChatAction({
           message,
-          chatType: user.isLoggedIn ? "PRIVATE" : "GLOBAL",
+          chatType: user?.user ? "PRIVATE" : "GLOBAL",
         })
       );
 

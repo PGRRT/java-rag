@@ -1,5 +1,4 @@
-import type { SenderType } from "@/api/enums/Sender";
-import type { MessageResponse } from "@/api/schemas/message";
+import type { MessageResponse } from "@/types/message";
 
 export interface ChatResponse {
   id: string;

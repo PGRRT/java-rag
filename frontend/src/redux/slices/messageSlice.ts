@@ -1,16 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { userApi } from "@/api/userApi";
+import { chatApi } from "@/api/chatApi";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import exceptionWrapper from "@/utils/exceptionWrapper";
-import type { MessageResponse } from "@/api/schemas/message";
-
-interface Message {
-  id: string;
-  chatId: string;
-  sender: "user" | "gpt";
-  text: string;
-  createdAt: string;
-}
+import type { MessageResponse } from "@/types/message";
 
 interface MessagesState {
   messages: MessageResponse[];
@@ -28,7 +20,7 @@ export const fetchMessagesAction = createAsyncThunk(
   "messages/fetchMessages",
   async (chatId: string, { rejectWithValue }) => {
     const response = await exceptionWrapper(async () => {
-      return userApi.getMessagesForChat(chatId);
+      return chatApi.getMessagesForChat(chatId);
     });
 
     if (!response.success) {
@@ -45,7 +37,7 @@ export const postMessagesAction = createAsyncThunk(
     { rejectWithValue }
   ) => {
     const response = await exceptionWrapper(async () => {
-      return userApi.postMessageForChat(chatId, content, "USER");
+      return chatApi.postMessageForChat(chatId, content, "USER");
     });
 
     if (!response.success) {
@@ -67,7 +59,7 @@ const messagesSlice = createSlice({
     },
     clearMessages: (state) => {
       state.messages = [];
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -89,5 +81,6 @@ const messagesSlice = createSlice({
   },
 });
 
-export const { addMessage, deleteMessage, clearMessages } = messagesSlice.actions;
+export const { addMessage, deleteMessage, clearMessages } =
+  messagesSlice.actions;
 export default messagesSlice.reducer;

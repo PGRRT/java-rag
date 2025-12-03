@@ -3,7 +3,7 @@ import { addMessage, fetchMessagesAction } from "@/redux/slices/messageSlice";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ChatEvent } from "@/api/enums/ChatEvent";
-import type { MessageResponse } from "@/api/schemas/message";
+import type { MessageResponse } from "@/types/message";
 import { Sender, type SenderType } from "@/api/enums/Sender";
 
 const formMessage = ({
