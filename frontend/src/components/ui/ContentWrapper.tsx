@@ -1,5 +1,4 @@
-import { css, ClassNames } from "@emotion/react";
-import type { ClassNamesArg } from "@emotion/react";
+import { cx, css } from "@emotion/css";
 
 const ContentWrapper = ({
   children,
@@ -12,6 +11,7 @@ const ContentWrapper = ({
   width,
   maxWidth,
   minHeight,
+  maxHeight,
   height,
   gap,
   direction,
@@ -37,40 +37,32 @@ const ContentWrapper = ({
   gap?: string;
   direction?: "row" | "column";
   maxWidth?: string;
+  maxHeight?: string;
   flex?: true;
   flexValue?: string;
   backgroundColor?: string;
   border?: string;
   wrap?: string;
   borderRadius?: string;
-  customCss?: ClassNamesArg;
+  customCss?: string;
   onClick?: () => void;
 }) => {
-  if (id == "123") {
-    console.log("align",align);
-    console.log("justify",justify);
-    console.log("flex",flex);
-    console.log("gap",gap);
-    console.log("direction",direction);
-
-  }
   return (
-    <ClassNames>
-      {({ css, cx }) => (
-        <div
-          onClick={onClick}
-          id={id}
-          className={cx(
-            customCss ,
-            css`
-             ${position ? `position: ${position};` : ""}
-             ${align ? `align-items: ${align};` : ""}
+    <div
+      onClick={onClick}
+      id={id}
+      className={cx(
+        customCss,
+        css`
+          ${position ? `position: ${position};` : ""}
+          ${align ? `align-items: ${align};` : ""}
              ${justify ? `justify-content: ${justify};` : ""}
              ${padding ? `padding: ${padding};` : ""}
              ${margin ? `margin: ${margin};` : ""}
              ${width ? `width: ${width};` : ""}
              ${maxWidth ? `max-width: ${maxWidth};` : ""}
-             ${minHeight ? `min-height: ${minHeight};` : ""}
+             ${maxHeight ? `max-height: ${maxHeight};` : ""}
+              ${minHeight ? `min-height: ${minHeight};` : ""}
              ${height ? `height: ${height};` : ""}
              ${gap ? `gap: ${gap};` : ""}
              ${direction ? `flex-direction: ${direction};` : ""}
@@ -81,14 +73,14 @@ const ContentWrapper = ({
              ${flexValue ? `flex: ${flexValue};` : ""}
              ${wrap ? `flex-wrap: ${wrap};` : ""}
 
-             ${align || justify || flex || gap || direction ? `display: flex;` : ""}
-            `
-          )}
-        >
-          {children}
-        </div>
+             ${align || justify || flex || gap || direction
+            ? `display: flex;`
+            : ""}
+        `
       )}
-    </ClassNames>
+    >
+      {children}
+    </div>
   );
 };
 

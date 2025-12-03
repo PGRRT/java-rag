@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import React, { useState } from "react";
 import {
   Tooltip,
@@ -7,7 +6,7 @@ import {
   ActionIcon,
   Button,
 } from "@mantine/core";
-import { css } from "@emotion/react";
+import { css } from "@emotion/css";
 import { Menu, TextAlignJustify, X } from "lucide-react";
 import colorPalette from "@/constants/colorPalette";
 import IconWrapper from "@/components/ui/IconWrapper";
@@ -48,7 +47,7 @@ export default function Sidebar() {
   return (
     <div
       id="sidebar"
-      css={css`
+      className={css`
         width: ${sidebarWidth}px;
         transition: width 0.3s;
         background-color: ${colorPalette.backgroundSecondary};
@@ -82,7 +81,7 @@ export default function Sidebar() {
       `}
     >
       <div
-        css={css`
+        className={css`
           position: relative;
           width: 100%;
           height: ${navbarHeight}px;
@@ -103,7 +102,7 @@ export default function Sidebar() {
         <div
           onClick={() => setExpanded(!expanded)}
           aria-hidden={expanded}
-          css={css`
+          className={css`
             ${buttonsStyle}
 
             left: 50%;
@@ -130,7 +129,7 @@ export default function Sidebar() {
         <div
           onClick={() => setExpanded(!expanded)}
           aria-hidden={!expanded}
-          css={css`
+          className={css`
             ${buttonsStyle}
 
             right: 0;
@@ -162,7 +161,7 @@ export default function Sidebar() {
         >
           <UnstyledButton
             onClick={() => console.log(item.label)}
-            css={css`
+            className={css`
               width: 100%;
               display: flex;
               align-items: center;

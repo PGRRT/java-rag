@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/user/me")
+    @GetMapping("/users/me")
     public ResponseEntity<UserResponse> getCurrentUser(@CookieValue(name = "accessToken", required = false) String accessToken) {
         UserResponse currentUser = userService.getCurrentUser(accessToken);
         return ResponseEntity.ok(currentUser);

@@ -1,5 +1,5 @@
 import { createTheme } from "@mantine/core";
-import type {MantineColorsTuple} from "@mantine/core"
+import type { MantineColorsTuple } from "@mantine/core";
 import colorPalette from "@/constants/colorPalette";
 
 // Define custom color tuples for Mantine (10 shades each)
@@ -31,6 +31,30 @@ const darkColor: MantineColorsTuple = [
   "#000000", // darkest
 ];
 
+const getButtonHeight = (size: "xs" | "sm" | "md" | "lg" | "xl"): string => {
+  let customHeight;
+  switch (size) {
+    case "xs":
+      customHeight = "28px"; // +4px od domyślnego
+      break;
+    case "sm":
+      customHeight = "40px"; // +4px od domyślnego 36px
+      break;
+    case "md":
+      customHeight = "46px"; // +4px od domyślnego 42px
+      break;
+    case "lg":
+      customHeight = "54px"; // +4px od domyślnego 50px
+      break;
+    case "xl":
+      customHeight = "64px"; // +4px od domyślnego 60px
+      break;
+    default:
+      customHeight = "40px";
+  }
+  return customHeight;
+};
+
 export const mantineTheme = createTheme({
   // Color scheme
   primaryColor: "primary",
@@ -52,12 +76,12 @@ export const mantineTheme = createTheme({
 
   // Spacing (based on your CSS variables)
   spacing: {
-    xss: "0.5rem",  // --spacing-xss
-    xs: "0.75rem",  // --spacing-xs
-    sm: "1rem",     // --spacing-sm
-    md: "1.5rem",   // --spacing-md
-    lg: "2rem",     // --spacing-lg
-    xl: "3rem",     // --spacing-vlg
+    xss: "0.5rem", // --spacing-xss
+    xs: "0.75rem", // --spacing-xs
+    sm: "1rem", // --spacing-sm
+    md: "1.5rem", // --spacing-md
+    lg: "2rem", // --spacing-lg
+    xl: "3rem", // --spacing-vlg
   },
 
   // Radius
@@ -78,55 +102,60 @@ export const mantineTheme = createTheme({
       defaultProps: {
         radius: "md",
       },
-      styles: () => ({
+      styles: (theme, props) => ({
         root: {
           fontWeight: 500,
           transition: "all 0.2s ease",
-          padding: "0 16px"
+          padding: "0px 20px",
+          height: getButtonHeight(props.size),
         },
       }),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vars: (_theme: any, props: any) => {
         // Ustaw CSS variables na podstawie wariantu
-        if (props.variant === 'filled' || props.variant === 'primary' || !props.variant) {
+        if (
+          props.variant === "filled" ||
+          props.variant === "primary" ||
+          !props.variant
+        ) {
           return {
             root: {
-              '--button-bg': colorPalette.white,
-              '--button-color': colorPalette.background,
-              '--button-hover': colorPalette.primary,
-              '--button-bd': 'none',
+              "--button-bg": colorPalette.white,
+              "--button-color": colorPalette.background,
+              "--button-hover": colorPalette.primary,
+              "--button-bd": "none",
             },
           };
         }
 
-        if (props.variant === 'outline') {
+        if (props.variant === "outline") {
           return {
             root: {
-              '--button-bg': 'transparent',
-              '--button-color': colorPalette.text,
-              '--button-bd': `1px solid ${colorPalette.strokePrimary}`,
-              '--button-hover': colorPalette.backgroundTertiary,
-              '--button-hover-bd': colorPalette.accent,
+              "--button-bg": "transparent",
+              "--button-color": colorPalette.text,
+              "--button-bd": `1px solid ${colorPalette.strokePrimary}`,
+              "--button-hover": colorPalette.backgroundTertiary,
+              "--button-hover-bd": colorPalette.accent,
             },
           };
         }
 
-        if (props.variant === 'subtle') {
+        if (props.variant === "subtle") {
           return {
             root: {
-              '--button-bg': 'transparent',
-              '--button-color': colorPalette.text,
-              '--button-hover': colorPalette.backgroundSecondary,
+              "--button-bg": "transparent",
+              "--button-color": colorPalette.text,
+              "--button-hover": colorPalette.backgroundSecondary,
             },
           };
         }
 
-        if (props.variant === 'light') {
+        if (props.variant === "light") {
           return {
             root: {
-              '--button-bg': colorPalette.backgroundSecondary,
-              '--button-color': colorPalette.text,
-              '--button-hover': colorPalette.backgroundTertiary,
+              "--button-bg": colorPalette.backgroundSecondary,
+              "--button-color": colorPalette.text,
+              "--button-hover": colorPalette.backgroundTertiary,
             },
           };
         }

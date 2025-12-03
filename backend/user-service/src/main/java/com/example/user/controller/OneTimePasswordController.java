@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/user/otp")
+@RequestMapping("/api/v1/users/otp")
 @RequiredArgsConstructor
 public class OneTimePasswordController {
     private final OtpService otpService;
     private final EmailService emailService;
     private final OtpCacheService otpCacheService;
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<String> createOtp(@RequestBody @Valid OtpRequest otpRequest) {
         String email = otpRequest.getEmail();
         String otp = otpService.generateOtp(email);

@@ -22,7 +22,6 @@ const LoginForm = () => {
   const { login: loginUser, clearAuthError, user, isLoading } = useAuth();
 
 
-
   const {
     register,
     handleSubmit,
@@ -76,9 +75,9 @@ const LoginForm = () => {
         direction="column"
         gap="25px"
       >
-        <h4 css={[typography.textXxl]}>Log in to your account</h4>
+        <h4 className={typography.textXxl}>Log in to your account</h4>
         <ContentWrapper gap="10px">
-          <span css={[typography.textL]}>Don't have an account?</span>
+          <span className={typography.textL}>Don't have an account?</span>
 
           <LinkRenderer href="/register" includeLinkStyles>
             Sign up

@@ -1,3 +1,4 @@
+import type { NavigateFunction } from "react-router-dom";
 import { toast } from "sonner";
 
 interface ToastOptions {
@@ -15,11 +16,11 @@ export const showToastAndRedirect = (message: string, url: string, duration = 20
   }, duration);
 };
 
-export const showAsyncToastAndRedirect = async(message: string, url: string, duration = 2000, router: any) => {
+export const showAsyncToastAndRedirect = async(message: string, url: string, duration = 2000, navigate: NavigateFunction) => {
   return new Promise<void>((resolve) => {
     showToast.success(message, { duration });
     setTimeout(() => {
-      router.push(url);
+      navigate(url);
       resolve();
     }, duration);
   });

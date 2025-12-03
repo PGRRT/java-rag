@@ -4,6 +4,8 @@ import App from "./App";
 // import ErrorPage from './routes/ErrorPage';
 
 const Home = lazy(() => import("./routes/Home"));
+const SignInPage = lazy(() => import("./routes/Auth/SignInPage"));
+const SignUpPage = lazy(() => import("./routes/Auth/SignUpPage"));
 
 export const router = createBrowserRouter([
   {
@@ -12,15 +14,9 @@ export const router = createBrowserRouter([
     // errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
-      { path: "chat/:chatId", element: <Home /> }, // Home na "/chat/:chatId"
-      // {
-      //   path: "auth",
-      //   Component: AuthLayout,
-      //   children: [
-      //     { path: "login", Component: Login },
-      //     { path: "register", Component: Register },
-      //   ],
-      // },
+      { path: "chat/:chatId", element: <Home /> },
+      { path: "sign-in", element: <SignInPage /> },
+      { path: "sign-up", element: <SignUpPage /> },
     ],
   },
 ]);

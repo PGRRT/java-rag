@@ -116,7 +116,7 @@ const RegisterForm = () => {
         {step == 0 ? (
           <form
             onSubmit={handleSubmit(createEmailVerificationPassword)}
-            css={css`
+            className={css`
               width: inherit;
               display: inherit;
               flex-direction: inherit;
@@ -132,7 +132,7 @@ const RegisterForm = () => {
         ) : step == 1 ? (
           <form
             onSubmit={handleSubmit(onSubmit)}
-            css={css`
+            className={css`
               width: inherit;
               display: inherit;
               flex-direction: inherit;
@@ -150,7 +150,7 @@ const RegisterForm = () => {
             </VerifyEmail>
           </form>
         ) : null}
-        <span css={[typography.textS]}>
+        <span className={typography.textS}>
           By creating an account, you agree to Signaro's{" "}
           <LinkRenderer href="/conditions" includeLinkStyles target="_blank">
             Conditions of Use
