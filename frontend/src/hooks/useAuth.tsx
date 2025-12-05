@@ -1,12 +1,11 @@
 // src/hooks/useAuth.tsx
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   loginUser,
   registerUser,
   logoutUser,
-  getCurrentUser,
   refreshToken,
   clearError,
   updateUser,
@@ -14,11 +13,11 @@ import {
 } from "@/redux/slices/authSlice";
 import { showToast } from "@/utils/showToast";
 import type { Credentials, RegisterData, User } from "@/types/user";
+import { useUserSWR } from "@/hooks/useUser";
 
 interface UseAuthReturn {
   // State
   user: User | null;
-  isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
 
@@ -38,20 +37,7 @@ export const useAuth = (): UseAuthReturn => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { user, isAuthenticated, isLoading, error } = useAppSelector(
-    (state) => state.auth
-  );
-
-  // Load user on app start (if not loading and no user)
-  useEffect(() => {
-    if (!user && !isLoading && !error) {
-      try {
-        dispatch(getCurrentUser());
-      } catch (err) {
-        console.error("User not logged in");
-      }
-    }
-  }, [dispatch, user, isLoading, error]);
+  const { user, loading: isLoading, error } = useUserSWR();
 
   const login = useCallback(
     async (credentials: Credentials): Promise<void> => {
@@ -66,16 +52,31 @@ export const useAuth = (): UseAuthReturn => {
   );
 
   const register = useCallback(
-    async (userData: RegisterData): Promise<void> => {
-      try {
-        await dispatch(registerUser(userData)).unwrap();
-      } catch (error) {
-        showToast.error((error as string) || "Registration failed");
-        throw error;
-      }
+    async (data: RegisterData) => {
+      const response = await showToast.async.withLoading(
+        () => dispatch(registerUser(data)).unwrap(),
+        {
+          loadingMessage: "Registering...",
+          successMessage: "Registered successfully",
+          errorMessage: (err) => err || "Registration failed",
+        }
+      );
+      return response;
     },
     [dispatch]
   );
+
+  // const register = useCallback(
+  //   async (userData: RegisterData): Promise<void> => {
+  //     try {
+  //       await dispatch(registerUser(userData)).unwrap();
+  //     } catch (error) {
+  //       showToast.error((error as string) || "Registration failed");
+  //       throw error;
+  //     }
+  //   },
+  //   [dispatch]
+  // );
 
   const logout = useCallback(async (): Promise<void> => {
     try {
@@ -107,7 +108,7 @@ export const useAuth = (): UseAuthReturn => {
     },
     [user]
   );
-  
+
   const hasPermission = useCallback(
     (permission: string): boolean => {
       if (!user) return false;
@@ -120,7 +121,6 @@ export const useAuth = (): UseAuthReturn => {
   const authState = useMemo(
     () => ({
       user,
-      isAuthenticated,
       isLoading,
       error,
       login,
@@ -133,7 +133,6 @@ export const useAuth = (): UseAuthReturn => {
     }),
     [
       user,
-      isAuthenticated,
       isLoading,
       error,
       login,
@@ -153,11 +152,6 @@ export const useAuth = (): UseAuthReturn => {
 export const useCurrentUser = () => {
   const { user } = useAuth();
   return user;
-};
-
-export const useIsAuthenticated = () => {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated;
 };
 
 export const useUserRole = () => {

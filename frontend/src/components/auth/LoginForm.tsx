@@ -37,8 +37,8 @@ const LoginForm = () => {
     try {
       clearAuthError();
       console.log("userData", userData);
-      await loginUser(userData);
-      console.log("User logged in successfully:", data);
+      const response = await loginUser(userData);
+      console.log("User logged in successfully:", response);
 
       // this is used to make isSubmitting true after the user is logged in (so that the button is disabled while redirecting)
       await showAsyncToastAndRedirect(

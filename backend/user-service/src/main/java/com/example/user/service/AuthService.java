@@ -107,10 +107,7 @@ public class AuthService {
         }
     }
 
-    public void logout(String accessToken, String refreshToken) {
-        if (accessToken != null && !accessToken.isEmpty()) {
-            blacklistToken(accessToken);
-        }
+    public void logout(String refreshToken) {
         if (refreshToken != null && !refreshToken.isEmpty()) {
             blacklistToken(refreshToken);
         }

@@ -54,8 +54,14 @@ public class UserService {
         }
 
         String email = null;
+
+        if (!accessToken.startsWith("Bearer ")) {
+            throw new BadCredentialsException("Invalid access token format");
+        }
+        String token = accessToken.substring(7); // Remove "Bearer " prefix
+
         try {
-            email = jwtService.getEmailFromToken(accessToken);
+            email = jwtService.getEmailFromToken(token);
         } catch (Exception e) {
             throw new BadCredentialsException("Invalid access token");
         }

@@ -7,7 +7,7 @@ import type { User, AuthState, Credentials, RegisterData } from "@/types/user";
 
 const initialState: AuthState = {
   user: null,
-  isAuthenticated: false,
+  accessToken: null,
   isLoading: false,
   error: null,
 };
@@ -53,19 +53,24 @@ export const refreshToken = createAsyncThunk(
   }
 );
 
-export const getCurrentUser = createAsyncThunk(
-  "auth/getCurrentUser",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await userApi.getProfile();
-      return response.data;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message || "Failed to get user"
-      );
-    }
-  }
-);
+
+// export const getCurrentUser = createAsyncThunk(
+//   "auth/getCurrentUser",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await userApi.getProfile();
+//       console.log("asdsadasd", response.data);
+      
+//       return response.data;
+//     } catch (error: any) {
+//       console.log("Error while getting current user", error);
+      
+//       return rejectWithValue(
+//         error.response?.data?.message || "Failed to get user"
+//       );
+//     }
+//   }
+// );
 
 export const logoutUser = createAsyncThunk(
   "auth/logout",
@@ -101,14 +106,15 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
+        console.log("Login redux", action.payload);
+
         state.isLoading = false;
-        state.isAuthenticated = true;
         state.user = action.payload.user || action.payload;
         state.error = null;
+        state.accessToken = action.payload.accessToken || null;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.isAuthenticated = false;
         state.user = null;
         state.error = action.payload as string;
       });
@@ -121,42 +127,38 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isAuthenticated = true;
         state.user = action.payload.user || action.payload;
         state.error = null;
+        state.accessToken = action.payload.accessToken || null;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });
 
-    // Get Current User
-    builder
-      .addCase(getCurrentUser.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(getCurrentUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isAuthenticated = true;
-        state.user = action.payload.user || action.payload;
-        state.error = null;
-      })
-      .addCase(getCurrentUser.rejected, (state, action) => {
-        state.isLoading = false;
-        state.isAuthenticated = false;
-        state.user = null;
-        state.error = action.payload as string;
-      });
+    // // Get Current User
+    // builder
+    //   .addCase(getCurrentUser.pending, (state) => {
+    //     state.isLoading = true;
+    //   })
+    //   .addCase(getCurrentUser.fulfilled, (state, action) => {
+    //     state.isLoading = false;
+    //     state.user = action.payload.user || action.payload;
+    //     state.error = null;
+    //   })
+    //   .addCase(getCurrentUser.rejected, (state, action) => {
+    //     state.isLoading = false;
+    //     state.user = null;
+    //     state.error = action.payload as string;
+    //   });
 
     // Refresh Token
     builder
       .addCase(refreshToken.fulfilled, (state, action) => {
-        if (action.payload.user) {
-          state.user = action.payload.user;
-        }
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
       })
       .addCase(refreshToken.rejected, (state) => {
-        state.isAuthenticated = false;
         state.user = null;
       });
 

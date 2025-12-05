@@ -30,14 +30,8 @@ public class AuthController {
     private final AuthService authService;
     private final CookieService cookieService;
 
-    @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser(@CookieValue(name = "accessToken", required = false) String accessToken) {
-        UserResponse currentUser = userService.getCurrentUser(accessToken);
-        return ResponseEntity.ok(currentUser);
-    }
-
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody @Valid LoginUserRequest loginUserRequest, HttpServletResponse response) {
+    public ResponseEntity<UserResponse> login(@RequestBody @Valid LoginUserRequest loginUserRequest) {
         UserResponse userResponse = userService.loginUser(loginUserRequest);
 
         AccessRefreshToken sessionCookies = jwtService.createSessionCookies(
@@ -45,9 +39,9 @@ public class AuthController {
                 userResponse.getEmail(),
                 userResponse.getRole()
         );
+        userResponse.setAccessToken(sessionCookies.getAccessToken());
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, sessionCookies.getAccessToken().toString())
                 .header(HttpHeaders.SET_COOKIE, sessionCookies.getRefreshToken().toString())
                 .body(userResponse);
     }
@@ -58,10 +52,12 @@ public class AuthController {
 
         UserWithCookiesResponse userWithCookiesResponse = authService.refreshToken(refreshToken);
 
+        UserResponse response  = userWithCookiesResponse.getUser();
+        response.setAccessToken(userWithCookiesResponse.getAccessToken());
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, userWithCookiesResponse.getAccessToken().toString())
                 .header(HttpHeaders.SET_COOKIE, userWithCookiesResponse.getRefreshToken().toString())
-                .body(userWithCookiesResponse.getUser());
+                .body(response);
     }
 
     @PostMapping("/register")
@@ -80,24 +76,22 @@ public class AuthController {
                 userResponse.getRole()
         );
 
+        userResponse.setAccessToken(sessionCookies.getAccessToken());
+
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.SET_COOKIE, sessionCookies.getAccessToken().toString())
                 .header(HttpHeaders.SET_COOKIE, sessionCookies.getRefreshToken().toString())
                 .body(userResponse);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
-            @CookieValue(name = "accessToken", required = false) String accessToken,
             @CookieValue(name = "refreshToken", required = false) String refreshToken
     ) {
-        authService.logout(accessToken, refreshToken);
+        authService.logout(refreshToken);
 
-        ResponseCookie clearAccess = cookieService.clearAccessTokenCookie();
         ResponseCookie clearRefresh = cookieService.clearRefreshTokenCookie();
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, clearAccess.toString())
                 .header(HttpHeaders.SET_COOKIE, clearRefresh.toString())
                 .build();
     }

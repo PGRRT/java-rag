@@ -39,36 +39,35 @@ const RegisterForm = () => {
       password: "",
       confirmPassword: "",
       otp: "",
-    },
+    }
   });
+  console.log("errors",errors)
+  console.log("isSubmitting",isSubmitting)
 
-  const onSubmit = async (data: RegisterFormData) => {
+  const onSubmit = async (formData: RegisterFormData) => {
     const userData: RegisterData = {
-      email: data.email,
-      password: data.password,
-      confirmPassword: data.confirmPassword,
-      otp: data?.otp ?? "",
+      email: formData.email,
+      password: formData.password,
+      confirmPassword: formData.confirmPassword,
+      otp: formData?.otp ?? "",
     };
 
-    try {
-      clearAuthError();
-      console.log("userData", userData);
+    clearAuthError();
+    console.log("userData", userData);
 
-      await showToast.async.withLoading(() => registerUser(userData), {
-        loadingMessage: "Creating your account...",
-      });
+    const { data, error } = await registerUser(userData);
 
-      // this is used to make isSubmitting true after the user is registered (so that the button is disabled while redirecting)
-      await showAsyncToastAndRedirect(
-        "Account created successfully! Redirecting to homepage...",
-        "/",
-        2000,
-        navigate
-      );
-    } catch (error) {
-      console.error("Error registering user:", error);
-      showToast.error(error?.response?.data?.message || "Registration failed");
-    }
+    if (error) return;
+
+    console.log("User registered successfully:", data);
+
+    // this is used to make isSubmitting true after the user is registered (so that the button is disabled while redirecting)
+    await showAsyncToastAndRedirect(
+      "Account created successfully! Redirecting to homepage...",
+      "/",
+      2000,
+      navigate
+    );
   };
 
   const createEmailVerificationPassword = async (data: RegisterFormData) => {

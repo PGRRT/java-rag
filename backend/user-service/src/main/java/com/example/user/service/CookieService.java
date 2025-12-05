@@ -52,9 +52,6 @@ public class CookieService {
                 .build();
     }
 
-    public ResponseCookie clearAccessTokenCookie() {
-        return clearCookie("accessToken");
-    }
 
     public ResponseCookie clearRefreshTokenCookie() {
         return clearCookie("refreshToken");

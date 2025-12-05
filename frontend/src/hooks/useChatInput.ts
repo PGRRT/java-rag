@@ -1,4 +1,3 @@
-import useUser from "@/hooks/useUser";
 import exceptionWrapper from "@/utils/exceptionWrapper";
 import { showToast } from "@/utils/showToast";
 import { useState } from "react";
@@ -6,15 +5,14 @@ import type { SenderType } from "@/api/enums/Sender";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { createChatAction } from "@/redux/slices/chatSlice";
-import { useAppDispatch } from "@/redux/hooks";
-import {
-  postMessagesAction,
-} from "@/redux/slices/messageSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { postMessagesAction } from "@/redux/slices/messageSlice";
+import { useUserSWR } from "@/hooks/useUser";
 
 const useChatInput = ({ chatId = "" }: { chatId?: string }) => {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState<string>("");
-  const user = useUser();
+  const { user } = useUserSWR();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {

@@ -24,7 +24,7 @@ public class CorsConfig {
                 "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
         )); // GET, POST, PUT, DELETE, itp.
         config.addAllowedHeader("*");
-//        config.setAllowCredentials(true); // if we use cookies
+        config.setAllowCredentials(true);
 
         config.setMaxAge(3600L); // 1 hour
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

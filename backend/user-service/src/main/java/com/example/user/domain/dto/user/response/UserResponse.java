@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.ResponseCookie;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -25,4 +26,6 @@ public class UserResponse {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    private ResponseCookie accessToken;
 }

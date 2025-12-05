@@ -9,14 +9,24 @@ interface ToastOptions {
   };
 }
 
-export const showToastAndRedirect = (message: string, url: string, duration = 2000, router: any) => {
+export const showToastAndRedirect = (
+  message: string,
+  url: string,
+  duration = 2000,
+  router: any
+) => {
   showToast.success(message, { duration });
   setTimeout(() => {
     router.push(url);
   }, duration);
 };
 
-export const showAsyncToastAndRedirect = async(message: string, url: string, duration = 2000, navigate: NavigateFunction) => {
+export const showAsyncToastAndRedirect = async (
+  message: string,
+  url: string,
+  duration = 2000,
+  navigate: NavigateFunction
+) => {
   return new Promise<void>((resolve) => {
     showToast.success(message, { duration });
     setTimeout(() => {
@@ -25,8 +35,6 @@ export const showAsyncToastAndRedirect = async(message: string, url: string, dur
     }, duration);
   });
 };
-
-
 
 export const showToast = {
   success: (message: string, options?: ToastOptions) => {
@@ -106,17 +114,14 @@ export const showToast = {
     withLoading: async <T>(
       asyncFn: () => Promise<T>,
       messages: {
-      loadingMessage?: string,
-      successMessage?: string | ((data: T) => string),
-      errorMessage?: string | ((error: any) => string)
-      },
-      options?: {
-        showDefaultErrorMessage?: boolean;
+        loadingMessage?: string;
+        successMessage?: string | ((data: T) => string);
+        errorMessage?: string | ((error: any) => string);
       }
-
-    ): Promise<T> => {
+    ): Promise<
+      { data: T; error?: undefined } | { data?: undefined; error: any }
+    > => {
       const { loadingMessage, successMessage, errorMessage } = messages ?? {};
-      const { showDefaultErrorMessage } = options ?? {};
       const loadingToast = toast.loading(loadingMessage);
 
       try {
@@ -125,25 +130,30 @@ export const showToast = {
         toast.dismiss(loadingToast);
 
         if (successMessage) {
-          const message = typeof successMessage === 'function'
-            ? successMessage(result)
-            : successMessage;
+          const message =
+            typeof successMessage === "function"
+              ? successMessage(result)
+              : successMessage;
           toast.success(message);
         }
 
-        return result;
-      } catch (error) {
+        return { data: result };
+      } catch (error: string | any) {
         toast.dismiss(loadingToast);
 
-        if (errorMessage || showDefaultErrorMessage) {
+        if (errorMessage) {
           const message = errorMessage
-            ? (typeof errorMessage === 'function' ? errorMessage(error) : errorMessage)
+            ? typeof errorMessage === "function"
+              ? errorMessage(error)
+              : errorMessage
             : "An error occurred";
 
           toast.error(message);
+        } else {
+          toast.error(error);
         }
 
-        throw error;
+        return { error };
       }
     },
   },

@@ -2,6 +2,9 @@ package com.example.user.controller;
 
 import com.example.user.domain.dto.error.response.ApiErrorResponse;
 import com.example.user.domain.dto.error.response.FieldError;
+import com.example.user.exceptions.OtpInvalidException;
+import com.example.user.exceptions.TokenRefreshException;
+import com.example.user.exceptions.UserNotActiveException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -89,6 +92,9 @@ public class ErrorHandler {
     @ExceptionHandler({
             JwtException.class,
             UsernameNotFoundException.class,
+            TokenRefreshException.class,
+            UserNotActiveException.class,
+            OtpInvalidException.class,
     })
     public ResponseEntity<ApiErrorResponse> handleCustomExceptions(RuntimeException e) {
         log.error("Error: {}", e.getMessage());

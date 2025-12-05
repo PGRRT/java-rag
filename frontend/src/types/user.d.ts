@@ -26,7 +26,7 @@ export interface RegisterData {
 
 export interface AuthState {
   user: User | null;
-  isAuthenticated: boolean;
+  accessToken: string | null;
   isLoading: boolean;
   error: string | null;
 }
