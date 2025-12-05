@@ -53,10 +53,10 @@ public class JwtService {
                 role
         );
 
-        ResponseCookie accessTokenCookie = getAccessTokenCookie(jwtUserClaims);
+        String accessToken = getAccessToken(jwtUserClaims);
         ResponseCookie refreshTokenCookie = getRefreshTokenCookie(jwtUserClaims);
 
-        return AccessRefreshToken.builder().accessToken(accessTokenCookie).refreshToken(refreshTokenCookie).build();
+        return AccessRefreshToken.builder().accessToken(accessToken).refreshToken(refreshTokenCookie).build();
     }
 
     public JwtUserClaims getJwtUserClaims(UUID id, String email, String role) {
@@ -160,10 +160,9 @@ public class JwtService {
         return false;
     }
 
-    public ResponseCookie getAccessTokenCookie(JwtUserClaims jwtUserClaims) {
+    public String getAccessToken(JwtUserClaims jwtUserClaims) {
         try {
-            String accessToken = generateAccessToken(jwtUserClaims);
-            return cookieService.createCookie("accessToken", accessToken, getJwtAccessTokenExpirationMs());
+            return generateAccessToken(jwtUserClaims);
         } catch (JwtException e) {
             log.error("Error generating access token", e);
             throw new IllegalStateException("Cannot generate access token");

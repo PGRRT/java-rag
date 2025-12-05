@@ -16,6 +16,7 @@ import { useAuth } from "@/hooks/useAuth";
 import loginBg from "@/assets/login-bg.png";
 import AgreeFooter from "@/components/AgreeFooter";
 import { styles } from "@/constants/styles";
+import { useEffect } from "react";
 
 const LoginForm = () => {
   const { login: loginUser, clearAuthError, user, isLoading } = useAuth();
@@ -23,36 +24,48 @@ const LoginForm = () => {
   const {
     register,
     handleSubmit,
+    setError,
+    clearErrors,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  watch((_, { name }) => {
+    if (name === "email" || name === "password") {
+      clearErrors(name); // czyszczenie tylko tego pola
+    }
+  });
+
+  const onSubmit = async (formData: LoginFormData) => {
     const userData: Credentials = {
-      email: data.email,
-      password: data.password,
+      email: formData.email,
+      password: formData.password,
     };
 
-    try {
-      clearAuthError();
-      console.log("userData", userData);
-      const response = await loginUser(userData);
-      console.log("User logged in successfully:", response);
+    clearAuthError();
+    const { data, error } = await loginUser(userData);
 
-      // this is used to make isSubmitting true after the user is logged in (so that the button is disabled while redirecting)
-      await showAsyncToastAndRedirect(
-        "Login successful! Redirecting to homepage...",
-        "/",
-        2000,
-        navigate
-      );
-    } catch (error) {
-      console.error("Error logging in user:", error);
-      showToast.error(
-        error?.response?.data?.message || "Error logging in user"
-      );
+    console.log("data, error", data, error);
+
+    if (error) {
+      setError("email", { type: "manual", message: " " }); // to highlight both fields
+      setError("password", { type: "manual", message: error });
+
+      return;
     }
+    // this is used to make isSubmitting true after the user is logged in (so that the button is disabled while redirecting)
+    await showAsyncToastAndRedirect(
+      "Login successful! Redirecting to homepage...",
+      "/",
+      2000,
+      navigate
+    );
   };
 
   return (
@@ -91,6 +104,9 @@ const LoginForm = () => {
                 type="email"
                 {...register("email")}
                 error={errors.email?.message}
+                onChange={() => {
+                  clearErrors();
+                }}
               />
 
               <Input
@@ -98,13 +114,12 @@ const LoginForm = () => {
                 type="password"
                 {...register("password")}
                 error={errors.password?.message}
+                onChange={() => {
+                  clearErrors();
+                }}
               />
 
-              <Button
-                type="submit"
-                // size="md"
-                disabled={isSubmitting || isLoading}
-              >
+              <Button type="submit" disabled={isSubmitting || isLoading}>
                 Log In
               </Button>
             </ContentWrapper>

@@ -1,4 +1,3 @@
-// src/hooks/useAuth.tsx
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -10,6 +9,7 @@ import {
   clearError,
   updateUser,
   resetAuth,
+  requestOtp,
 } from "@/redux/slices/authSlice";
 import { showToast } from "@/utils/showToast";
 import type { Credentials, RegisterData, User } from "@/types/user";
@@ -28,6 +28,8 @@ interface UseAuthReturn {
   updateProfile: (updates: Partial<User>) => void;
   clearAuthError: () => void;
 
+  createOtp: (email: string) => Promise<void>;
+
   // Utilities
   hasRole: (role: string | string[]) => boolean;
   hasPermission: (permission: string) => boolean;
@@ -38,15 +40,19 @@ export const useAuth = (): UseAuthReturn => {
   const navigate = useNavigate();
 
   const { user, loading: isLoading, error } = useUserSWR();
+  console.log("Logged user", user);
 
   const login = useCallback(
-    async (credentials: Credentials): Promise<void> => {
-      try {
-        await dispatch(loginUser(credentials)).unwrap();
-      } catch (error) {
-        showToast.error((error as string) || "Login failed");
-        throw error;
-      }
+    async (credentials: Credentials) => {
+      const response = await showToast.async.withLoading(
+        () => dispatch(loginUser(credentials)).unwrap(),
+        {
+          loadingMessage: "Logging in...",
+          successMessage: "Logged in successfully",
+          errorMessage: (err) => err || "Login failed",
+        }
+      );
+      return response;
     },
     [dispatch]
   );
@@ -66,17 +72,27 @@ export const useAuth = (): UseAuthReturn => {
     [dispatch]
   );
 
-  // const register = useCallback(
-  //   async (userData: RegisterData): Promise<void> => {
-  //     try {
-  //       await dispatch(registerUser(userData)).unwrap();
-  //     } catch (error) {
-  //       showToast.error((error as string) || "Registration failed");
-  //       throw error;
-  //     }
-  //   },
-  //   [dispatch]
-  // );
+  //  const data = await showToast.async.withLoading(() => userApi.createOtp(userEmail), {
+  //       loadingMessage: "Sending verification email...",
+  //       successMessage: `Verification email sent to ${userEmail}!`,
+  //       errorMessage: "Failed to send verification email",
+  //     });
+
+  const createOtp = useCallback(
+    async (email: string) => {
+      const response = await showToast.async.withLoading(
+        () => dispatch(requestOtp(email)).unwrap(),
+        {
+          loadingMessage: "Sending OTP...",
+          successMessage: "OTP sent successfully",
+          errorMessage: (err) => err || "Failed to send OTP",
+        }
+      );
+
+      return response;
+    },
+    [dispatch]
+  );
 
   const logout = useCallback(async (): Promise<void> => {
     try {
@@ -125,6 +141,7 @@ export const useAuth = (): UseAuthReturn => {
       error,
       login,
       register,
+      createOtp,
       logout,
       updateProfile,
       clearAuthError,
@@ -137,6 +154,7 @@ export const useAuth = (): UseAuthReturn => {
       error,
       login,
       register,
+      createOtp,
       logout,
       updateProfile,
       clearAuthError,

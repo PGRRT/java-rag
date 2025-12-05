@@ -1,7 +1,8 @@
 package com.example.user.controller;
 
 import com.example.user.domain.dto.auth.AccessRefreshToken;
-import com.example.user.domain.dto.auth.response.UserWithCookiesResponse;
+import com.example.user.domain.dto.auth.response.AuthResponse;
+import com.example.user.domain.dto.auth.response.UserWithCookie;
 import com.example.user.domain.dto.user.request.LoginUserRequest;
 import com.example.user.domain.dto.user.request.RegisterUserRequest;
 import com.example.user.domain.dto.user.response.UserResponse;
@@ -31,7 +32,7 @@ public class AuthController {
     private final CookieService cookieService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody @Valid LoginUserRequest loginUserRequest) {
+    public ResponseEntity<AuthResponse<UserResponse>> login(@RequestBody @Valid LoginUserRequest loginUserRequest) {
         UserResponse userResponse = userService.loginUser(loginUserRequest);
 
         AccessRefreshToken sessionCookies = jwtService.createSessionCookies(
@@ -39,29 +40,34 @@ public class AuthController {
                 userResponse.getEmail(),
                 userResponse.getRole()
         );
-        userResponse.setAccessToken(sessionCookies.getAccessToken());
+        AuthResponse<UserResponse> authResponse = AuthResponse.<UserResponse>builder()
+                .accessToken(sessionCookies.getAccessToken())
+                .user(userResponse)
+                .build();
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, sessionCookies.getRefreshToken().toString())
-                .body(userResponse);
+                .body(authResponse);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<UserResponse> refresh(
+    public ResponseEntity<AuthResponse<UserResponse>> refresh(
             @CookieValue(required = false, name = "refreshToken") String refreshToken) {
 
-        UserWithCookiesResponse userWithCookiesResponse = authService.refreshToken(refreshToken);
+        UserWithCookie userWithCookie = authService.refreshToken(refreshToken);
 
-        UserResponse response  = userWithCookiesResponse.getUser();
-        response.setAccessToken(userWithCookiesResponse.getAccessToken());
+        AuthResponse<UserResponse> authResponse = AuthResponse.<UserResponse>builder()
+                .accessToken(userWithCookie.getAccessToken())
+                .user(userWithCookie.getUser())
+                .build();
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, userWithCookiesResponse.getRefreshToken().toString())
-                .body(response);
+                .header(HttpHeaders.SET_COOKIE, userWithCookie.getRefreshToken().toString())
+                .body(authResponse);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody @Valid RegisterUserRequest registerUserRequest, HttpServletResponse response) {
+    public ResponseEntity<AuthResponse<UserResponse>> register(@RequestBody @Valid RegisterUserRequest registerUserRequest, HttpServletResponse response) {
         boolean hasOtpValid = otpService.verifyOtp(registerUserRequest.getEmail(), registerUserRequest.getOtp());
 
         if (!hasOtpValid) {
@@ -76,11 +82,14 @@ public class AuthController {
                 userResponse.getRole()
         );
 
-        userResponse.setAccessToken(sessionCookies.getAccessToken());
+        AuthResponse<UserResponse> authResponse = AuthResponse.<UserResponse>builder()
+                .accessToken(sessionCookies.getAccessToken())
+                .user(userResponse)
+                .build();
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.SET_COOKIE, sessionCookies.getRefreshToken().toString())
-                .body(userResponse);
+                .body(authResponse);
     }
 
     @PostMapping("/logout")

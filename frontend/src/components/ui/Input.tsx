@@ -25,6 +25,7 @@ const Input: React.FC<InputProps> = ({
   description,
   ...props
 }) => {
+
   return (
     <ContentWrapper gap="10px" direction="column">
       {label && (
@@ -80,7 +81,7 @@ const Input: React.FC<InputProps> = ({
           {description}
         </p>
       )}
-      {error && (
+      {error && error?.trim()?.length > 0 && (
         <p
           className={css`
             color: #ef4444;

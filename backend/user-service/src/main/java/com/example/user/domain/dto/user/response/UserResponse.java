@@ -26,6 +26,4 @@ public class UserResponse {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    private ResponseCookie accessToken;
 }

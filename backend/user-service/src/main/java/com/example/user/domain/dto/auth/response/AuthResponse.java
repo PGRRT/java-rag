@@ -1,16 +1,15 @@
-package com.example.user.domain.dto.auth;
+package com.example.user.domain.dto.auth.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.http.ResponseCookie;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccessRefreshToken {
+public class AuthResponse<T> {
+    private T user;
     private String accessToken;
-    private ResponseCookie refreshToken;
 }

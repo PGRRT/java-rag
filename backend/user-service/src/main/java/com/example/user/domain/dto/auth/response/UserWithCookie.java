@@ -11,8 +11,8 @@ import org.springframework.http.ResponseCookie;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserWithCookiesResponse {
+public class UserWithCookie {
     UserResponse user;
-    ResponseCookie accessToken;
+    String accessToken;
     ResponseCookie refreshToken;
 }

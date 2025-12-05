@@ -1,6 +1,5 @@
 import ContentWrapper from "@/components/ui/ContentWrapper";
 import { Button } from "@mantine/core";
-import { typography } from "@/constants/typography";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "@/api/schemas/registerSchema";
@@ -20,7 +19,7 @@ import AgreeFooter from "@/components/AgreeFooter";
 import loginBg from "@/assets/login-bg.png";
 
 const RegisterForm = () => {
-  const { register: registerUser, clearAuthError, user } = useAuth();
+  const { register: registerUser, createOtp, clearAuthError, user } = useAuth();
   const navigate = useNavigate();
   // const [step, setStep] = useState<number>(1);
   const [step, setStep] = useState<number>(0);
@@ -31,6 +30,7 @@ const RegisterForm = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     getValues,
+    setError,
     trigger,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -39,10 +39,10 @@ const RegisterForm = () => {
       password: "",
       confirmPassword: "",
       otp: "",
-    }
+    },
   });
-  console.log("errors",errors)
-  console.log("isSubmitting",isSubmitting)
+
+    console.log("errors", errors);
 
   const onSubmit = async (formData: RegisterFormData) => {
     const userData: RegisterData = {
@@ -53,11 +53,34 @@ const RegisterForm = () => {
     };
 
     clearAuthError();
-    console.log("userData", userData);
 
     const { data, error } = await registerUser(userData);
 
-    if (error) return;
+    if (error) {
+      console.log("error on submit", error);
+      setError("otp", { type: "manual", message: error });
+
+      return;
+    }
+
+// accessToken
+// : 
+// {name: 'accessToken', value: 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjMmZiODZmNy0xOTI1L…IRN6XHdXoHCD7veosPgAPwkCQDtBV33_KxPZupEZRUE16gryg', maxAge: 'PT15M', domain: null, path: '/', …}
+// active
+// : 
+// true
+// createdAt
+// : 
+// "2025-12-05T19:25:41.457609981"
+// email
+// : 
+// "projekty.pg0@gmail.com"
+// role
+// : 
+// "USER"
+// updatedAt
+// : 
+// "2025-12-05T19:25:41.457609981"
 
     console.log("User registered successfully:", data);
 
@@ -78,11 +101,11 @@ const RegisterForm = () => {
     try {
       const userEmail = getValues("email");
 
-      await showToast.async.withLoading(() => userApi.createOtp(userEmail), {
-        loadingMessage: "Sending verification email...",
-        successMessage: `Verification email sent to ${userEmail}!`,
-        errorMessage: "Failed to send verification email",
-      });
+      const { data, error } = await createOtp(userEmail);
+
+      if (error) {
+        return;
+      }
 
       setStep(step + 1);
     } catch (error) {

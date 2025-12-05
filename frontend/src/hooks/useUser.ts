@@ -10,6 +10,8 @@ export const useUserSWR = () => {
   const reduxUser = useAppSelector((state) => state.auth.user);
   const accessToken = useAppSelector((state) => state.auth.accessToken);
 
+  console.log("accessToken", accessToken);
+
   const { data, error, isLoading } = useSWR(
     accessToken ? "user" : null,
     fetchUser,

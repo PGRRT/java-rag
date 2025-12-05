@@ -1,7 +1,7 @@
 package com.example.user.service;
 
 import com.example.user.domain.dto.auth.AccessRefreshToken;
-import com.example.user.domain.dto.auth.response.UserWithCookiesResponse;
+import com.example.user.domain.dto.auth.response.UserWithCookie;
 import com.example.user.domain.dto.user.response.UserResponse;
 import com.example.user.domain.entities.User;
 import com.example.user.exceptions.InvalidTokenException;
@@ -31,7 +31,7 @@ public class AuthService {
     private final RedisTemplate<String, String> redisTemplate;
     private final UserMapper userMapper;
 
-    public UserWithCookiesResponse refreshToken(String refreshTokenCookie) {
+    public UserWithCookie refreshToken(String refreshTokenCookie) {
         try {
             // Validate the refresh token
             if (refreshTokenCookie == null || refreshTokenCookie.isEmpty()) {
@@ -69,7 +69,7 @@ public class AuthService {
 
             UserResponse userResponse = userMapper.toDto(user);
 
-            return UserWithCookiesResponse.builder()
+            return UserWithCookie.builder()
                     .accessToken(sessionCookies.getAccessToken())
                     .refreshToken(sessionCookies.getRefreshToken())
                     .user(userResponse)

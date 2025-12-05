@@ -39,6 +39,20 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+export const requestOtp = createAsyncThunk(
+  "auth/createOtp",
+  async (email: string, { rejectWithValue }) => {
+    try {
+      const response = await userApi.createOtp(email);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to send OTP"
+      );
+    }
+  }
+);
+
 export const refreshToken = createAsyncThunk(
   "auth/refreshToken",
   async (_, { rejectWithValue }) => {
@@ -109,7 +123,7 @@ const authSlice = createSlice({
         console.log("Login redux", action.payload);
 
         state.isLoading = false;
-        state.user = action.payload.user || action.payload;
+        state.user = action.payload.user;
         state.error = null;
         state.accessToken = action.payload.accessToken || null;
       })
@@ -127,7 +141,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.user || action.payload;
+        state.user = action.payload.user;
         state.error = null;
         state.accessToken = action.payload.accessToken || null;
       })
