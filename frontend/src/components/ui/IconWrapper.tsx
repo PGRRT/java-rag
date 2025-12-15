@@ -20,9 +20,11 @@ const IconWrapper = ({
       <Icon
         onClick={onClick}
         size={size}
-        css={css`
+        className={css`
           color: ${color} !important;
-          cursor: pointer;
+          cursor: pointer !important;
+
+          
           ${hoverColor &&
           css`
             &:hover {

@@ -4,6 +4,7 @@ export const colorPalette = {
   text: "#D9D9D9",
   textActive: "#FFFFFF",
   textMuted: "#999999",
+  textBrand: "#60a5fa",
   accent: "#999999",
   backgroundSecondary: "#111111",
   backgroundTertiary: "#3C3C3C",

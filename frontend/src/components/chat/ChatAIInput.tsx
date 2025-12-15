@@ -51,7 +51,8 @@ const ChatAIInput = ({ chatId }: { chatId?: string }) => {
           </FileButton>
         }
         rightSection={
-          <div
+          <button
+            type="submit"
             className={css`
               background: white;
               border-radius: 50%;
@@ -60,11 +61,11 @@ const ChatAIInput = ({ chatId }: { chatId?: string }) => {
               display: flex;
               align-items: center;
               justify-content: center;
+              cursor: pointer;
             `}
-            onClick={sendMessage}
           >
             <IconWrapper Icon={ChevronUp} color="black" />
-          </div>
+          </button>
         }
         placeholder="What's up, Doc?"
         style={{ flex: 1 }}

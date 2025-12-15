@@ -9,14 +9,10 @@ import { loginSchema } from "@/api/schemas/loginSchema";
 import type { LoginFormData } from "@/api/schemas/loginSchema";
 import type { Credentials } from "@/types/user";
 import { css, cx } from "@emotion/css";
-import { breakPointsMediaQueries } from "@/constants/breakPoints";
 import { showAsyncToastAndRedirect, showToast } from "@/utils/showToast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import loginBg from "@/assets/login-bg.png";
 import AgreeFooter from "@/components/AgreeFooter";
-import { styles } from "@/constants/styles";
-import { useEffect } from "react";
 
 const LoginForm = () => {
   const { login: loginUser, clearAuthError, user, isLoading } = useAuth();
@@ -70,99 +66,60 @@ const LoginForm = () => {
 
   return (
     <ContentWrapper
-      align="center"
-      direction="row"
       width="100%"
-      customCss={css`
-        height: 100vh;
-      `}
+      padding="20px"
+      height="100%"
+      direction="column"
+      justify="space-between"
+      align="center"
+      customCss={css``}
     >
+      <div /> {/* Spacer */}
       <ContentWrapper
         width="100%"
-        padding="20px"
-        height="100%"
+        maxWidth="400px"
         direction="column"
-        justify="space-between"
-        align="center"
-        customCss={css``}
+        gap="30px"
       >
-        <div /> {/* Spacer */}
-        <ContentWrapper
-          width="100%"
-          maxWidth="400px"
-          direction="column"
-          gap="30px"
-        >
-          <h4 className={cx(typography.textXl, "center")}>
-            Log into your account
-          </h4>
+        <h4 className={cx(typography.textXl, "center")}>
+          Log into your account
+        </h4>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <ContentWrapper direction="column" gap="30px">
-              <Input
-                label="Email"
-                type="email"
-                {...register("email")}
-                error={errors.email?.message}
-                onChange={() => {
-                  clearErrors();
-                }}
-              />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <ContentWrapper direction="column" gap="30px">
+            <Input
+              label="Email"
+              type="email"
+              {...register("email")}
+              error={errors.email?.message}
+              onChange={() => {
+                clearErrors();
+              }}
+            />
 
-              <Input
-                label="Password"
-                type="password"
-                {...register("password")}
-                error={errors.password?.message}
-                onChange={() => {
-                  clearErrors();
-                }}
-              />
+            <Input
+              label="Password"
+              type="password"
+              {...register("password")}
+              error={errors.password?.message}
+              onChange={() => {
+                clearErrors();
+              }}
+            />
 
-              <Button type="submit" disabled={isSubmitting || isLoading}>
-                Log In
-              </Button>
-            </ContentWrapper>
-          </form>
-          <ContentWrapper gap="10px" customCss={cx("center")}>
-            <span className={typography.textM}>Don't have an account?</span>
-            <Link
-              className={typography.textM}
-              href="/sign-up"
-              includeLinkStyles
-            >
-              Sign up
-            </Link>
+            <Button type="submit" disabled={isSubmitting || isLoading}>
+              Log In
+            </Button>
           </ContentWrapper>
+        </form>
+        <ContentWrapper gap="10px" customCss={cx("center")}>
+          <span className={typography.textM}>Don't have an account?</span>
+          <Link className={typography.textM} href="/sign-up" includeLinkStyles>
+            Sign up
+          </Link>
         </ContentWrapper>
-        <AgreeFooter />
       </ContentWrapper>
-      <ContentWrapper
-        width="100%"
-        height="100%"
-        customCss={cx(
-          "",
-          css`
-            display: none;
-            height: 100vh;
-            overflow: hidden;
-            ${breakPointsMediaQueries.desktop} {
-              display: block;
-            }
-          `
-        )}
-      >
-        <img
-          src={loginBg}
-          alt="Login illustration"
-          className={css`
-            height: 100vh;
-            max-height: inherit;
-            width: 100%;
-            object-fit: cover;
-          `}
-        />
-      </ContentWrapper>
+      <AgreeFooter />
     </ContentWrapper>
   );
 };

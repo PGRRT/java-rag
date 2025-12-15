@@ -42,8 +42,6 @@ const RegisterForm = () => {
     },
   });
 
-    console.log("errors", errors);
-
   const onSubmit = async (formData: RegisterFormData) => {
     const userData: RegisterData = {
       email: formData.email,
@@ -63,26 +61,6 @@ const RegisterForm = () => {
       return;
     }
 
-// accessToken
-// : 
-// {name: 'accessToken', value: 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjMmZiODZmNy0xOTI1L…IRN6XHdXoHCD7veosPgAPwkCQDtBV33_KxPZupEZRUE16gryg', maxAge: 'PT15M', domain: null, path: '/', …}
-// active
-// : 
-// true
-// createdAt
-// : 
-// "2025-12-05T19:25:41.457609981"
-// email
-// : 
-// "projekty.pg0@gmail.com"
-// role
-// : 
-// "USER"
-// updatedAt
-// : 
-// "2025-12-05T19:25:41.457609981"
-
-    console.log("User registered successfully:", data);
 
     // this is used to make isSubmitting true after the user is registered (so that the button is disabled while redirecting)
     await showAsyncToastAndRedirect(
@@ -115,14 +93,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <ContentWrapper
-      align="center"
-      direction="row"
-      width="100%"
-      customCss={css`
-        height: 100vh;
-      `}
-    >
+   
       <ContentWrapper
         width="100%"
         padding="20px"
@@ -179,33 +150,7 @@ const RegisterForm = () => {
         <AgreeFooter />
       </ContentWrapper>
 
-      <ContentWrapper
-        width="100%"
-        height="100%"
-        customCss={cx(
-          "",
-          css`
-            display: none;
-            height: 100vh;
-            overflow: hidden;
-            ${breakPointsMediaQueries.desktop} {
-              display: block;
-            }
-          `
-        )}
-      >
-        <img
-          src={loginBg}
-          alt="Login illustration"
-          className={css`
-            height: 100vh;
-            max-height: inherit;
-            width: 100%;
-            object-fit: cover;
-          `}
-        />
-      </ContentWrapper>
-    </ContentWrapper>
+ 
   );
 };
 

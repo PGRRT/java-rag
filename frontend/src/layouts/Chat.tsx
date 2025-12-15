@@ -16,12 +16,19 @@ import {
 import { ChevronUp, MoveUp, Paperclip } from "lucide-react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import Logo from "@/components/ui/Logo";
+import colorPalette from "@/constants/colorPalette";
 
 const Chat = () => {
   const { chatId } = useParams();
 
   return (
-    <ContentWrapper justify="center" position="relative" height="100%" padding="0 20px">
+    <ContentWrapper
+      justify="center"
+      position="relative"
+      height="100%"
+      padding="0 20px"
+    >
       {chatId ? (
         // We are in a specific chat
         <ChatContainer key={chatId} chatId={chatId} />
@@ -33,7 +40,13 @@ const Chat = () => {
           width="100%"
           margin="20vh 0 0 0"
         >
-          <ContentWrapper width="100%" justify="center">
+          <ContentWrapper
+            width="100%"
+            justify="center"
+            align="center"
+            gap="10px"
+          >
+            <Logo size={55} />
             <h3 className={cx(typography.textTitle, typography.textTitleTai)}>
               MedAI
             </h3>
