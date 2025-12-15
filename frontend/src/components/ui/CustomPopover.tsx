@@ -12,8 +12,8 @@ const CustomPopover = ({
 }: {
   trigger: React.ReactNode;
   content: React.ReactNode;
-  open: boolean;
-  setOpen: (open: boolean) => void;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
   width?: number | string;
   position?:
     | "top"
@@ -29,18 +29,22 @@ const CustomPopover = ({
     | "right-start"
     | "right-end";
 }) => {
+  const popoverProps =
+    open !== undefined && setOpen !== undefined
+      ? { opened: open, onChange: setOpen }
+      : {};
+
   return (
     <>
       <Popover
-        opened={open}
-        onChange={setOpen}
+        {...popoverProps}
         width={width ?? 200}
         position={position ?? "bottom-start"}
         styles={{
           dropdown: {
             borderRadius: styles.borderRadius.small,
             background: colorPalette.backgroundBright,
-            border: "unset",
+            border: `1px solid ${colorPalette.strokePrimary}`,
           },
         }}
       >

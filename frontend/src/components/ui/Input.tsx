@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import type { ChangeEvent, InputHTMLAttributes } from "react";
 import ContentWrapper from "@/components/ui/ContentWrapper";
 import { typography } from "@/constants/typography";

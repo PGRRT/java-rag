@@ -22,7 +22,6 @@ const SelectInput = ({
   onChange: (value: string) => void;
   options: options[];
 }) => {
-  const button = null;
   const [open, setOpen] = useState(false);
 
   const currentLabel = options?.find((option) => option.value === value)?.label;
@@ -33,7 +32,6 @@ const SelectInput = ({
       setOpen={setOpen}
       trigger={
         <div
-          ref={button}
           onClick={() => setOpen((prev) => !prev)}
           className={cx(
             `${typography.textM}`,
@@ -48,7 +46,6 @@ const SelectInput = ({
               background: transparent;
 
               padding: 0 ${styles.padding.small};
-
               user-select: none;
               border-radius: ${styles.borderRadius.medium};
               &:hover {
@@ -80,35 +77,42 @@ const SelectInput = ({
       }
       content={
         <div className={css``}>
-          {options?.map((option) => {
+          {options?.map((option, idx) => {
             return (
-              <button
-                key={option.value}
-                onClick={() => {
-                  onChange(option.value);
-                  setOpen(false);
-                }}
-                className={css`
-                  cursor: pointer;
-                  width: 100%;
-                  text-align: left;
-                  color: ${colorPalette.text};
-                  padding: 8px 12px;
-                  border-radius: ${styles.borderRadius.small};
+              <>
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    onChange(option.value);
+                    setOpen(false);
+                  }}
+                  className={css`
+                    cursor: pointer;
+                    width: 100%;
+                    text-align: left;
+                    color: ${colorPalette.text};
+                    border-radius: ${styles.borderRadius.small};
+                    padding: 8px 12px;
 
-                  // not for last
-                  &:not(:last-child) {
-                    border-bottom: 1px solid ${colorPalette.strokePrimary};
-                  }
-                  background: transparent;
+                    background: transparent;
 
-                  &:hover {
-                    background: ${colorPalette.backgroundTertiary};
-                  }
-                `}
-              >
-                <span className={cx(typography.textM)}>{option.label}</span>
-              </button>
+                    &:hover {
+                      background: ${colorPalette.backgroundTertiary};
+                    }
+                  `}
+                >
+                  <span className={cx(typography.textM)}>{option.label}</span>
+                </button>
+                {idx !== options.length - 1 && (
+                  <div
+                    className={css`
+                      height: 1px;
+                      background-color: ${colorPalette.strokePrimary};
+                      margin: 4px 0;
+                    `}
+                  />
+                )}
+              </>
             );
           })}
         </div>

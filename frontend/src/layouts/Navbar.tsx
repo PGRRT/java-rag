@@ -1,3 +1,4 @@
+import { Avatar } from "@/components/ui/Avatar";
 import ContentWrapper from "@/components/ui/ContentWrapper";
 import SelectInput from "@/components/ui/SelectInput";
 import colorPalette from "@/constants/colorPalette";
@@ -8,6 +9,7 @@ import { css } from "@emotion/css";
 import { Button } from "@mantine/core";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { email } from "zod";
 
 const ragOptions = [
   {
@@ -27,7 +29,6 @@ const Navbar = () => {
   const { isMobile } = useViewport();
   const margin = isMobile ? "0 0 0 60px" : "0";
   const { user } = useAuth();
-  console.log("user in navbar", user);
 
   return (
     <>
@@ -54,7 +55,7 @@ const Navbar = () => {
 
         <ContentWrapper direction="row" gap="10px">
           {user ? (
-            <div>Welcome, {user.email}!</div>
+            <Avatar email={user.email} size={36} />
           ) : (
             <>
               <Button component={Link} to="/sign-in">
