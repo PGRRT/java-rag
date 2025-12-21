@@ -14,8 +14,9 @@ import {
 } from "@mantine/core";
 import { ChevronUp, MoveUp, Paperclip } from "lucide-react";
 import { useState } from "react";
+import type { UUID } from "@/types/index";
 
-const ChatAIInput = ({ chatId }: { chatId?: string }) => {
+const ChatAIInput = ({ chatId }: { chatId?: UUID }) => {
   const { file, setFile, message, setMessage, sendMessage } = useChatInput({
     chatId,
   });

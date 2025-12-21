@@ -14,7 +14,7 @@ export const router = createBrowserRouter([
     // errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
-      { path: "chat/:chatId", element: <Home /> },
+      { path: "c/:chatId", element: <Home /> },
       { path: "sign-in", element: <SignInPage /> },
       { path: "sign-up", element: <SignUpPage /> },
     ],

@@ -33,7 +33,7 @@ export const fetchMessagesAction = createAsyncThunk(
 export const postMessagesAction = createAsyncThunk(
   "messages/postMessage",
   async (
-    { chatId, content }: { chatId: string; content: string },
+    { chatId, content }: { chatId: UUID; content: string },
     { rejectWithValue }
   ) => {
     const response = await exceptionWrapper(async () => {

@@ -12,6 +12,10 @@ import com.example.chat.service.SseService;
 import com.example.chat.service.impl.ChatServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,20 +39,17 @@ public class ChatController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ChatResponse>> getAllChats() {
-        List<ChatResponse> allChatsWithMessages = chatService.getAllChats();
+    public ResponseEntity<Page<ChatResponse>> getAllChats(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "false") boolean includeGlobal
+    ) {
+        // extract email from security context
+        String email = null;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
 
-        return new ResponseEntity<>(allChatsWithMessages, HttpStatus.OK);
-    }
-
-    /***
-     * Get all chats of the user
-     * Returns a list of ChatResponse objects representing all chats associated with the user and global chats
-     * @return
-     */
-    @GetMapping("/with-messages")
-    public ResponseEntity<List<ChatWithMessagesResponse>> getAllChatsWithMessages() {
-        List<ChatWithMessagesResponse> allChatsWithMessages = chatService.getAllChatsWithMessages();
+        Page<ChatResponse> allChatsWithMessages  = chatService.getAllChats(includeGlobal,pageable);
 
         return new ResponseEntity<>(allChatsWithMessages, HttpStatus.OK);
     }

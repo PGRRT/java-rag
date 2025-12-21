@@ -29,7 +29,7 @@ const connectSse = ({
 }) => {
   const url = `http://localhost:8080/api/v1/chats/${chatId}/stream`;
   let sse: EventSource | null = null;
-  let retries = 0;
+  const retries = 0;
   const maxRetries = 4;
   let retryTimer: number | null = null;
   let closedByClient = false;
@@ -122,7 +122,7 @@ const connectSse = ({
   return { close };
 };
 
-const useChat = ({ chatId }: { chatId?: string }) => {
+const useChat = ({ chatId }: { chatId?: UUID }): UseChat => {
   const messages = useAppSelector((state) => state.message.messages);
   const dispatch = useAppDispatch();
 

@@ -16,6 +16,8 @@ import com.example.chat.service.ChatService;
 import com.example.chat.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,30 +33,16 @@ public class ChatServiceImpl implements ChatService {
     private final MessageMapper messageMapper;
 
     @Override
-    public List<ChatResponse> getAllChats() {
-
+    public Page<ChatResponse> getAllChats(boolean includeGlobal, Pageable pageable) {
         // TODO:
         // in future we will get this from security context
         UUID userId = null;
-        List<Chat> chatsForUser = chatRepository.findChatsForUser(userId);
+        Page<Chat> chatsPage = chatRepository.findChatsForUser(userId, includeGlobal, pageable);
 
-        return chatsForUser.stream().map(
-                chatMapper::toChatResponse
-        ).toList();
+        return chatsPage.map(chatMapper::toChatResponse);
     }
 
-    @Override
-    public List<ChatWithMessagesResponse> getAllChatsWithMessages() {
 
-        // TODO:
-        // in future we will get this from security context
-        UUID userId = null;
-        List<Chat> chatsForUser = chatRepository.findChatsForUser(userId);
-
-        return chatsForUser.stream().map(
-                chatMapper::toChatWithMessagesResponse
-        ).toList();
-    }
 
     @Override
     @Transactional

@@ -149,8 +149,6 @@ export default function Sidebar() {
             top: 50%;
             transform: translateY(-50%);
             margin-left: 15px;
-            // height: 35px;
-            // width: 35px;
 
             opacity: 0;
             transition: all 0.2s;

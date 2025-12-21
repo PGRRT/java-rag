@@ -6,14 +6,15 @@ import com.example.chat.domain.dto.chat.response.ChatWithMessagesResponse;
 import com.example.chat.domain.dto.chat.response.CreateChatResponse;
 import com.example.chat.domain.dto.message.response.MessageResponse;
 import com.example.chat.domain.entities.Chat;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface ChatService {
-    List<ChatWithMessagesResponse> getAllChatsWithMessages();
-    List<ChatResponse> getAllChats();
+    Page<ChatResponse> getAllChats(boolean includeGlobal, Pageable pageable);
     CreateChatResponse saveChat(CreateChatRequest chatRequest);
 
     List<MessageResponse> getAllMessagesInChat(UUID chatId);

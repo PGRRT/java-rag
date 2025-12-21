@@ -1,15 +1,16 @@
 import type { MessageResponse } from "@/types/message";
+import type { UUID } from "@/types/index";
 
 export interface ChatResponse {
-  id: string;
+  id: UUID;
   title: string;
 }
 export interface ChatWithMessagesResponse {
-  id: string;
+  id: UUID;
   title: string;
   messages: MessageResponse[];
 }
 export interface CreateChatResponse {
-  id: string;
+  id: UUID;
   title: string;
 }

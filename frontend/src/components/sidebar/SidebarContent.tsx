@@ -5,81 +5,60 @@ import colorPalette from "@/constants/colorPalette";
 import { styles } from "@/constants/styles";
 import { typography } from "@/constants/typography";
 import { css, cx } from "@emotion/css";
-import { Tooltip, UnstyledButton, Text, Button, Loader } from "@mantine/core";
-import { SearchIcon, SettingsIcon, SquarePen } from "lucide-react";
+import { Loader } from "@mantine/core";
+import { SearchIcon, SquarePen } from "lucide-react";
 import { useState, useRef, useCallback } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { useInfiniteChats } from "@/hooks/useInfiniteChats";
+import { SidebarOption, type SidebarItem } from "@/types/sidebarOptions";
 
-const generalOptions = [
+const generalOptions: SidebarItem[] = [
   {
     id: 1,
     label: "New chat",
     icon: SquarePen,
-    action: () => console.log("New chat clicked"),
     isDisabled: false,
+    type: SidebarOption.NewChat,
   },
   {
     id: 2,
     label: "Search chats",
     icon: SearchIcon,
-    action: () => console.log("Search chats clicked"),
     isDisabled: true,
-  },
-];
-
-const defaultChat = [
-  {
-    id: 1,
-    label: "Amazing road to AI",
-  },
-  {
-    id: 2,
-    label: "Understanding machine learning",
-  },
-  {
-    id: 3,
-    label: "Deep dive into neural networks",
+    type: SidebarOption.SearchChats,
   },
 ];
 
 const SidebarContent = ({ expanded }) => {
-  // Zamień to na swój hook gdy będzie gotowy endpoint:
-  // const { chats, isLoading, isLoadingMore, loadMore, isReachingEnd } = useInfiniteChats();
-
-  // Tymczasowo dummy data (symulacja 150 chatów)
-  const [chats, setChats] = useState(
-    Array.from({ length: 150 }, (_, i) => ({
-      id: i + 1,
-      label: `Chat ${i + 1} - ${
-        ["AI Discussion", "ML Research", "Neural Networks", "Data Science"][
-          i % 4
-        ]
-      }`,
-    }))
-  );
+  const { chats, isLoading, isLoadingMore, loadMore, isReachingEnd } =
+    useInfiniteChats();
 
   const parentRef = useRef<HTMLDivElement>(null);
 
   const rowVirtualizer = useVirtualizer({
     count: chats.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 42, // wysokość jednego itemu (padding + tekst)
-    overscan: 5, // renderuj 5 dodatkowych itemów poza widokiem
+    estimateSize: () => 42,
+    overscan: 5,
   });
 
   // Detect when user scrolls near bottom to trigger loadMore
-  const lastItemRef = useCallback((node: HTMLDivElement | null) => {
-    if (!node) return;
+  const lastItemRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node) return;
 
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        // loadMore(); // Odkomentuj gdy użyjesz useInfiniteChats
-      }
-    });
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !isLoadingMore && !isReachingEnd) {
+          console.log("Loading more chats...");
+          loadMore();
+        }
+      });
 
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
+      observer.observe(node);
+      return () => observer.disconnect();
+    },
+    [loadMore, isLoadingMore, isReachingEnd]
+  );
 
   if (!expanded) {
     return null;
@@ -101,8 +80,9 @@ const SidebarContent = ({ expanded }) => {
             key={item.id}
             label={item.label}
             icon={item.icon}
-            action={item.action}
             isDisabled={item.isDisabled}
+            type={item.type}
+            id={item.id}
           />
         ))}
       </ContentWrapper>
@@ -127,8 +107,6 @@ const SidebarContent = ({ expanded }) => {
           flex: 1;
           overflow-y: auto;
           overflow-x: hidden;
-
-        
         `}
       >
         <div
@@ -155,20 +133,20 @@ const SidebarContent = ({ expanded }) => {
                 }}
               >
                 <SidebarChatItem
-                  label={chat.label}
-                  action={() => console.log(`Chat ${chat.id} clicked`)}
+                  id={chat.id}
+                  type={SidebarOption.ChatItem}
+                  label={chat.title}
                 />
               </div>
             );
           })}
         </div>
 
-        {/* Loader gdy ładuje się więcej - odkomentuj gdy użyjesz useInfiniteChats */}
-        {/* {isLoadingMore && (
+        {isLoadingMore && (
           <ContentWrapper justify="center" padding="10px">
             <Loader size="sm" />
           </ContentWrapper>
-        )} */}
+        )}
       </div>
     </ContentWrapper>
   );

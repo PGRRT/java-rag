@@ -3,21 +3,48 @@ import IconWrapper from "@/components/ui/IconWrapper";
 import colorPalette from "@/constants/colorPalette";
 import { styles } from "@/constants/styles";
 import { typography } from "@/constants/typography";
+import { SidebarOption, type SidebarOptionType } from "@/types/sidebarOptions";
 import { css, cx } from "@emotion/css";
+import { useNavigate } from "react-router-dom";
 
 const SidebarChatItem = ({
   label,
   icon,
-  action,
   isDisabled = false,
   smallPadding = false,
+  type,
+  id,
 }: {
   label: string;
   icon?: React.ElementType;
-  action?: () => void;
   isDisabled?: boolean;
   smallPadding?: boolean;
+  type?: SidebarOptionType;
+  id?: number;
 }) => {
+  const navigate = useNavigate();
+
+  const getActionForOption = () => {
+    switch (type) {
+      case SidebarOption.NewChat:
+        return () => {
+          navigate("/");
+        };
+      case SidebarOption.SearchChats:
+        return () => {
+          // Implement search chats action
+          // console.log("Search chats action triggered");
+        };
+      case SidebarOption.ChatItem:
+        return () => {
+          navigate(`/c/${id}`);
+        };
+      default:
+        return () => {};
+    }
+  };
+
+  const action = getActionForOption();
   return (
     <>
       <ContentWrapper

@@ -9,11 +9,12 @@ import { navbarHeight } from "@/layouts/Navbar";
 import { css, cx } from "@emotion/css";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import type { UUID } from "@/types/index";
 
 export const AiInputHeight = 90;
 const chatPadding = 12;
 const additionalSpace = 30;
-const ChatContainer = ({ chatId }: { chatId: string }) => {
+const ChatContainer = ({ chatId }: { chatId: UUID }) => {
   const { messages } = useChat({ chatId });
   console.log("messages", messages);
 

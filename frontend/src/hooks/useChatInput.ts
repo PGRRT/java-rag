@@ -8,8 +8,9 @@ import { createChatAction } from "@/redux/slices/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { postMessagesAction } from "@/redux/slices/messageSlice";
 import { useUserSWR } from "@/hooks/useUser";
+import type { UUID } from "@/types/index";
 
-const useChatInput = ({ chatId = "" }: { chatId?: string }) => {
+const useChatInput = ({ chatId = "" as UUID }: { chatId?: UUID }) => {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState<string>("");
   const { user } = useUserSWR();
@@ -18,7 +19,7 @@ const useChatInput = ({ chatId = "" }: { chatId?: string }) => {
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let tempChatId: string = chatId;
+    let tempChatId: UUID = chatId;
 
     if (!message.trim()) {
       return;
@@ -43,7 +44,7 @@ const useChatInput = ({ chatId = "" }: { chatId?: string }) => {
       const chatId = res.payload.id;
       tempChatId = chatId;
       setTimeout(() => {
-        navigate(`/chat/${chatId}`, {
+        navigate(`/c/${chatId}`, {
           replace: false,
         });
       }, 1000);

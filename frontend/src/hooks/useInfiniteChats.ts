@@ -1,41 +1,53 @@
 import useSWRInfinite from "swr/infinite";
 import axios from "axios";
+import { chatApi } from "@/api/chatApi";
+import apiClient from "@/api/apiClient";
+import type { UUID } from "@/types/index";
 
 const CHATS_PER_PAGE = 10;
 
 interface Chat {
-  id: number;
-  label: string;
-  // dodaj inne pola które przychodzą z backendu
+  id: UUID;
+  title: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+interface PageResponse {
+  content: Chat[];
+  empty: boolean;
+  first: boolean;
+  last: boolean;
+  number: number;
+  numberOfElements: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
+const fetcher = (url: string) => apiClient.get(url).then((res) => res.data);
 
 export const useInfiniteChats = () => {
-  const getKey = (pageIndex: number, previousPageData: Chat[]) => {
-    // Jeśli poprzednia strona była pusta, kończymy
-    if (previousPageData && !previousPageData.length) return null;
+  const getKey = (pageIndex: number, previousPageData: PageResponse | null) => {
+    if (previousPageData && previousPageData.last) return null;
 
-    // Endpoint z paginacją - dostosuj do swojego API
-    return `/api/chats?page=${pageIndex}&limit=${CHATS_PER_PAGE}`;
+    return `/api/v1/chats?page=${pageIndex}&size=${CHATS_PER_PAGE}&includeGlobal=true`;
   };
 
   const { data, error, size, setSize, isLoading, isValidating } =
-    useSWRInfinite<Chat[]>(getKey, fetcher, {
-      revalidateFirstPage: false, // nie refetchuj pierwszej strony przy każdej zmianie
-      persistSize: true, // pamiętaj ile stron już załadowano
-      revalidateOnFocus: false, // nie refetchuj gdy wrócisz do okna
-      dedupingInterval: 60000, // cache na 60s
+    useSWRInfinite<PageResponse>(getKey, fetcher, {
+      revalidateFirstPage: false, // Don't revalidate the first page on focus
+      persistSize: true, // Keep the size when revalidating
+      revalidateOnFocus: false, // Disable revalidation on window focus
+      dedupingInterval: 60000, // 1 minute deduplication interval
     });
 
-  const chats = data ? data.flat() : [];
+  const chats = data ? data.flatMap((page) => page.content) : [];
   const isLoadingMore =
     isLoading || (size > 0 && data && typeof data[size - 1] === "undefined");
-  const isEmpty = data?.[0]?.length === 0;
+  const isEmpty = data?.[0]?.content.length === 0;
   const isReachingEnd =
-    isEmpty || (data && data[data.length - 1]?.length < CHATS_PER_PAGE);
+    isEmpty || (data && data[data.length - 1]?.last === true);
 
   const loadMore = () => {
     if (!isLoadingMore && !isReachingEnd) {
