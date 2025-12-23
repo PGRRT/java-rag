@@ -8,9 +8,14 @@ import com.example.user.domain.entities.User;
 import com.example.user.mapper.UserMapper;
 import com.example.user.repository.UserRepository;
 import com.example.user.security.JwtService;
+import com.example.user.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +29,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
     private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
     @Transactional
     public UserResponse saveUser(RegisterUserRequest registerUserRequest, boolean hasOtpValid) {
@@ -80,17 +86,36 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
-    public UserResponse loginUser(LoginUserRequest registerRequestDto) {
-        User user = userRepository.findUserWithRoleByEmail(registerRequestDto.getEmail()).orElse(null);
-        // User user =
-        // userRepository.findByEmail(registerRequestDto.getEmail()).orElse(null);
-        if (user == null || !passwordEncoder.matches(registerRequestDto.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Invalid email or password");
-        } else if (!user.isActive()) {
-            throw new IllegalStateException("User account is not active"); // skip for now
-        }
+    public UserResponse loginUser(LoginUserRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
 
-        return userMapper.toDto(user);
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+
+        String role = principal.authorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(authority -> authority.replace("ROLE_", ""))
+                .findFirst()
+                .orElse("USER");
+
+        return  UserResponse.builder()
+                .id(principal.id())
+                .email(principal.email())
+                .role(role)
+                .build();
+//                userMapper.toDtoFromPrincipal(principal);
+
+//        User user = userRepository.findUserWithRoleByEmail(registerRequestDto.getEmail()).orElse(null);
+//        // User user =
+//        // userRepository.findByEmail(registerRequestDto.getEmail()).orElse(null);
+//        if (user == null || !passwordEncoder.matches(registerRequestDto.getPassword(), user.getPassword())) {
+//            throw new BadCredentialsException("Invalid email or password");
+//        } else if (!user.isActive()) {
+//            throw new IllegalStateException("User account is not active"); // skip for now
+//        }
+//
+//        return userMapper.toDto(user);
     }
 
 }
