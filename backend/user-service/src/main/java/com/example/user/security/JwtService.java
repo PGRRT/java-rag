@@ -117,35 +117,12 @@ public class JwtService {
         return getClaims(token).getId();
     }
 
-    public boolean isTokenExpired(String token) {
+
+    public boolean isTokenInvalid(String token) {
         try {
             Claims claims = getClaims(token);
+
             return claims.getExpiration().before(new Date());
-        } catch (JwtException e) {
-            log.error("Error checking token expiration: {}", e.getMessage());
-            return true;
-        }
-    }
-
-    public long getTokenExpiration(String token) {
-        try {
-            Claims claims = getClaims(token);
-            return claims.getExpiration().getTime();
-        } catch (JwtException e) {
-            log.error("Error getting token expiration: {}", e.getMessage());
-            throw new IllegalArgumentException("Invalid token");
-        }
-    }
-
-    public boolean isValidToken(String token) {
-        try {
-            Claims claims = getClaims(token);
-
-            if (claims.getExpiration().before(new Date())) {
-                return false;
-            }
-
-            return true;
         } catch (SecurityException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
@@ -157,7 +134,7 @@ public class JwtService {
         } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty: {}", e.getMessage());
         }
-        return false;
+        return true;
     }
 
     public String getAccessToken(JwtUserClaims jwtUserClaims) {

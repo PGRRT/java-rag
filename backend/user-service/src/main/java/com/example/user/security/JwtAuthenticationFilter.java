@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String jwt = recoverToken(request);
 
-        if (jwt == null || !jwtService.isValidToken(jwt)) {
+        if (jwt == null || jwtService.isTokenInvalid(jwt)) {
             filterChain.doFilter(request, response);
             return;
         }

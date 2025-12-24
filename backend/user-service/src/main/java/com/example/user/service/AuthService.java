@@ -1,13 +1,8 @@
 package com.example.user.service;
 
-import com.example.user.domain.dto.auth.AccessRefreshToken;
 import com.example.user.domain.dto.auth.JwtUserClaims;
-import com.example.user.domain.dto.auth.response.UserWithCookie;
-import com.example.user.domain.dto.user.response.UserResponse;
-import com.example.user.domain.entities.User;
 import com.example.user.exceptions.InvalidTokenException;
 import com.example.user.exceptions.TokenRefreshException;
-import com.example.user.exceptions.UserNotActiveException;
 import com.example.user.mapper.UserMapper;
 import com.example.user.repository.UserRepository;
 import com.example.user.security.JwtService;
@@ -17,7 +12,6 @@ import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -42,7 +36,7 @@ public class AuthService {
             }
 
             // Check if the token is expired
-            if (jwtService.isTokenExpired(refreshTokenCookie)) {
+            if (jwtService.isTokenInvalid(refreshTokenCookie)) {
                 throw new JwtException("Invalid refresh token");
             }
 
