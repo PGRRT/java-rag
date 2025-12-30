@@ -57,14 +57,6 @@ public class AuthController {
         String accessToken = authService.refreshToken(refreshToken);
 
         return ResponseEntity.ok().body(accessToken);
-//        AuthResponse<UserResponse> authResponse = AuthResponse.<UserResponse>builder()
-//                .accessToken(userWithCookie.getAccessToken())
-//                .user(userWithCookie.getUser())
-//                .build();
-//
-//        return ResponseEntity.ok()
-////                .header(HttpHeaders.SET_COOKIE, userWithCookie.getRefreshToken().toString())
-//                .body(authResponse);
     }
 
     @PostMapping("/register")

@@ -1,5 +1,6 @@
 package com.example.common.jwt.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 public record UserPrincipal(UUID id,
                             String email,
-                            String password,
+                            @JsonIgnore String password,
                             boolean isActive,
                             Collection<? extends GrantedAuthority> authorities) implements UserDetails {
     @Override public String getUsername() { return email; }
