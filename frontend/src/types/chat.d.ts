@@ -1,5 +1,5 @@
 import type { MessageResponse } from "@/types/message";
-import type { UUID } from "@/types/index";
+import type { UUID } from "@/types/global";
 
 export interface ChatResponse {
   id: UUID;

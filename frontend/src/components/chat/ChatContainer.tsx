@@ -9,7 +9,7 @@ import { navbarHeight } from "@/layouts/Navbar";
 import { css, cx } from "@emotion/css";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import type { UUID } from "@/types/index";
+import type { UUID } from "@/types/global";
 
 export const AiInputHeight = 90;
 const chatPadding = 12;

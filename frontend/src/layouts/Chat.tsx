@@ -18,7 +18,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import Logo from "@/components/ui/Logo";
 import colorPalette from "@/constants/colorPalette";
-import type { UUID } from "@/types";
+import type { UUID } from "@/types/global";
 
 const Chat = () => {
   const {

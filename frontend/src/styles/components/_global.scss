@@ -1,0 +1,15 @@
+// "&[data-active]": {
+//           //   color: colorPalette.white,
+//           // },
+
+//           // "&:hover": {
+//           //   color: `${colorPalette.white} !important`,
+//           // },
+
+.mantine-SegmentedControl-label[data-active] {
+    color: var(--color-text-active) !important;
+}
+
+.mantine-SegmentedControl-label:hover {
+    color: var(--color-text-active) !important;
+}

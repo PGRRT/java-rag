@@ -7,6 +7,7 @@ import com.example.chat.domain.dto.chat.response.ChatWithMessagesResponse;
 import com.example.chat.domain.dto.chat.response.CreateChatResponse;
 import com.example.chat.domain.dto.message.response.MessageResponse;
 import com.example.chat.domain.entities.Chat;
+import com.example.chat.domain.enums.ChatType;
 import com.example.chat.service.ChatService;
 import com.example.chat.service.SseService;
 import com.example.chat.service.impl.ChatServiceImpl;
@@ -48,13 +49,13 @@ public class ChatController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "false") boolean includeGlobal,
+            @RequestParam(required = false) ChatType type,
             @AuthenticationPrincipal UserPrincipal user
     ) {
         UUID userId = user != null ? user.id() : null;
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
 
-        Page<ChatResponse> allChatsWithMessages = chatService.getGlobalAndUserChats(userId, includeGlobal, pageable);
+        Page<ChatResponse> allChatsWithMessages = chatService.getGlobalAndUserChats(userId, type, pageable);
 
         return new ResponseEntity<>(allChatsWithMessages, HttpStatus.OK);
     }

@@ -16,3 +16,5 @@ export interface SidebarItem {
   isDisabled?: boolean;
   type: SidebarOptionType;
 };
+
+export type chatMode = "ALL" | "GLOBAL" | "PRIVATE";

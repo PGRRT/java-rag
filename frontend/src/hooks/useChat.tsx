@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { ChatEvent } from "@/api/enums/ChatEvent";
 import type { MessageResponse } from "@/types/message";
 import { Sender, type SenderType } from "@/api/enums/Sender";
-import type { UUID } from "@/types";
+import type { UUID } from "@/types/global";
 
 const formMessage = ({
   id,

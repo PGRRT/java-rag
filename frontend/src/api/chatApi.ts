@@ -3,7 +3,7 @@ import type { ChatRoomType } from "@/api/enums/ChatRoom";
 import type { SenderType } from "@/api/enums/Sender";
 import type { ChatResponse, CreateChatResponse } from "@/types/chat";
 import type { CreateMessageResponse, MessageResponse } from "@/types/message";
-import type { UUID } from "@/types/index";
+import type { UUID } from "@/types/global";
 import type { AxiosResponse } from "axios";
 
 export const chatApi = {

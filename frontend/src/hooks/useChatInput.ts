@@ -8,7 +8,7 @@ import { createChatAction } from "@/redux/slices/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { postMessagesAction } from "@/redux/slices/messageSlice";
 import { useUserSWR } from "@/hooks/useUser";
-import type { UUID } from "@/types/index";
+import type { UUID } from "@/types/global";
 
 const useChatInput = ({ chatId = "" as UUID }: { chatId?: UUID }) => {
   const [file, setFile] = useState<File | null>(null);

@@ -3,7 +3,8 @@ import { store } from "@/redux/store";
 import { setAccessToken, setUser } from "@/redux/slices/authSlice";
 
 const backendApi = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL,
+  baseURL: "http://localhost:8080",
+  // baseURL: import.meta.env.VITE_BACKEND_URL,
   timeout: 10000,
   withCredentials: true,
 });

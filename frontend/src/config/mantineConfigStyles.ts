@@ -326,6 +326,34 @@ export const mantineTheme = createTheme({
         },
       }),
     },
+
+    SegmentedControl: {
+      styles: () => ({
+        root: {
+          backgroundColor: colorPalette.backgroundSecondary,
+          border: `1px solid ${colorPalette.strokePrimary}`,
+        },
+        label: {
+          fontSize: "14px",
+          fontWeight: 400,
+          lineHeight: "120%",
+          color: colorPalette.textMuted,
+
+          // moved to scss since here it was not working with [data-active] and hover in some cases
+          // "&[data-active]": {
+          //   color: colorPalette.white,
+          // },
+
+          // "&:hover": {
+          //   color: `${colorPalette.white} !important`,
+          // },
+        },
+
+        indicator: {
+          backgroundColor: colorPalette.backgroundTertiary,
+        },
+      }),
+    },
   },
 
   // Other settings
