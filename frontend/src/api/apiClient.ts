@@ -9,7 +9,7 @@ const backendApi = axios.create({
   withCredentials: true,
 });
 
-// Kolejka requestów i flagi stanu
+// Request queue and state flags
 let isRefreshing = false;
 let isInitialized = false;
 let failedQueue: Array<{
@@ -28,7 +28,7 @@ const processQueue = (error: any = null) => {
   failedQueue = [];
 };
 
-// Inicjalizacja auth przy starcie aplikacji
+// Initialize auth on app startup
 export const initializeAuth = async (): Promise<boolean> => {
   if (isInitialized) return true;
 
@@ -36,7 +36,7 @@ export const initializeAuth = async (): Promise<boolean> => {
   try {
     console.log("[Auth] Initializing authentication...");
     const response = await backendApi.post("/api/v1/auth/refresh");
-    
+
     store.dispatch(setAccessToken(response.data));
 
     console.log("[Auth] Authentication initialized successfully");
@@ -48,22 +48,22 @@ export const initializeAuth = async (): Promise<boolean> => {
     );
     return false;
   } finally {
-    isInitialized = true; // Zawsze ustawiamy na true, aby nie blokować innych requestów
-    processQueue(); // Zwolnij kolejkę niezależnie od wyniku
+    isInitialized = true; // Always set to true to avoid blocking other requests
+    processQueue(); // Release queue regardless of result
     isRefreshing = false;
   }
 };
 
-// Request interceptor - dodaje token i czeka na inicjalizację
+// Request interceptor - adds token and waits for initialization
 backendApi.interceptors.request.use(
   async (config) => {
-    // Pomiń inicjalizację dla endpointu refresh i auth
+    // Skip initialization for refresh and auth endpoints
     const skipInit =
       config.url?.includes("/auth/refresh") ||
       config.url?.includes("/auth/login") ||
       config.url?.includes("/auth/register");
 
-    // Czekaj tylko jeśli refresh trwa w tym momencie
+    // Wait only if refresh is currently in progress
     if (!skipInit && isRefreshing) {
       console.log("[Auth] Request queued, waiting for refresh to complete...");
       await new Promise((resolve, reject) => {
@@ -71,7 +71,7 @@ backendApi.interceptors.request.use(
       });
     }
 
-    // Dodaj token jeśli istnieje
+    // Add token if it exists
     const state = store.getState();
     const token = state.auth.accessToken;
 
@@ -87,13 +87,17 @@ backendApi.interceptors.request.use(
   }
 );
 
-// Response interceptor - automatyczny refresh przy 401
+// Response interceptor - automatic refresh on 401
 backendApi.interceptors.response.use(
   (res) => res,
   async (err) => {
     const originalRequest = err.config;
 
-    // Jeśli 401 i nie próbujemy już ponownie
+    if (originalRequest?.url?.includes("/auth/refresh")) {
+      return Promise.reject(err);
+    }
+
+    // If 401 and not already retrying
     if (err.response?.status === 401 && !originalRequest._retry) {
       if (
         window.location.pathname === "/sign-in" ||
@@ -101,10 +105,10 @@ backendApi.interceptors.response.use(
       ) {
         return Promise.reject(err);
       }
-      
+
       console.log("[Auth] 401 Unauthorized - attempting token refresh");
 
-      // Jeśli już trwa refresh, dodaj do kolejki
+      // If refresh is already in progress, add to queue
       if (isRefreshing) {
         console.log("[Auth] Refresh in progress, queuing request...");
         return new Promise((resolve, reject) => {
@@ -130,30 +134,29 @@ backendApi.interceptors.response.use(
         const response = await backendApi.post("/api/v1/auth/refresh");
         const newAccessToken = response.data;
 
-        // Zapisz nowy token w store (response.data to AuthResponse)
+        // Save new token in store (response.data is AuthResponse)
         store.dispatch(setAccessToken(newAccessToken));
 
-        // Dodaj nowy token do oryginalnego requesta
+        // Add new token to original request
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
-        // Przetwórz kolejkę
         processQueue();
         console.log("[Auth] Token refreshed successfully, retrying request");
 
-        // Powtórz oryginalny request
+        // Retry original request
         return backendApi(originalRequest);
       } catch (refreshError) {
         console.error("[Auth] Token refresh failed:", refreshError);
 
-        // Odrzuć wszystkie w kolejce
+        // Reject all requests in queue
         processQueue(refreshError);
 
-        // Reset stanu
+        // Reset state
         store.dispatch(setAccessToken(null));
         store.dispatch(setUser(null));
         isInitialized = false;
 
-        // Przekieruj do logowania (opcjonalnie)
+        // Redirect to login (optional)
         if (
           window.location.pathname !== "/sign-in" &&
           window.location.pathname !== "/sign-up"
@@ -168,7 +171,7 @@ backendApi.interceptors.response.use(
       }
     }
 
-    // Loguj inne błędy tylko w konsoli
+    // Log other errors to console only
     if (err.response) {
       console.error(
         `[API Error] ${err.config?.method?.toUpperCase()} ${err.config?.url}:`,

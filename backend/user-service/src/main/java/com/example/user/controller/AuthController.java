@@ -46,6 +46,10 @@ public class AuthController {
     public ResponseEntity<String> refresh(
             @CookieValue(required = false, name = "refreshToken") String refreshToken) {
 
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is missing");
+        }
+
         String accessToken = authService.refreshToken(refreshToken);
 
         return ResponseEntity.ok().body(accessToken);

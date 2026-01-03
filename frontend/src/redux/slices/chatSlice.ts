@@ -11,6 +11,7 @@ const initialState = {
   chats: [] as Array<{ id: string; title: string }>,
   isLoading: false,
   error: null as string | null,
+  chatsRefreshTrigger: false as boolean,
 };
 
 // export const fetchChatsAction = createAsyncThunk(
@@ -37,11 +38,11 @@ export const createChatAction = createAsyncThunk(
       return chatApi.createChat(message, chatType);
     }, "Chat created successfully");
 
-    revalidateChats();
-
     if (!response.success) {
       return rejectWithValue("Failed to create chat");
     }
+
+    // revalidateChats();
 
     return response.data;
   }
@@ -50,8 +51,15 @@ export const createChatAction = createAsyncThunk(
 const chatSlice = createSlice({
   name: "chat",
   initialState,
-  reducers: {},
+  reducers: {
+    clearChatsRefreshTrigger: (state) => {
+      state.chatsRefreshTrigger = false;
+    }
+  },
   extraReducers: (builder) => {
+    builder.addCase(createChatAction.fulfilled, (state) => {
+      state.chatsRefreshTrigger = true;
+    });
     // builder
     //   .addCase(fetchChatsAction.pending, (state) => {
     //     state.isLoading = true;
@@ -70,5 +78,5 @@ const chatSlice = createSlice({
   },
 });
 
-// export const { fetchChats } = chatSlice.actions;
+export const { clearChatsRefreshTrigger } = chatSlice.actions;
 export default chatSlice.reducer;

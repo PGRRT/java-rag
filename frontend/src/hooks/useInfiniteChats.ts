@@ -7,39 +7,24 @@ import type { UUID } from "@/types/global";
 import type { PageResponse } from "@/types/backendResponse";
 import type { chatMode } from "@/types/sidebarOptions";
 import { useEffect } from "react";
+import type { ChatResponse } from "@/types/chat";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { clearChatsRefreshTrigger } from "@/redux/slices/chatSlice";
 
 const CHATS_PER_PAGE = 10;
 
 const fetcher = (url: string) => apiClient.get(url).then((res) => res.data);
 
 export const revalidateChats = () => {
-  mutate((key: any) => {
-    if (typeof key !== "string") return false;
+  mutate(
+    (key: any) => {
+      console.log("Mutating chats for key:", key);
 
-    // if (!key.includes("/api/v1/chats")) return false;
-
-    return true;
-  });
-};
-
-// Funkcja do debugowania cache
-export const logSWRCache = () => {
-  console.log("=== SWR Cache ===");
-  const allKeys = Array.from(cache.keys());
-  console.log("All cache keys:", allKeys);
-
-  // Filtruj tylko klucze związane z chatami
-  const chatKeys = allKeys.filter(
-    (key: any) => typeof key === "string" && key.includes("/api/v1/chats")
+      return typeof key === "string" && key.includes("/api/v1/chats");
+    },
+    undefined,
+    { revalidate: true }
   );
-  console.log("Chat cache keys:", chatKeys);
-
-  // Pokaż wartości
-  chatKeys.forEach((key: any) => {
-    console.log(`Key: ${key}`);
-    console.log("Value:", cache.get(key));
-  });
-  console.log("=================");
 };
 
 export const useInfiniteChats = ({ mode }: { mode: chatMode }) => {
@@ -56,34 +41,40 @@ export const useInfiniteChats = ({ mode }: { mode: chatMode }) => {
 
     return url;
   };
-  console.log("mode", mode);
 
-  // const { cache } = useSWRConfig();
+  const {
+    data,
+    error,
+    size,
+    setSize,
+    isLoading,
+    isValidating,
+    mutate: localMutate,
+  } = useSWRInfinite<PageResponse>(getKey, fetcher, {
+    revalidateFirstPage: false, // Don't revalidate the first page on focus
+    persistSize: true, // Keep the size when revalidating
+    revalidateOnFocus: false, // Disable revalidation on window focus
+  });
 
-  // const logCache = () => {
-  //   console.group("📦 SWR Cache Dump");
+  const { mutate: globalMutate } = useSWRConfig();
 
-  //   // Cache jest Mapą, więc iterujemy po niej
-  //   // W SWR v2 cache działa trochę jak Mapa
-  //   for (const [key, value] of cache as any) {
-  //     console.log("🔑 Klucz:", key);
-  //     console.log("📄 Dane:", value.data);
-  //     console.log("❌ Błąd:", value.error);
-  //     console.log("-------------------");
-  //   }
+  const chatsRefreshTrigger = useAppSelector(
+    (state) => state.chat.chatsRefreshTrigger
+  );
 
-  //   console.groupEnd();
-  // };
+  const dispatch = useAppDispatch();
 
-  // logCache()
+  useEffect(() => {
+    console.log("asdzxc");
 
-  const { data, error, size, setSize, isLoading, isValidating } =
-    useSWRInfinite<PageResponse>(getKey, fetcher, {
-      revalidateFirstPage: false, // Don't revalidate the first page on focus
-      persistSize: true, // Keep the size when revalidating
-      revalidateOnFocus: false, // Disable revalidation on window focus
-      dedupingInterval: 60000, // 1 minute deduplication interval
-    });
+    if (chatsRefreshTrigger == true) {
+      console.log("I am revalidating");
+      dispatch(clearChatsRefreshTrigger());
+
+      localMutate();
+      revalidateChats();
+    }
+  }, [chatsRefreshTrigger, localMutate, dispatch]);
 
   // useEffect(() => {
   //   // Reset to first page when mode changes

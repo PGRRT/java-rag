@@ -59,10 +59,6 @@ const Chat = () => {
 
           <ChatAIInput />
 
-          <h2 style={{ color: "red" }}>
-            Dodac private albo global chat button
-          </h2>
-
           <ContentWrapper
             direction="row"
             gap="0.5rem"
