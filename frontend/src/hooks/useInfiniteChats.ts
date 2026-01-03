@@ -18,8 +18,6 @@ const fetcher = (url: string) => apiClient.get(url).then((res) => res.data);
 export const revalidateChats = () => {
   mutate(
     (key: any) => {
-      console.log("Mutating chats for key:", key);
-
       return typeof key === "string" && key.includes("/api/v1/chats");
     },
     undefined,
@@ -56,7 +54,6 @@ export const useInfiniteChats = ({ mode }: { mode: chatMode }) => {
     revalidateOnFocus: false, // Disable revalidation on window focus
   });
 
-  const { mutate: globalMutate } = useSWRConfig();
 
   const chatsRefreshTrigger = useAppSelector(
     (state) => state.chat.chatsRefreshTrigger
@@ -65,21 +62,14 @@ export const useInfiniteChats = ({ mode }: { mode: chatMode }) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log("asdzxc");
 
     if (chatsRefreshTrigger == true) {
-      console.log("I am revalidating");
       dispatch(clearChatsRefreshTrigger());
 
       localMutate();
       revalidateChats();
     }
   }, [chatsRefreshTrigger, localMutate, dispatch]);
-
-  // useEffect(() => {
-  //   // Reset to first page when mode changes
-  //   setSize(1);
-  // }, [mode]);
 
   const chats = data ? data.flatMap((page) => page.content) : [];
   const isLoadingMore =

@@ -34,6 +34,9 @@ export const createChatAction = createAsyncThunk(
     { message, chatType }: { message: string; chatType: ChatRoomType },
     { rejectWithValue }
   ) => {
+    console.log("message",message);
+    console.log("chatType",chatType);
+    
     const response = await exceptionWrapper(async () => {
       return chatApi.createChat(message, chatType);
     }, "Chat created successfully");

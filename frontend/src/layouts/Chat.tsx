@@ -57,7 +57,7 @@ const Chat = () => {
             </h3>
           </ContentWrapper>
 
-          <ChatAIInput />
+          <ChatAIInput isNewChat />
 
           <ContentWrapper
             direction="row"

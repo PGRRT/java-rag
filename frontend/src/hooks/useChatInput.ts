@@ -14,9 +14,11 @@ import { ChatRoom, type ChatRoomType } from "@/api/enums/ChatRoom";
 const useChatInput = ({
   chatId = "" as UUID,
   mode,
+  isNewChat = false,
 }: {
   chatId?: UUID;
   mode: ChatRoomType;
+  isNewChat?: boolean;
 }) => {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState<string>("");
@@ -24,6 +26,7 @@ const useChatInput = ({
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+
     e.preventDefault();
 
     let tempChatId: UUID = chatId;
@@ -32,7 +35,7 @@ const useChatInput = ({
       return;
     }
 
-    if (!chatId) {
+    if (isNewChat) {
       // Create new chat if chatId is not provided
 
       if (mode == ChatRoom.PRIVATE && !user?.email) {

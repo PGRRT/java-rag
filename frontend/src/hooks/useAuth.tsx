@@ -14,6 +14,7 @@ import {
 import { showToast } from "@/utils/showToast";
 import type { Credentials, RegisterData, User } from "@/types/user";
 import { useUserSWR } from "@/hooks/useUser";
+import { useSWRConfig } from "swr";
 
 interface UseAuthReturn {
   // State
@@ -40,8 +41,8 @@ export const useAuth = (): UseAuthReturn => {
   const navigate = useNavigate();
 
   const { user, loading: isLoading, error } = useUserSWR();
+  const { cache } = useSWRConfig();
 
-  
   const login = useCallback(
     async (credentials: Credentials) => {
       const response = await showToast.async.withLoading(
@@ -89,6 +90,10 @@ export const useAuth = (): UseAuthReturn => {
   );
 
   const logout = useCallback(async (): Promise<void> => {
+    if (cache instanceof Map) {
+      cache.clear();
+    }
+
     const response = await showToast.async.withLoading(
       () => dispatch(logoutUser()).unwrap(),
       {
@@ -99,13 +104,14 @@ export const useAuth = (): UseAuthReturn => {
     );
 
     const { data, error } = response ?? {};
+
     if (data) {
       navigate("/sign-in");
     } else if (error) {
       dispatch(resetAuth());
       navigate("/sign-in");
     }
-  }, [dispatch, navigate]);
+  }, [dispatch, navigate, cache]);
 
   const updateProfile = useCallback(
     (updates: Partial<User>): void => {

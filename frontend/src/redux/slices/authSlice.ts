@@ -72,11 +72,9 @@ export const refreshToken = createAsyncThunk(
 //   async (_, { rejectWithValue }) => {
 //     try {
 //       const response = await userApi.getProfile();
-//       console.log("asdsadasd", response.data);
 
 //       return response.data;
 //     } catch (error: any) {
-//       console.log("Error while getting current user", error);
 
 //       return rejectWithValue(
 //         error.response?.data?.message || "Failed to get user"
@@ -180,11 +178,14 @@ const authSlice = createSlice({
       });
 
     // Logout
-    builder.addCase(logoutUser.fulfilled, () => initialState);
+    builder.addCase(logoutUser.fulfilled, () => {
+      
+      return initialState;
+    });
   },
 });
 
 export const { clearError, updateUser, setAccessToken, setUser, resetAuth } =
   authSlice.actions;
-  
+
 export default authSlice.reducer;
