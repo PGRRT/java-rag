@@ -41,7 +41,7 @@ export const useAuth = (): UseAuthReturn => {
   const navigate = useNavigate();
 
   const { user, loading: isLoading, error } = useUserSWR();
-  const { cache } = useSWRConfig();
+  const { mutate } = useSWRConfig();
 
   const login = useCallback(
     async (credentials: Credentials) => {
@@ -53,9 +53,12 @@ export const useAuth = (): UseAuthReturn => {
           errorMessage: (err) => err || "Login failed",
         }
       );
+
+      await mutate(() => true, undefined, { revalidate: false });
+
       return response;
     },
-    [dispatch]
+    [dispatch, mutate]
   );
 
   const register = useCallback(
@@ -68,9 +71,11 @@ export const useAuth = (): UseAuthReturn => {
           errorMessage: (err) => err || "Registration failed",
         }
       );
+      await mutate(() => true, undefined, { revalidate: false });
+
       return response;
     },
-    [dispatch]
+    [dispatch, mutate]
   );
 
   const createOtp = useCallback(
@@ -90,10 +95,6 @@ export const useAuth = (): UseAuthReturn => {
   );
 
   const logout = useCallback(async (): Promise<void> => {
-    if (cache instanceof Map) {
-      cache.clear();
-    }
-
     const response = await showToast.async.withLoading(
       () => dispatch(logoutUser()).unwrap(),
       {
@@ -103,6 +104,8 @@ export const useAuth = (): UseAuthReturn => {
       }
     );
 
+    await mutate(() => true, undefined, { revalidate: false });
+
     const { data, error } = response ?? {};
 
     if (data) {
@@ -111,7 +114,7 @@ export const useAuth = (): UseAuthReturn => {
       dispatch(resetAuth());
       navigate("/sign-in");
     }
-  }, [dispatch, navigate, cache]);
+  }, [dispatch, navigate, mutate]);
 
   const updateProfile = useCallback(
     (updates: Partial<User>): void => {

@@ -36,6 +36,9 @@ jwt:
 common:
   jwt:
     enabled: true
+  exception:
+    handler:
+      enabled: true
 
 
 
