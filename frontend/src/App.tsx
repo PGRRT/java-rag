@@ -7,7 +7,7 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
-    // Nie inicjalizuj auth na stronach logowania/rejestracji
+    // Do not initialize auth on sign-in or sign-up pages
     const isAuthPage =
       location.pathname === "/sign-in" || location.pathname === "/sign-up";
 
