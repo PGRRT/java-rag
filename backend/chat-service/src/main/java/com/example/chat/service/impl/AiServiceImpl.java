@@ -12,36 +12,38 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AiServiceImpl implements AiService {
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
     private final MessageService messageService;
-    private final SseService sseService;
 
     @Override
     public String generateResponse(UUID chatId, String prompt) {
-        Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("query", prompt);
+        Map<String, String> requestBody = Map.of("query", prompt);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        AiResponse response = restClient.post().uri("http://api:9000/query/{chatId}", chatId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(requestBody)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (request, res) -> {
+                    log.error("AI service error for chatId {}: status {}", chatId, res.getStatusCode());
+                    throw new RuntimeException("AI service failed with status " + res.getStatusCode());
+                })
+                .body(AiResponse.class);
 
-        HttpEntity<Map<String, String>> entity = new HttpEntity<>(requestBody, headers);
-        AiResponse response = restTemplate.postForObject("http://api:9000/query/" + chatId, entity,AiResponse.class);
         if (response == null) {
             log.error("AI service returned null for chatId {}", chatId);
             throw new RuntimeException("AI service returned null");
