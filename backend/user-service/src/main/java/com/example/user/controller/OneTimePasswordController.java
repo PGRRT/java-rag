@@ -1,6 +1,6 @@
 package com.example.user.controller;
 
-import com.example.user.domain.dto.otp.OtpRequest;
+import com.example.user.domain.dto.otp.request.OtpRequest;
 import com.example.user.service.EmailService;
 import com.example.user.service.OtpCacheService;
 import com.example.user.service.OtpService;

@@ -1,4 +1,4 @@
-package com.example.user.domain.dto.otp;
+package com.example.user.domain.dto.otp.request;
 
 
 import jakarta.validation.constraints.Email;

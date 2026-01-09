@@ -9,20 +9,32 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-
     <modules>
+        <module>common-library</module>
+        <module>gateway</module>
+        <module>eureka</module>
         <module>chat-service</module>
         <module>user-service</module>
-        <module>eureka</module>
-        <module>gateway</module>
-        <module>common-library</module>
     </modules>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>6.2.11</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies><build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><configuration><source>5</source><target>5</target><compilerArgs>--enable-preview</compilerArgs></configuration></plugin></plugins></build>
+<!--    <dependencies>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework</groupId>-->
+<!--            <artifactId>spring-context</artifactId>-->
+<!--            <version>6.2.11</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
+<!--    </dependencies>-->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>25</source>
+                    <target>25</target>
+                    <compilerArgs>--enable-preview</compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
