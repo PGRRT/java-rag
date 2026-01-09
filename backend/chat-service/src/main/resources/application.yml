@@ -11,9 +11,9 @@ spring:
       mode: always
 
 jwt:
-  secret: ${JWT_SECRET:mySecretKey}
-  accessTokenExpirationMs: 86400000 # 24 hours
-  refreshTokenExpirationMs: 604800000 # 7 days
+  secret: ${JWT_SECRET}
+  accessTokenExpirationMs: ${JWT_EXPIRATION_ACCESS_TOKEN}
+  refreshTokenExpirationMs: ${JWT_EXPIRATION_REFRESH_TOKEN}
 
 common:
   jwt:

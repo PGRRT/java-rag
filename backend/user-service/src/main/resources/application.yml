@@ -26,8 +26,13 @@ spring:
       mode: always
   data:
     redis:
-      host: "redis"
+      host: ${REDIS_HOST}
       port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
+app:
+  company:
+    email: ${COMPANY_EMAIL}
 
 jwt:
   secret: ${JWT_SECRET}
