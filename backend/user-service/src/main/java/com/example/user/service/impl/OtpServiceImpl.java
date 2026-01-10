@@ -1,40 +1,43 @@
 package com.example.user.service.impl;
 
+import com.example.user.service.EmailService;
+import com.example.user.service.OtpCacheService;
 import com.example.user.service.OtpService;
 import com.example.user.utility.OtpCodeGenerator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
 public class OtpServiceImpl implements OtpService {
-    private final StringRedisTemplate redisTemplate;
     private final OtpCodeGenerator otpCodeGenerator;
-    private static final Duration OTP_TTL = Duration.ofMinutes(5);
+    private final OtpCacheService otpCacheService;
+    private final EmailService emailService;
+
+    @Override
+    public void processOtpRequest(String email) {
+        String otp = generateOtp(email);
+        otpCacheService.saveOtp(email, otp);
+
+        emailService.sendRegistrationEmail(email,otp);
+    }
 
     @Override
     public String generateOtp(String email) {
         String otp = otpCodeGenerator.generateOtp(6);
 
-        ValueOperations<String, String> ops = redisTemplate.opsForValue();
-        ops.set("otp:" + email, otp, OTP_TTL);
         return otp;
     }
 
     @Override
     public boolean verifyOtp(String email, String otp) {
-        ValueOperations<String, String> ops = redisTemplate.opsForValue();
-        String savedOtp = ops.get("otp:" + email);
+        String savedOtp = otpCacheService.getOtp(email);
 
         if (savedOtp == null || !savedOtp.equals(otp)) {
             return false;
         }
 
-        redisTemplate.delete("otp:" + email);
+        otpCacheService.deleteOtp(email);
         return true;
     }
 }

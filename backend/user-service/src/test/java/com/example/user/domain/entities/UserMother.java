@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class UserMother {
+
     private UserMother() {
     }
 
@@ -11,7 +12,7 @@ public class UserMother {
         return User.builder()
                 .id(UUID.randomUUID())
                 .email("john.doe@example.com")
-                .password("qwe123")
+                .password("pass123")
                 .emailVerified(true)
                 .active(true)
                 .role(RoleMother.userRole().build())

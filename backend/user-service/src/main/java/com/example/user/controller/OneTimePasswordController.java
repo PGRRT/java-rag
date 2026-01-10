@@ -21,12 +21,8 @@ public class OneTimePasswordController {
     private final OtpCacheService otpCacheService;
 
     @PostMapping
-    public ResponseEntity<String> createOtp(@RequestBody @Valid OtpRequest otpRequest) {
-        String email = otpRequest.getEmail();
-        String otp = otpService.generateOtp(email);
-        otpCacheService.saveOtp(email, otp);
-
-        emailService.sendRegistrationEmail(email,otp);
+    public ResponseEntity<String> sendOtp(@RequestBody @Valid OtpRequest otpRequest) {
+        otpService.processOtpRequest(otpRequest.getEmail());
 
         return ResponseEntity.ok("OTP has been sent to your email");
     }

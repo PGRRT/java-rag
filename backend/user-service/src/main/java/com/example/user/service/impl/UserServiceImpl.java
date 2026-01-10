@@ -8,12 +8,10 @@ import com.example.user.exceptions.UserNotFoundException;
 import com.example.user.mapper.UserMapper;
 import com.example.user.publisher.UserEventPublisher;
 import com.example.user.repository.UserRepository;
-import com.example.common.jwt.service.JwtService;
 import com.example.user.service.RoleService;
 import com.example.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,12 +26,11 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
-    private final JwtService jwtService;
     private final UserEventPublisher userEventPublisher;
 
     @Override
     @Transactional
-    public UserResponse saveUser(RegisterUserRequest registerUserRequest, boolean hasOtpValid) {
+    public UserResponse saveUser(RegisterUserRequest registerUserRequest) {
         if (!registerUserRequest.getPassword().equals(registerUserRequest.getConfirmPassword())) {
             throw new IllegalArgumentException("Password and Confirm Password do not match");
         } else if (userRepository.findByEmail(registerUserRequest.getEmail()).isPresent()) {
@@ -41,9 +38,8 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userMapper.toEntity(registerUserRequest); // email and password
-        if (hasOtpValid) {
-            user.setEmailVerified(true);
-        }
+
+        user.setEmailVerified(true);
 
         Role defaultRole = roleService.getDefaultRole();
         user.setRole(defaultRole);

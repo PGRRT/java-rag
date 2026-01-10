@@ -14,21 +14,22 @@ public class OtpCacheServiceImpl implements OtpCacheService {
 
     private final StringRedisTemplate redisTemplate;
     private static final Duration OTP_TTL = Duration.ofMinutes(5);
+    private static final String KEY_PREFIX = "otp:";
 
     @Override
     public void saveOtp(String email, String otp) {
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
-        ops.set(email, otp, OTP_TTL);
+        ops.set(KEY_PREFIX + email, otp, OTP_TTL);
     }
 
     @Override
     public String getOtp(String email) {
         ValueOperations<String, String> ops = redisTemplate.opsForValue();
-        return ops.get(email);
+        return ops.get(KEY_PREFIX + email);
     }
 
     @Override
     public void deleteOtp(String email) {
-        redisTemplate.delete(email);
+        redisTemplate.delete(KEY_PREFIX + email);
     }
 }

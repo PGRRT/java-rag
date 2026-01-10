@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
-
     @Value("${app.company.email:}")
     private String COMPANY_EMAIL;
     private final JavaMailSender mailSender;

@@ -84,7 +84,7 @@ public class AuthServiceImpl implements AuthService {
             throw new OtpInvalidException("Invalid or expired OTP. Please request a new one.");
         }
 
-        UserResponse userResponse = userService.saveUser(request,true);
+        UserResponse userResponse = userService.saveUser(request);
 
         AccessRefreshToken tokens = jwtService.createSessionCookies(
                 userResponse.getId(),
@@ -109,7 +109,7 @@ public class AuthServiceImpl implements AuthService {
             String jti = claims.getId();
             long expiration = claims.getExpiration().getTime();
 
-//             Check if the jti is blacklisted
+//          Check if the jti is blacklisted
             if (isJtiBlacklisted(jti)) {
                 throw new InvalidTokenException("Refresh token is blacklisted");
             }
@@ -141,6 +141,9 @@ public class AuthServiceImpl implements AuthService {
         } catch (JwtException e) {
             log.warn("Invalid refresh token: {}", e.getMessage());
             throw new InvalidTokenException("Invalid refresh token");
+        } catch (InvalidTokenException | UserNotActiveException e) {
+            log.warn("Token refresh failed: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Error refreshing token", e);
             throw new TokenRefreshException("Failed to refresh token");
@@ -175,7 +178,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void blacklistToken(String token) {
+    public void getClaimsAndBlacklistToken(String token) {
         try {
             // Get token expiration time
             Claims claims = jwtService.getClaims(token);
@@ -192,7 +195,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseCookie logout(String refreshToken) {
         if (refreshToken != null && !refreshToken.isEmpty()) {
-            blacklistToken(refreshToken);
+            getClaimsAndBlacklistToken(refreshToken);
         }
 
         return cookieService.clearRefreshTokenCookie();

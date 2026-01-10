@@ -38,27 +38,6 @@ export default function Sidebar() {
   const { isMobile } = useViewport();
   const sidebarWidth = expanded ? activeSidebarWidth : notActiveSidebarWidth;
 
-  useEffect(() => {
-    const a = async () => {
-      for (let i = 0; i < 30; i++) {
-        await new Promise((resolve) => {
-          setTimeout(async () => {
-            try {
-              const a = await chatApi.getChats();
-              console.log("chat fetch attempt", i, a);
-              
-            } catch (err) {
-              console.error(err);
-            } finally {
-              resolve(null);
-            }
-          }, 10);
-        });
-      }
-    };
-    a();
-  }, []);
-
   return (
     <div
       id="sidebar"

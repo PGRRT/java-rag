@@ -116,11 +116,12 @@ public class JwtService {
                 .build();
     }
 
-    private String generateToken(JwtUserClaims userClaims, int expirationMs) {
+    private String generateToken(JwtUserClaims userClaims, int expirationMs, String type) {
         return Jwts.builder()
                 .subject(userClaims.userId().toString())
                 .claim("email", userClaims.email())
                 .claim("role", userClaims.role())
+                .claim("type", type)
                 .issuedAt(new java.util.Date(System.currentTimeMillis()))
                 .expiration(new java.util.Date(System.currentTimeMillis() + expirationMs))
                 .signWith(getSigningKey())
@@ -130,11 +131,11 @@ public class JwtService {
     }
 
     public String generateAccessToken(JwtUserClaims userClaims) {
-        return generateToken(userClaims, jwtAccessTokenExpirationMs);
+        return generateToken(userClaims, jwtAccessTokenExpirationMs, "access");
     }
 
     public String generateRefreshToken(JwtUserClaims userClaims) {
-        return generateToken(userClaims, jwtRefreshTokenExpirationMs);
+        return generateToken(userClaims, jwtRefreshTokenExpirationMs, "refresh");
     }
 
     public String getAccessToken(JwtUserClaims jwtUserClaims) {
