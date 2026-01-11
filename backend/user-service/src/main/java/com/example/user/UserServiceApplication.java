@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 
 @SpringBootApplication
 @EnableCaching
-@EnableJpaAuditing
 @EnableRabbit
 @EnableAsync
 @EnableWebSecurity

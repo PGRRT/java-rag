@@ -1,8 +1,6 @@
 package com.example.user.controller;
 
 import com.example.user.domain.dto.otp.request.OtpRequest;
-import com.example.user.service.EmailService;
-import com.example.user.service.OtpCacheService;
 import com.example.user.service.OtpService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OneTimePasswordController {
     private final OtpService otpService;
-    private final EmailService emailService;
-    private final OtpCacheService otpCacheService;
 
     @PostMapping
     public ResponseEntity<String> sendOtp(@RequestBody @Valid OtpRequest otpRequest) {

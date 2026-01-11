@@ -5,6 +5,7 @@ import com.example.common.exception.GlobalErrorHandler;
 import com.example.user.exceptions.OtpInvalidException;
 import com.example.user.exceptions.TokenRefreshException;
 import com.example.user.exceptions.UserNotActiveException;
+import com.example.user.exceptions.UserNotFoundException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrorHandler extends GlobalErrorHandler {
     @ExceptionHandler({
             JwtException.class,
-            UsernameNotFoundException.class,
             TokenRefreshException.class
     })
     public ResponseEntity<ApiErrorResponse> handleAuthenticationExceptions(RuntimeException e) {
@@ -30,6 +30,21 @@ public class ErrorHandler extends GlobalErrorHandler {
                 .message(e.getMessage() != null ? e.getMessage() : "Authentication failed")
                 .build();
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler({
+            UserNotFoundException.class,
+            UsernameNotFoundException.class,
+    })
+    public ResponseEntity<ApiErrorResponse> handleUserNotFoundException(RuntimeException e) {
+        // User not found exceptions
+        log.error("User not found exception: {}", e.getMessage(), e);
+
+        ApiErrorResponse error = ApiErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(e.getMessage() != null ? e.getMessage() : "User not found")
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UserNotActiveException.class)
