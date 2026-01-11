@@ -47,7 +47,7 @@ public class UserServiceImplTest {
     private ArgumentCaptor<User> userCaptor;
 
     // Test Constants
-    private final UUID TEST_USER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
+    private final UUID TEST_USER_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
     private final String TEST_EMAIL = "john.doe@example.com";
     private final String RAW_PASSWORD = "pass123";
     private final String ENCODED_PASSWORD = "$2a$10$encodedHashValue";

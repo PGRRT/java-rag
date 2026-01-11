@@ -42,6 +42,8 @@ public class UserControllerTest {
 
     private final UUID TEST_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
     private final String TEST_EMAIL = "john.doe@example.com";
+    private final String ROLE = "USER";
+    private final Boolean ACTIVE = true;
 
     @BeforeEach
     void tearDown() {
@@ -57,8 +59,8 @@ public class UserControllerTest {
         UserResponse expectedResponse = UserResponse.builder()
                 .id(TEST_ID)
                 .email(TEST_EMAIL)
-                .role("USER")
-                .active(true)
+                .role(ROLE)
+                .active(ACTIVE)
                 .build();
 
         given(userService.getCurrentUser(TEST_ID)).willReturn(expectedResponse);
@@ -73,8 +75,8 @@ public class UserControllerTest {
                 // JsonPath assertions ensure the structure and data are correct
                 .andExpect(jsonPath("$.id").value(TEST_ID.toString()))
                 .andExpect(jsonPath("$.email").value(TEST_EMAIL))
-                .andExpect(jsonPath("$.role").value("USER"))
-                .andExpect(jsonPath("$.active").value(true));
+                .andExpect(jsonPath("$.role").value(ROLE))
+                .andExpect(jsonPath("$.active").value(ACTIVE));
 
     }
 
@@ -130,9 +132,9 @@ public class UserControllerTest {
                 email,
                 null,
                 true,
-                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                List.of(new SimpleGrantedAuthority("ROLE_" + ROLE))
         );
-        Authentication auth = new TestingAuthenticationToken(principal, null, "ROLE_USER");
+        Authentication auth = new TestingAuthenticationToken(principal, null, "ROLE_" + ROLE);
 
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
