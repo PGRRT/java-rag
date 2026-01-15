@@ -14,11 +14,14 @@ import com.example.user.domain.entities.User;
 import com.example.user.domain.entities.UserMother;
 import com.example.user.exceptions.InvalidTokenException;
 import com.example.user.exceptions.OtpInvalidException;
+import com.example.user.exceptions.TokenRefreshException;
 import com.example.user.exceptions.UserNotActiveException;
 import com.example.user.repository.UserRepository;
 import com.example.user.service.OtpService;
 import com.example.user.service.UserService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -220,7 +223,6 @@ public class AuthServiceImplTest {
 
         when(jwtService.getClaims(refreshToken)).thenReturn(claims);
 
-        // Symulujemy, że Redis ma ten klucz (czyli token JEST na czarnej liście)
         when(redisTemplate.hasKey("blacklist:" + id)).thenReturn(true);
 
         // when & then
@@ -297,6 +299,340 @@ public class AuthServiceImplTest {
                 eq("blacklisted"),
                 any(Duration.class)
         );
+    }
+
+    // LOGOUT WITH NULL TOKEN TEST
+    @Test
+    @DisplayName("Should logout successfully even with null refresh token")
+    void shouldLogoutWithNullToken() {
+        // given
+        String refreshToken = null;
+
+        // Mock cookie clearing
+        ResponseCookie emptyCookie = ResponseCookie.from("refresh_token", "").maxAge(0).build();
+        when(cookieService.clearRefreshTokenCookie()).thenReturn(emptyCookie);
+
+        // when
+        ResponseCookie result = authService.logout(refreshToken);
+
+        // then
+        assertThat(result.getMaxAge().getSeconds()).isEqualTo(0);
+
+        // Verify that getClaimsAndBlacklistToken was not called (branch coverage)
+        verify(jwtService, never()).getClaims(anyString());
+    }
+
+    // LOGOUT WITH EMPTY TOKEN TEST
+    @Test
+    @DisplayName("Should logout successfully even with empty refresh token")
+    void shouldLogoutWithEmptyToken() {
+        // given
+        String refreshToken = "";
+
+        // Mock cookie clearing
+        ResponseCookie emptyCookie = ResponseCookie.from("refresh_token", "").maxAge(0).build();
+        when(cookieService.clearRefreshTokenCookie()).thenReturn(emptyCookie);
+
+        // when
+        ResponseCookie result = authService.logout(refreshToken);
+
+        // then
+        assertThat(result.getMaxAge().getSeconds()).isEqualTo(0);
+
+        // Verify that getClaimsAndBlacklistToken was not called
+        verify(jwtService, never()).getClaims(anyString());
+    }
+
+    @Test
+    @DisplayName("Should throw InvalidTokenException when refresh token is null")
+    void shouldThrowWhenRefreshTokenIsNull() {
+        // when & then
+        assertThatThrownBy(() -> authService.refreshToken(null))
+                .isInstanceOf(InvalidTokenException.class)
+                .hasMessage("Refresh token is missing");
+
+        verify(jwtService, never()).getClaims(anyString());
+    }
+
+    @Test
+    @DisplayName("Should throw InvalidTokenException when refresh token is empty")
+    void shouldThrowWhenRefreshTokenIsEmpty() {
+        // when & then
+        assertThatThrownBy(() -> authService.refreshToken(""))
+                .isInstanceOf(InvalidTokenException.class)
+                .hasMessage("Refresh token is missing");
+
+        verify(jwtService, never()).getClaims(anyString());
+    }
+
+    @Test
+    @DisplayName("Should throw InvalidTokenException when refresh token has expired")
+    void shouldThrowWhenRefreshTokenExpired() {
+        // given
+        String refreshToken = "eyJhbGciOiJIUzI1NiJ9.expired.token";
+
+        when(jwtService.getClaims(refreshToken)).thenThrow(new ExpiredJwtException(null, null, "Token expired"));
+
+        // when & then
+        assertThatThrownBy(() -> authService.refreshToken(refreshToken))
+                .isInstanceOf(InvalidTokenException.class)
+                .hasMessage("Refresh token expired");
+    }
+
+    @Test
+    @DisplayName("Should throw InvalidTokenException when refresh token is malformed")
+    void shouldThrowWhenRefreshTokenIsMalformed() {
+        // given
+        String refreshToken = "malformed.token.value";
+
+        when(jwtService.getClaims(refreshToken)).thenThrow(new JwtException("Invalid JWT"));
+
+        // when & then
+        assertThatThrownBy(() -> authService.refreshToken(refreshToken))
+                .isInstanceOf(InvalidTokenException.class)
+                .hasMessage("Invalid refresh token");
+    }
+
+    @Test
+    @DisplayName("Should throw TokenRefreshException when unexpected error occurs")
+    void shouldThrowTokenRefreshExceptionOnUnexpectedError() {
+        // given
+        String refreshToken = "eyJhbGciOiJIUzI1NiJ9.valid.token";
+
+        when(jwtService.getClaims(refreshToken)).thenThrow(new RuntimeException("Database error"));
+
+        // when & then
+        assertThatThrownBy(() -> authService.refreshToken(refreshToken))
+                .isInstanceOf(TokenRefreshException.class)
+                .hasMessage("Failed to refresh token");
+    }
+
+    @Test
+    @DisplayName("Should throw UsernameNotFoundException when user not found during refresh")
+    void shouldThrowWhenUserNotFoundDuringRefresh() {
+        // given
+        String refreshToken = "eyJhbGciOiJIUzI1NiJ9.valid.token";
+        String jti = UUID.randomUUID().toString();
+
+        Claims claims = Jwts.claims()
+                .subject(USER_ID.toString())
+                .id(jti)
+                .expiration(new Date(System.currentTimeMillis() + 100000))
+                .build();
+
+        when(jwtService.getClaims(refreshToken)).thenReturn(claims);
+        when(redisTemplate.hasKey("blacklist:" + jti)).thenReturn(false);
+        when(userRepository.findUserWithRoleById(USER_ID)).thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> authService.refreshToken(refreshToken))
+                .isInstanceOf(TokenRefreshException.class)
+                .hasMessage("Failed to refresh token");
+    }
+
+    @Test
+    @DisplayName("Should handle expired token with short token string for preview")
+    void shouldHandleExpiredTokenWithShortString() {
+        // given
+        String refreshToken = "short";
+
+        when(jwtService.getClaims(refreshToken)).thenThrow(new ExpiredJwtException(null, null, "Token expired"));
+
+        // when & then
+        assertThatThrownBy(() -> authService.refreshToken(refreshToken))
+                .isInstanceOf(InvalidTokenException.class)
+                .hasMessage("Refresh token expired");
+    }
+
+    // ========== isTokenBlacklisted TESTS (0% coverage) ==========
+
+    @Test
+    @DisplayName("Should return true when token is blacklisted")
+    void shouldReturnTrueWhenTokenIsBlacklisted() {
+        // given
+        String token = "eyJhbGciOiJIUzI1NiJ9.valid.token";
+        String jti = UUID.randomUUID().toString();
+
+        Claims claims = Jwts.claims()
+                .id(jti)
+                .build();
+
+        when(jwtService.getClaims(token)).thenReturn(claims);
+        when(redisTemplate.hasKey("blacklist:" + jti)).thenReturn(true);
+
+        // when
+        boolean result = authService.isTokenBlacklisted(token);
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    @DisplayName("Should return false when token is not blacklisted")
+    void shouldReturnFalseWhenTokenIsNotBlacklisted() {
+        // given
+        String token = "eyJhbGciOiJIUzI1NiJ9.valid.token";
+        String jti = UUID.randomUUID().toString();
+
+        Claims claims = Jwts.claims()
+                .id(jti)
+                .build();
+
+        when(jwtService.getClaims(token)).thenReturn(claims);
+        when(redisTemplate.hasKey("blacklist:" + jti)).thenReturn(false);
+
+        // when
+        boolean result = authService.isTokenBlacklisted(token);
+
+        // then
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("Should return false when token is null")
+    void shouldReturnFalseWhenTokenIsNull() {
+        // when
+        boolean result = authService.isTokenBlacklisted(null);
+
+        // then
+        assertThat(result).isFalse();
+        verify(jwtService, never()).getClaims(anyString());
+    }
+
+    @Test
+    @DisplayName("Should return false when token is empty")
+    void shouldReturnFalseWhenTokenIsEmpty() {
+        // when
+        boolean result = authService.isTokenBlacklisted("");
+
+        // then
+        assertThat(result).isFalse();
+        verify(jwtService, never()).getClaims(anyString());
+    }
+
+
+    @Test
+    @DisplayName("Should blacklist token when TTL is positive")
+    void shouldBlacklistTokenWhenTtlIsPositive() {
+        // given
+        long expiration = System.currentTimeMillis() + 100000;
+        String jti = UUID.randomUUID().toString();
+
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+
+        // when
+        authService.blacklistToken(expiration, jti);
+
+        // then
+        verify(valueOperations).set(
+                eq("blacklist:" + jti),
+                eq("blacklisted"),
+                any(Duration.class)
+        );
+    }
+
+    @Test
+    @DisplayName("Should not blacklist token when TTL is zero or negative")
+    void shouldNotBlacklistTokenWhenTtlIsNegative() {
+        // given
+        long expiration = System.currentTimeMillis() - 100000; // expired
+        String jti = UUID.randomUUID().toString();
+
+        // when
+        authService.blacklistToken(expiration, jti);
+
+        // then
+        verify(redisTemplate, never()).opsForValue();
+    }
+
+    @Test
+    @DisplayName("Should not blacklist token when jti is null")
+    void shouldNotBlacklistTokenWhenJtiIsNull() {
+        // given
+        long expiration = System.currentTimeMillis() + 100000;
+        String jti = null;
+
+        // when
+        authService.blacklistToken(expiration, jti);
+
+        // then
+        verify(redisTemplate, never()).opsForValue();
+    }
+
+    @Test
+    @DisplayName("Should not blacklist token when jti is empty")
+    void shouldNotBlacklistTokenWhenJtiIsEmpty() {
+        // given
+        long expiration = System.currentTimeMillis() + 100000;
+        String jti = "";
+
+        // when
+        authService.blacklistToken(expiration, jti);
+
+        // then
+        verify(redisTemplate, never()).opsForValue();
+    }
+
+    // ========== getClaimsAndBlacklistToken TESTS (missing lines) ==========
+
+    @Test
+    @DisplayName("Should extract claims and blacklist token successfully")
+    void shouldExtractClaimsAndBlacklistTokenSuccessfully() {
+        // given
+        String token = "eyJhbGciOiJIUzI1NiJ9.valid.token";
+        String jti = UUID.randomUUID().toString();
+        long expiration = System.currentTimeMillis() + 100000;
+
+        Claims claims = Jwts.claims()
+                .id(jti)
+                .expiration(new Date(expiration))
+                .build();
+
+        when(jwtService.getClaims(token)).thenReturn(claims);
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+
+        // when
+        authService.getClaimsAndBlacklistToken(token);
+
+        // then
+        verify(jwtService).getClaims(token);
+        verify(valueOperations).set(
+                eq("blacklist:" + jti),
+                eq("blacklisted"),
+                any(Duration.class)
+        );
+    }
+
+    @Test
+    @DisplayName("Should handle exception gracefully when extracting claims fails")
+    void shouldHandleExceptionWhenExtractingClaimsFails() {
+        // given
+        String token = "invalid.token";
+
+        when(jwtService.getClaims(token)).thenThrow(new JwtException("Invalid token"));
+
+        // when - should not throw exception
+        authService.getClaimsAndBlacklistToken(token);
+
+        // then
+        verify(jwtService).getClaims(token);
+        verify(redisTemplate, never()).opsForValue();
+    }
+
+    @Test
+    @DisplayName("Should handle exception when claims parsing throws runtime exception")
+    void shouldHandleRuntimeExceptionDuringClaimsParsing() {
+        // given
+        String token = "eyJhbGciOiJIUzI1NiJ9.valid.token";
+
+        when(jwtService.getClaims(token)).thenThrow(new RuntimeException("Unexpected error"));
+
+        // when - should not throw exception
+        authService.getClaimsAndBlacklistToken(token);
+
+        // then
+        verify(jwtService).getClaims(token);
+        verify(redisTemplate, never()).opsForValue();
     }
 
 

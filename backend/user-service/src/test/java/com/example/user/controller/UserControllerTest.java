@@ -110,6 +110,22 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("DELETE /users/me - Should return 404 when user does not exist")
+    void shouldReturn404_WhenDeletingNonExistentUser() throws Exception {
+        // given
+        mockUserInSecurityContext(TEST_ID, TEST_EMAIL);
+
+        willThrow(new UserNotFoundException("User not found"))
+                .given(userService).deleteCurrentUser(TEST_ID);
+
+        // when & then
+        mockMvc.perform(delete("/api/v1/users/me"))
+                .andExpect(status().isNotFound());
+
+        then(userService).should(times(1)).deleteCurrentUser(TEST_ID);
+    }
+
+    @Test
     @DisplayName("DELETE /users/me - Should Propagate Exception when service fails")
     void shouldPropagateException_WhenServiceFails() throws Exception {
         // given

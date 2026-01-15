@@ -100,7 +100,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             // Validate the refresh token
             if (refreshTokenCookie == null || refreshTokenCookie.isEmpty()) {
-                throw new JwtException("Refresh token is missing");
+                throw new InvalidTokenException("Refresh token is missing");
             }
 
             Claims claims = jwtService.getClaims(refreshTokenCookie);

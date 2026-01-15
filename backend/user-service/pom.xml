@@ -218,6 +218,7 @@
 				</executions>
 			</plugin>
 
+<!--			Plugin to enable Mockito inline mocking capabilities-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -227,6 +228,38 @@
 
 					<forkedProcessExitTimeoutInSeconds>5</forkedProcessExitTimeoutInSeconds>
 				</configuration>
+			</plugin>
+
+
+<!--            Test coverage plugin-->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.14</version>
+
+				<configuration>
+					<excludes>
+						<exclude>com/example/user/config/**</exclude>
+						<exclude>com/example/user/domain/entities/**</exclude>
+						<exclude>com/example/user/domain/dto/**</exclude>
+						<exclude>com/example/user/domain/enums/**</exclude>
+					</excludes>
+				</configuration>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

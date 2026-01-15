@@ -38,7 +38,7 @@ public class ErrorHandler extends GlobalErrorHandler {
     })
     public ResponseEntity<ApiErrorResponse> handleUserNotFoundException(RuntimeException e) {
         // User not found exceptions
-        log.error("User not found exception: {}", e.getMessage(), e);
+        log.warn("User not found exception: {}", e.getMessage(), e);
 
         ApiErrorResponse error = ApiErrorResponse.builder()
                 .status(HttpStatus.NOT_FOUND.value())
@@ -50,7 +50,7 @@ public class ErrorHandler extends GlobalErrorHandler {
     @ExceptionHandler(UserNotActiveException.class)
     public ResponseEntity<ApiErrorResponse> handleUserNotActiveException(UserNotActiveException e) {
         // User exists but is not active - authorization issue
-        log.error("User not active exception: {}", e.getMessage(), e);
+        log.warn("User not active exception: {}", e.getMessage(), e);
 
         ApiErrorResponse error = ApiErrorResponse.builder()
                 .status(HttpStatus.FORBIDDEN.value())
@@ -62,7 +62,7 @@ public class ErrorHandler extends GlobalErrorHandler {
     @ExceptionHandler(OtpInvalidException.class)
     public ResponseEntity<ApiErrorResponse> handleOtpInvalidException(OtpInvalidException e) {
         // Invalid OTP code provided
-        log.error("OTP validation exception: {}", e.getMessage(), e);
+        log.warn("OTP validation exception: {}", e.getMessage(), e);
 
         ApiErrorResponse error = ApiErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())

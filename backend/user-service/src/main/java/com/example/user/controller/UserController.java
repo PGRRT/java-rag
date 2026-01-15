@@ -31,6 +31,7 @@ public class UserController {
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         userService.deleteCurrentUser(principal.id());
+
         return ResponseEntity.noContent().build();
     }
 }
