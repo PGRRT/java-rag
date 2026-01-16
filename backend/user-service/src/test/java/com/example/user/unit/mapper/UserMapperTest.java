@@ -1,16 +1,13 @@
-package com.example.user.mapper;
+package com.example.user.unit.mapper;
 
 import com.example.user.domain.dto.user.request.RegisterUserRequest;
 import com.example.user.domain.dto.user.response.UserResponse;
-import com.example.user.domain.entities.Role;
-import com.example.user.domain.entities.RoleMother;
 import com.example.user.domain.entities.User;
-import com.example.user.domain.entities.UserMother;
+import com.example.user.mapper.UserMapper;
+import com.example.user.unit.domain.entities.UserMother;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
-
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

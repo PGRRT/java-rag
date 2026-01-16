@@ -1,9 +1,7 @@
 package com.example.user.controller;
 
-import com.example.common.jwt.dto.AccessRefreshToken;
 import com.example.user.domain.dto.auth.AuthResult;
 import com.example.user.domain.dto.auth.response.AuthResponse;
-import com.example.user.domain.dto.auth.response.UserWithCookie;
 import com.example.user.domain.dto.user.request.LoginUserRequest;
 import com.example.user.domain.dto.user.request.RegisterUserRequest;
 import com.example.user.domain.dto.user.response.UserResponse;

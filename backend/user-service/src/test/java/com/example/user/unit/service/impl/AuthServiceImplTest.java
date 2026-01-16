@@ -1,4 +1,4 @@
-package com.example.user.service.impl;
+package com.example.user.unit.service.impl;
 
 import com.example.common.jwt.dto.AccessRefreshToken;
 import com.example.common.jwt.dto.UserPrincipal;
@@ -9,9 +9,10 @@ import com.example.user.domain.dto.user.request.LoginUserRequest;
 import com.example.user.domain.dto.user.request.RegisterUserRequest;
 import com.example.user.domain.dto.user.response.UserResponse;
 import com.example.user.domain.entities.Role;
-import com.example.user.domain.entities.RoleMother;
+import com.example.user.service.impl.AuthServiceImpl;
+import com.example.user.unit.domain.entities.RoleMother;
 import com.example.user.domain.entities.User;
-import com.example.user.domain.entities.UserMother;
+import com.example.user.unit.domain.entities.UserMother;
 import com.example.user.exceptions.InvalidTokenException;
 import com.example.user.exceptions.OtpInvalidException;
 import com.example.user.exceptions.TokenRefreshException;
@@ -63,13 +64,28 @@ public class AuthServiceImplTest {
     private AuthServiceImpl authService;
 
     // Test Data Constants
-    private final String EMAIL = "john.doe@example.com";
-    private final String PASSWORD = "pass123";
-    private final String OTP = "123456";
-    private final UUID USER_ID = UUID.randomUUID();
-    private final String ROLE = "USER";
+    private static final String EMAIL = "john.doe@example.com";
+    private static final String PASSWORD = "pass123";
+    private static final String OTP = "123456";
+    private static final UUID USER_ID = UUID.randomUUID();
+    private static final String ROLE = "USER";
 
-    // SUCCESSFUL LOGIN TEST
+    // Generated tokens for testing
+//    private  String ACCESS_TOKEN;
+//    private  String REFRESH_TOKEN;
+
+    private static final String ACCESS_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiNDZlYmQxMC1lOTE2LTRjNWMtYmJmNS01YTA2ZmIxZmVjYWIiLCJlbWFpbCI6ImJrdWJhMTQwMUBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3Njg1OTE2OTEsImV4cCI6MTc2ODU5MjU5MSwiaXNzIjoic2lnbmFyby5jb20iLCJqdGkiOiIyMzAxMmZjMy1kZDgzLTQ5OGYtYWVmYS01NTkyNGUzMWNmZjUifQ.7SCqMnRU9a8AhpseM32sPn_Omx0QHYG2UJPr8tdhYTIROK9-1hboHbFpfWFmRhx9hpxH3x01AvTq2nCJyKR-Og";
+    private static final String REFRESH_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiNDZlYmQxMC1lOTE2LTRjNWMtYmJmNS01YTA2ZmIxZmVjYWIiLCJlbWFpbCI6ImJrdWJhMTQwMUBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsInR5cGUiOiJyZWZyZXNoIiwiaWF0IjoxNzY4NTkxNTg2LCJleHAiOjE3NjkxOTYzODYsImlzcyI6InNpZ25hcm8uY29tIiwianRpIjoiODZkYjAwYjQtYmRmMC00NDI0LTgyMTMtMDU3NWQ2NjNmNDdhIn0.zxkvHhWsYtdL6dxt3oWNkQsTFtDYYf_sHgDSOr9bA6H5JaJFAhHhQmaHCGvmvcVULNerm231-usuA3a7GI6kDg";
+
+    private static final Claims REFRESH_CLAIMS = Jwts.claims()
+            .subject(USER_ID.toString())
+            .id(UUID.randomUUID().toString())
+            .add("type", "refresh")
+            .expiration(new Date(System.currentTimeMillis() + 100000))
+            .build();
+
+
+
     @Test
     @DisplayName("Should login user successfully and return tokens")
     void shouldLoginUser() {
@@ -87,7 +103,7 @@ public class AuthServiceImplTest {
 
         // Mock Token Generation
         ResponseCookie mockCookie = ResponseCookie.from("refresh_token", "cookie-value-123").build();
-        AccessRefreshToken tokens = new AccessRefreshToken("access-token-jwt", mockCookie);
+        AccessRefreshToken tokens = new AccessRefreshToken(ACCESS_TOKEN, mockCookie);
 
         when(jwtService.createSessionCookies(USER_ID, EMAIL, ROLE)).thenReturn(tokens);
 
@@ -96,7 +112,7 @@ public class AuthServiceImplTest {
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.accessToken()).isEqualTo("access-token-jwt");
+        assertThat(result.accessToken()).isEqualTo(ACCESS_TOKEN);
         assertThat(result.userResponse().getEmail()).isEqualTo(EMAIL);
 
         // Verify refresh token cookie
@@ -104,7 +120,6 @@ public class AuthServiceImplTest {
         assertThat(result.refreshTokenCookie().getValue()).isEqualTo("cookie-value-123");
     }
 
-    // NEGATIVE REGISTRATION TEST - INVALID OTP
     @Test
     @DisplayName("Should throw exception when OTP is invalid during registration")
     void shouldThrowWhenOtpInvalid() {
@@ -127,7 +142,6 @@ public class AuthServiceImplTest {
         verifyNoInteractions(jwtService);
     }
 
-    // SUCCESSFUL REGISTRATION TEST
     @Test
     @DisplayName("Should register user when OTP is valid")
     void shouldRegisterUserWhenOtpValid() {
@@ -150,7 +164,7 @@ public class AuthServiceImplTest {
 
         // Cookie setup
         ResponseCookie mockCookie = ResponseCookie.from("refresh_token", "cookie-reg-123").build();
-        AccessRefreshToken tokens = new AccessRefreshToken("access-token-reg", mockCookie);
+        AccessRefreshToken tokens = new AccessRefreshToken(ACCESS_TOKEN, mockCookie);
 
         when(jwtService.createSessionCookies(USER_ID, EMAIL, ROLE)).thenReturn(tokens);
 
@@ -165,14 +179,10 @@ public class AuthServiceImplTest {
         verify(userService).saveUser(request);
     }
 
-    // REFRESH TOKEN TESTS
     @Test
     @DisplayName("Should refresh token successfully")
     void shouldRefreshTokenSuccessfully() {
         // given
-        String refreshToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzEyMyIsInR5cGUiOiJyZWZyZXNoIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE4MzE2MDIyMjJ9.XbPzG4-Xyq5x9b3a_1ZzGq5x9b3a_1ZzGq5x9b3a_1Z";
-        String expectedNewAccessToken = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzaWduYXJvLmNvbSIsImp0aSI6IjA0YTk4YjU3LTg4M2UtNGU3NS1iZjk3LTUxYmI0MTEzZmY0NyIsInN1YiI6Ijk5IiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MDQ4ODIzMDgsImV4cCI6MTczNjQxODM0OH0.XmZkY2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y";
-
         Role role = RoleMother.userRole().build();
 
         User mockUser = User.builder()
@@ -182,74 +192,47 @@ public class AuthServiceImplTest {
                 .role(role)
                 .build();
 
-        Claims claims = Jwts.claims()
-                .subject(USER_ID.toString())
-                .id("unique-token-id")
-                .expiration(new Date(System.currentTimeMillis() + 100000))
-                .add("role", ROLE)
-                .build();
-
-        when(jwtService.getClaims(refreshToken)).thenReturn(claims);
+        when(jwtService.getClaims(REFRESH_TOKEN)).thenReturn(REFRESH_CLAIMS);
 
         // Mock Token Generation
-        when(jwtService.generateAccessToken(any())).thenReturn(expectedNewAccessToken);
+        when(jwtService.generateAccessToken(any())).thenReturn(ACCESS_TOKEN);
 
         // 3. Check Blacklist in Redis
-        when(redisTemplate.hasKey("blacklist:unique-token-id")).thenReturn(false);
+        when(redisTemplate.hasKey("blacklist:" + REFRESH_CLAIMS.getId())).thenReturn(false);
 
         // 4. Mock User Retrieval
         when(userRepository.findUserWithRoleById(USER_ID)).thenReturn(Optional.of(mockUser));
 
         // when
-        String accessToken = authService.refreshToken(refreshToken);
+        String accessToken = authService.refreshToken(REFRESH_TOKEN);
 
         // then
-        assertThat(accessToken).isEqualTo(expectedNewAccessToken);
+        assertThat(accessToken).isEqualTo(ACCESS_TOKEN);
     }
 
-    // NEGATIVE REFRESH TOKEN TESTS - BLACKLISTED TOKEN
     @Test
     @DisplayName("Should throw exception when refresh token is blacklisted")
     void shouldThrowWhenRefreshTokenIsBlacklisted() {
         // given
-        String refreshToken = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzaWduYXJvLmNvbSIsImp0aSI6IjA0YTk4YjU3LTg4M2UtNGU3NS1iZjk3LTUxYmI0MTEzZmY0NyIsInN1YiI6Ijk5IiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MDQ4ODIzMDgsImV4cCI6MTczNjQxODM0OH0.XmZkY2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y";
+        when(jwtService.getClaims(REFRESH_TOKEN)).thenReturn(REFRESH_CLAIMS);
 
-        String id = UUID.randomUUID().toString();
-        Claims claims = Jwts.claims()
-                .subject(USER_ID.toString())
-                .id(id)
-                .expiration(new Date(System.currentTimeMillis() + 100000))
-                .build();
-
-        when(jwtService.getClaims(refreshToken)).thenReturn(claims);
-
-        when(redisTemplate.hasKey("blacklist:" + id)).thenReturn(true);
+        when(redisTemplate.hasKey("blacklist:" + REFRESH_CLAIMS.getId())).thenReturn(true);
 
         // when & then
-        assertThatThrownBy(() -> authService.refreshToken(refreshToken))
+        assertThatThrownBy(() -> authService.refreshToken(REFRESH_TOKEN))
                 .isInstanceOf(InvalidTokenException.class)
                 .hasMessage("Refresh token is blacklisted");
 
         verify(userRepository, never()).findUserWithRoleById(any());
     }
 
-    // NEGATIVE REFRESH TOKEN TESTS - INACTIVE USER
     @Test
     @DisplayName("Should throw exception when user is not active during refresh")
     void shouldThrowWhenUserNotActive() {
         // given
-        String refreshToken = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzaWduYXJvLmNvbSIsImp0aSI6IjA0YTk4YjU3LTg4M2UtNGU3NS1iZjk3LTUxYmI0MTEzZmY0NyIsInN1YiI6Ijk5IiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MDQ4ODIzMDgsImV4cCI6MTczNjQxODM0OH0.XmZkY2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y";
-
-        String id = UUID.randomUUID().toString();
-        Claims claims = Jwts.claims()
-                .subject(USER_ID.toString())
-                .id(id)
-                .expiration(new Date(System.currentTimeMillis() + 10000))
-                .build();
-
         User inactiveUser = UserMother.inactive().build();
 
-        when(jwtService.getClaims(refreshToken)).thenReturn(claims);
+        when(jwtService.getClaims(REFRESH_TOKEN)).thenReturn(REFRESH_CLAIMS);
         when(redisTemplate.hasKey(anyString())).thenReturn(false);
         when(userRepository.findUserWithRoleById(USER_ID)).thenReturn(Optional.of(inactiveUser));
 
@@ -257,28 +240,19 @@ public class AuthServiceImplTest {
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
         // when & then
-        assertThatThrownBy(() -> authService.refreshToken(refreshToken))
+        assertThatThrownBy(() -> authService.refreshToken(REFRESH_TOKEN))
                 .isInstanceOf(UserNotActiveException.class);
 
         // Check if we blacklisted the token
-        verify(valueOperations).set(eq("blacklist:" + id), anyString(), any(Duration.class));
+        verify(valueOperations).set(eq("blacklist:" + REFRESH_CLAIMS.getId()), anyString(), any(Duration.class));
     }
 
-    // SUCCESSFUL LOGOUT TEST
     @Test
     @DisplayName("Should logout user successfully")
     void shouldLogoutUser() {
         // given
-        String refreshToken = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzaWduYXJvLmNvbSIsImp0aSI6IjA0YTk4YjU3LTg4M2UtNGU3NS1iZjk3LTUxYmI0MTEzZmY0NyIsInN1YiI6Ijk5IiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3MDQ4ODIzMDgsImV4cCI6MTczNjQxODM0OH0.XmZkY2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y2Y";
-        String jti = UUID.randomUUID().toString();
-
-        Claims claims = Jwts.claims()
-                .id(jti)
-                .expiration(new Date(System.currentTimeMillis() + 100000))
-                .build();
-
         // Mock getting claims from token
-        when(jwtService.getClaims(refreshToken)).thenReturn(claims);
+        when(jwtService.getClaims(REFRESH_TOKEN)).thenReturn(REFRESH_CLAIMS);
 
         // Mock Redis operations
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -288,20 +262,19 @@ public class AuthServiceImplTest {
         when(cookieService.clearRefreshTokenCookie()).thenReturn(emptyCookie);
 
         // when
-        ResponseCookie result = authService.logout(refreshToken);
+        ResponseCookie result = authService.logout(REFRESH_TOKEN);
 
         // then
         assertThat(result.getMaxAge().getSeconds()).isEqualTo(0); // Check cookie is cleared
 
         // check if token was blacklisted
         verify(valueOperations).set(
-                eq("blacklist:" + jti),
+                eq("blacklist:" + REFRESH_CLAIMS.getId()),
                 eq("blacklisted"),
                 any(Duration.class)
         );
     }
 
-    // LOGOUT WITH NULL TOKEN TEST
     @Test
     @DisplayName("Should logout successfully even with null refresh token")
     void shouldLogoutWithNullToken() {
@@ -322,7 +295,6 @@ public class AuthServiceImplTest {
         verify(jwtService, never()).getClaims(anyString());
     }
 
-    // LOGOUT WITH EMPTY TOKEN TEST
     @Test
     @DisplayName("Should logout successfully even with empty refresh token")
     void shouldLogoutWithEmptyToken() {
@@ -369,12 +341,10 @@ public class AuthServiceImplTest {
     @DisplayName("Should throw InvalidTokenException when refresh token has expired")
     void shouldThrowWhenRefreshTokenExpired() {
         // given
-        String refreshToken = "eyJhbGciOiJIUzI1NiJ9.expired.token";
-
-        when(jwtService.getClaims(refreshToken)).thenThrow(new ExpiredJwtException(null, null, "Token expired"));
+        when(jwtService.getClaims(REFRESH_TOKEN)).thenThrow(new ExpiredJwtException(null, null, "Token expired"));
 
         // when & then
-        assertThatThrownBy(() -> authService.refreshToken(refreshToken))
+        assertThatThrownBy(() -> authService.refreshToken(REFRESH_TOKEN))
                 .isInstanceOf(InvalidTokenException.class)
                 .hasMessage("Refresh token expired");
     }
@@ -383,12 +353,10 @@ public class AuthServiceImplTest {
     @DisplayName("Should throw InvalidTokenException when refresh token is malformed")
     void shouldThrowWhenRefreshTokenIsMalformed() {
         // given
-        String refreshToken = "malformed.token.value";
-
-        when(jwtService.getClaims(refreshToken)).thenThrow(new JwtException("Invalid JWT"));
+        when(jwtService.getClaims(REFRESH_TOKEN)).thenThrow(new JwtException("Invalid JWT"));
 
         // when & then
-        assertThatThrownBy(() -> authService.refreshToken(refreshToken))
+        assertThatThrownBy(() -> authService.refreshToken(REFRESH_TOKEN))
                 .isInstanceOf(InvalidTokenException.class)
                 .hasMessage("Invalid refresh token");
     }
@@ -397,12 +365,10 @@ public class AuthServiceImplTest {
     @DisplayName("Should throw TokenRefreshException when unexpected error occurs")
     void shouldThrowTokenRefreshExceptionOnUnexpectedError() {
         // given
-        String refreshToken = "eyJhbGciOiJIUzI1NiJ9.valid.token";
-
-        when(jwtService.getClaims(refreshToken)).thenThrow(new RuntimeException("Database error"));
+        when(jwtService.getClaims(REFRESH_TOKEN)).thenThrow(new RuntimeException("Database error"));
 
         // when & then
-        assertThatThrownBy(() -> authService.refreshToken(refreshToken))
+        assertThatThrownBy(() -> authService.refreshToken(REFRESH_TOKEN))
                 .isInstanceOf(TokenRefreshException.class)
                 .hasMessage("Failed to refresh token");
     }
@@ -411,21 +377,12 @@ public class AuthServiceImplTest {
     @DisplayName("Should throw UsernameNotFoundException when user not found during refresh")
     void shouldThrowWhenUserNotFoundDuringRefresh() {
         // given
-        String refreshToken = "eyJhbGciOiJIUzI1NiJ9.valid.token";
-        String jti = UUID.randomUUID().toString();
-
-        Claims claims = Jwts.claims()
-                .subject(USER_ID.toString())
-                .id(jti)
-                .expiration(new Date(System.currentTimeMillis() + 100000))
-                .build();
-
-        when(jwtService.getClaims(refreshToken)).thenReturn(claims);
-        when(redisTemplate.hasKey("blacklist:" + jti)).thenReturn(false);
+        when(jwtService.getClaims(REFRESH_TOKEN)).thenReturn(REFRESH_CLAIMS);
+        when(redisTemplate.hasKey("blacklist:" + REFRESH_CLAIMS.getId())).thenReturn(false);
         when(userRepository.findUserWithRoleById(USER_ID)).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> authService.refreshToken(refreshToken))
+        assertThatThrownBy(() -> authService.refreshToken(REFRESH_TOKEN))
                 .isInstanceOf(TokenRefreshException.class)
                 .hasMessage("Failed to refresh token");
     }
@@ -444,24 +401,15 @@ public class AuthServiceImplTest {
                 .hasMessage("Refresh token expired");
     }
 
-    // ========== isTokenBlacklisted TESTS (0% coverage) ==========
-
     @Test
     @DisplayName("Should return true when token is blacklisted")
     void shouldReturnTrueWhenTokenIsBlacklisted() {
         // given
-        String token = "eyJhbGciOiJIUzI1NiJ9.valid.token";
-        String jti = UUID.randomUUID().toString();
-
-        Claims claims = Jwts.claims()
-                .id(jti)
-                .build();
-
-        when(jwtService.getClaims(token)).thenReturn(claims);
-        when(redisTemplate.hasKey("blacklist:" + jti)).thenReturn(true);
+        when(jwtService.getClaims(REFRESH_TOKEN)).thenReturn(REFRESH_CLAIMS);
+        when(redisTemplate.hasKey("blacklist:" + REFRESH_CLAIMS.getId())).thenReturn(true);
 
         // when
-        boolean result = authService.isTokenBlacklisted(token);
+        boolean result = authService.isTokenBlacklisted(REFRESH_TOKEN);
 
         // then
         assertThat(result).isTrue();
@@ -471,18 +419,11 @@ public class AuthServiceImplTest {
     @DisplayName("Should return false when token is not blacklisted")
     void shouldReturnFalseWhenTokenIsNotBlacklisted() {
         // given
-        String token = "eyJhbGciOiJIUzI1NiJ9.valid.token";
-        String jti = UUID.randomUUID().toString();
-
-        Claims claims = Jwts.claims()
-                .id(jti)
-                .build();
-
-        when(jwtService.getClaims(token)).thenReturn(claims);
-        when(redisTemplate.hasKey("blacklist:" + jti)).thenReturn(false);
+        when(jwtService.getClaims(REFRESH_TOKEN)).thenReturn(REFRESH_CLAIMS);
+        when(redisTemplate.hasKey("blacklist:" + REFRESH_CLAIMS.getId())).thenReturn(false);
 
         // when
-        boolean result = authService.isTokenBlacklisted(token);
+        boolean result = authService.isTokenBlacklisted(REFRESH_TOKEN);
 
         // then
         assertThat(result).isFalse();
@@ -573,31 +514,20 @@ public class AuthServiceImplTest {
         verify(redisTemplate, never()).opsForValue();
     }
 
-    // ========== getClaimsAndBlacklistToken TESTS (missing lines) ==========
-
     @Test
     @DisplayName("Should extract claims and blacklist token successfully")
     void shouldExtractClaimsAndBlacklistTokenSuccessfully() {
         // given
-        String token = "eyJhbGciOiJIUzI1NiJ9.valid.token";
-        String jti = UUID.randomUUID().toString();
-        long expiration = System.currentTimeMillis() + 100000;
-
-        Claims claims = Jwts.claims()
-                .id(jti)
-                .expiration(new Date(expiration))
-                .build();
-
-        when(jwtService.getClaims(token)).thenReturn(claims);
+        when(jwtService.getClaims(REFRESH_TOKEN)).thenReturn(REFRESH_CLAIMS);
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
         // when
-        authService.getClaimsAndBlacklistToken(token);
+        authService.getClaimsAndBlacklistToken(REFRESH_TOKEN);
 
         // then
-        verify(jwtService).getClaims(token);
+        verify(jwtService).getClaims(REFRESH_TOKEN);
         verify(valueOperations).set(
-                eq("blacklist:" + jti),
+                eq("blacklist:" + REFRESH_CLAIMS.getId()),
                 eq("blacklisted"),
                 any(Duration.class)
         );
@@ -623,17 +553,13 @@ public class AuthServiceImplTest {
     @DisplayName("Should handle exception when claims parsing throws runtime exception")
     void shouldHandleRuntimeExceptionDuringClaimsParsing() {
         // given
-        String token = "eyJhbGciOiJIUzI1NiJ9.valid.token";
-
-        when(jwtService.getClaims(token)).thenThrow(new RuntimeException("Unexpected error"));
+        when(jwtService.getClaims(REFRESH_TOKEN)).thenThrow(new RuntimeException("Unexpected error"));
 
         // when - should not throw exception
-        authService.getClaimsAndBlacklistToken(token);
+        authService.getClaimsAndBlacklistToken(REFRESH_TOKEN);
 
         // then
-        verify(jwtService).getClaims(token);
+        verify(jwtService).getClaims(REFRESH_TOKEN);
         verify(redisTemplate, never()).opsForValue();
     }
-
-
 }

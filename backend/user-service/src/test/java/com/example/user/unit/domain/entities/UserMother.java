@@ -1,4 +1,6 @@
-package com.example.user.domain.entities;
+package com.example.user.unit.domain.entities;
+
+import com.example.user.domain.entities.User;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

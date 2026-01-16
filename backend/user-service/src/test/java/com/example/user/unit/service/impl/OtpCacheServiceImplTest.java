@@ -1,5 +1,6 @@
-package com.example.user.service.impl;
+package com.example.user.unit.service.impl;
 
+import com.example.user.service.impl.OtpCacheServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,10 +25,10 @@ public class OtpCacheServiceImplTest {
     @InjectMocks
     private OtpCacheServiceImpl otpCacheService;
 
-    private final String EMAIL = "john.doe@example.com";
-    private final String OTP = "123456";
-    private final String KEY_PREFIX = "otp:";
-    private final Duration OTP_TTL = Duration.ofMinutes(5);
+    private static final String EMAIL = "john.doe@example.com";
+    private static final String OTP = "123456";
+    private static final String KEY_PREFIX = "otp:";
+    private static final Duration OTP_TTL = Duration.ofMinutes(5);
 
     @Test
     @DisplayName("Should save OTP to Redis with correct TTL")

@@ -1,6 +1,7 @@
-package com.example.user.controller;
+package com.example.user.unit.controller;
 
 import com.example.common.jwt.dto.UserPrincipal;
+import com.example.user.controller.UserController;
 import com.example.user.domain.dto.user.response.UserResponse;
 import com.example.user.exceptions.UserNotFoundException;
 import com.example.user.service.UserService;

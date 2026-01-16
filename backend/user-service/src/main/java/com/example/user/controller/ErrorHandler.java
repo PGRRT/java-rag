@@ -2,10 +2,7 @@ package com.example.user.controller;
 
 import com.example.common.exception.ApiErrorResponse;
 import com.example.common.exception.GlobalErrorHandler;
-import com.example.user.exceptions.OtpInvalidException;
-import com.example.user.exceptions.TokenRefreshException;
-import com.example.user.exceptions.UserNotActiveException;
-import com.example.user.exceptions.UserNotFoundException;
+import com.example.user.exceptions.*;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,7 +17,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrorHandler extends GlobalErrorHandler {
     @ExceptionHandler({
             JwtException.class,
-            TokenRefreshException.class
+            TokenRefreshException.class,
+            InvalidTokenException.class
     })
     public ResponseEntity<ApiErrorResponse> handleAuthenticationExceptions(RuntimeException e) {
         // Authentication related exceptions - invalid tokens, user not found, token refresh issues

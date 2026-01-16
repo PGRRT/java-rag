@@ -51,8 +51,6 @@ public class RabbitMqConfig {
                 .with(USER_DELETED_ROUTING_KEY);
     }
 
-
-
     @Bean
     public RetryOperationsInterceptor retryInterceptor() {
         return RetryInterceptorBuilder.stateless()

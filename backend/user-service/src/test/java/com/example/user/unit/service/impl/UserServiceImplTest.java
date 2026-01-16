@@ -1,12 +1,12 @@
-package com.example.user.service.impl;
+package com.example.user.unit.service.impl;
 
-import com.example.common.jwt.service.JwtService;
 import com.example.user.domain.dto.user.request.RegisterUserRequest;
 import com.example.user.domain.dto.user.response.UserResponse;
 import com.example.user.domain.entities.Role;
-import com.example.user.domain.entities.RoleMother;
+import com.example.user.service.impl.UserServiceImpl;
+import com.example.user.unit.domain.entities.RoleMother;
 import com.example.user.domain.entities.User;
-import com.example.user.domain.entities.UserMother;
+import com.example.user.unit.domain.entities.UserMother;
 import com.example.user.exceptions.UserNotFoundException;
 import com.example.user.mapper.UserMapper;
 import com.example.user.publisher.UserEventPublisher;
@@ -38,7 +38,6 @@ public class UserServiceImplTest {
     @Mock private RoleService roleService;
     @Mock private UserEventPublisher userEventPublisher;
 
-    // System Under Test
     @InjectMocks
     private UserServiceImpl userService;
 
@@ -47,13 +46,12 @@ public class UserServiceImplTest {
     private ArgumentCaptor<User> userCaptor;
 
     // Test Constants
-    private final UUID TEST_USER_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
-    private final String TEST_EMAIL = "john.doe@example.com";
-    private final String RAW_PASSWORD = "pass123";
-    private final String ENCODED_PASSWORD = "$2a$10$encodedHashValue";
-    private final String ROLE_USER = "USER";
+    private static final UUID TEST_USER_ID = UUID.fromString("a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11");
+    private static final String TEST_EMAIL = "john.doe@example.com";
+    private static final String RAW_PASSWORD = "pass123";
+    private static final String ENCODED_PASSWORD = "$2a$10$encodedHashValue";
+    private static final String ROLE_USER = "USER";
 
-    // SUCCESSFUL TESTS FOR SAVE USER
     @Test
     @DisplayName("Should save user successfully: Encodes password, sets Default Role, and marks Verified")
     void shouldSaveUserSuccessfully_WhenOtpIsValid() {
@@ -103,7 +101,6 @@ public class UserServiceImplTest {
     }
 
 
-    // NEGATIVE TESTS FOR SAVE USER - PASSWORD MISMATCH
     @Test
     @DisplayName("Should throw exception when Passwords do not match")
     void shouldThrowException_WhenPasswordsMismatch() {
@@ -122,7 +119,6 @@ public class UserServiceImplTest {
         verifyNoInteractions(userRepository, passwordEncoder);
     }
 
-    // NEGATIVE TESTS FOR SAVE USER - EMAIL ALREADY TAKEN
     @Test
     @DisplayName("Should throw exception when Email is already taken")
     void shouldThrowException_WhenEmailExists() {
@@ -146,7 +142,6 @@ public class UserServiceImplTest {
         verify(userRepository, never()).save(any());
     }
 
-    // SUCCESSFUL TESTS FOR GET CURRENT USER
     @Test
     @DisplayName("Should return UserResponse when user exists")
     void shouldGetCurrentUser_WhenExists() {
@@ -181,7 +176,6 @@ public class UserServiceImplTest {
         assertThat(result.isActive()).isTrue();
     }
 
-    // NEGATIVE TESTS FOR GET CURRENT USER - USER NOT FOUND
     @Test
     @DisplayName("Should throw UserNotFoundException when fetching non-existent user")
     void shouldThrowException_WhenUserNotFound() {
@@ -194,7 +188,6 @@ public class UserServiceImplTest {
                 .hasMessage("User not found");
     }
 
-    // SUCCESSFUL TESTS FOR DELETE CURRENT USER
     @Test
     @DisplayName("Should delete user and publish event when user exists")
     void shouldDeleteUser_AndPublishEvent() {
@@ -211,7 +204,6 @@ public class UserServiceImplTest {
         verify(userEventPublisher).publishUserDeleted(TEST_USER_ID); // Ensure event is fired
     }
 
-    // NEGATIVE TESTS FOR DELETE CURRENT USER - USER NOT FOUND
     @Test
     @DisplayName("Should throw UserNotFoundException when trying to delete non-existent user")
     void shouldThrowException_WhenDeletingMissingUser() {

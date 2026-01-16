@@ -1,6 +1,7 @@
 package com.example.user.service.impl;
 
 import com.example.common.jwt.dto.AccessRefreshToken;
+import com.example.common.jwt.dto.JwtType;
 import com.example.common.jwt.dto.JwtUserClaims;
 import com.example.common.jwt.dto.UserPrincipal;
 import com.example.user.domain.dto.auth.AuthResult;
@@ -104,6 +105,12 @@ public class AuthServiceImpl implements AuthService {
             }
 
             Claims claims = jwtService.getClaims(refreshTokenCookie);
+
+            JwtType type = JwtType.fromString(claims.get("type", String.class));
+
+            if (type != JwtType.REFRESH) {
+                throw new InvalidTokenException("Invalid token type");
+            }
 
             String subjectId = claims.getSubject();
             String jti = claims.getId();

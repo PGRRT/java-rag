@@ -1,5 +1,6 @@
-package com.example.user.controller;
+package com.example.user.unit.controller;
 
+import com.example.user.controller.OneTimePasswordController;
 import com.example.user.domain.dto.otp.request.OtpRequest;
 import com.example.user.service.OtpService;
 import com.fasterxml.jackson.databind.ObjectMapper;

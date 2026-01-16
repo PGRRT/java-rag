@@ -1,5 +1,6 @@
-package com.example.user.domain.dto.user.request;
+package com.example.user.unit.domain.dto.user.request;
 
+import com.example.user.domain.dto.user.request.LoginUserRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

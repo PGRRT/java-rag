@@ -1,6 +1,7 @@
-package com.example.user.controller;
+package com.example.user.unit.controller;
 
 import com.example.common.exception.ApiErrorResponse;
+import com.example.user.controller.ErrorHandler;
 import com.example.user.exceptions.OtpInvalidException;
 import com.example.user.exceptions.TokenRefreshException;
 import com.example.user.exceptions.UserNotActiveException;

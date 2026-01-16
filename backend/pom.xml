@@ -16,14 +16,7 @@
         <module>chat-service</module>
         <module>user-service</module>
     </modules>
-<!--    <dependencies>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework</groupId>-->
-<!--            <artifactId>spring-context</artifactId>-->
-<!--            <version>6.2.11</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
-<!--    </dependencies>-->
+
     <build>
         <plugins>
             <plugin>

@@ -1,7 +1,8 @@
-package com.example.user.service.impl;
+package com.example.user.unit.service.impl;
 
 import com.example.user.service.EmailService;
 import com.example.user.service.OtpCacheService;
+import com.example.user.service.impl.OtpServiceImpl;
 import com.example.user.utility.OtpCodeGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,8 +23,8 @@ public class OtpServiceImplTest {
     @InjectMocks
     private OtpServiceImpl otpService;
 
-    private final String EMAIL = "john.doe@example.com";
-    private final String OTP = "123456";
+    private static final String EMAIL = "john.doe@example.com";
+    private static final String OTP = "123456";
 
     @Test
     @DisplayName("Should process OTP request successfully")
