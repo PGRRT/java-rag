@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false) // Disable security filters
 @ActiveProfiles("test")
-public class UserControllerTest {
+class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 

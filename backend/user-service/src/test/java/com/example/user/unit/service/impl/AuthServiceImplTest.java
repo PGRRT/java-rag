@@ -50,7 +50,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthServiceImplTest {
+class AuthServiceImplTest {
     @Mock private JwtService jwtService;
     @Mock private OtpService otpService;
     @Mock private UserService userService;

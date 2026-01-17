@@ -41,6 +41,7 @@ public abstract class BaseIT {
             .withExposedPorts(5672);
 
 
+    // VERY IMPORTANT: We need to mock JavaMailSender to prevent actual email sending during tests, do not remove this!
     @MockitoBean
     protected JavaMailSender javaMailSender;
 

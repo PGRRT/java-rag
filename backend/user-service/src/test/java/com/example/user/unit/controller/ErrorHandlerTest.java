@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-public class ErrorHandlerTest {
+class ErrorHandlerTest {
     private static final int HTTP_UNAUTHORIZED = HttpStatus.UNAUTHORIZED.value();
     private static final int HTTP_NOT_FOUND = HttpStatus.NOT_FOUND.value();
     private static final int HTTP_FORBIDDEN = HttpStatus.FORBIDDEN.value();

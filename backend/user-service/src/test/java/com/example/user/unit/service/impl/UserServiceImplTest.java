@@ -31,7 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceImplTest {
+class UserServiceImplTest {
     @Mock private UserRepository userRepository;
     @Mock private UserMapper userMapper;
     @Mock private PasswordEncoder passwordEncoder;

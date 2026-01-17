@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class OtpServiceImplTest {
+class OtpServiceImplTest {
     @Mock private OtpCodeGenerator otpCodeGenerator;
     @Mock private OtpCacheService otpCacheService;
     @Mock private EmailService emailService;

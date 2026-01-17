@@ -55,10 +55,9 @@ class AuthenticationIT extends BaseIT {
     @Test
     @DisplayName("Should complete full authentication flow: register → login → refresh → logout")
     void shouldCompleteFullAuthenticationFlow() throws Exception {
-        // ========== STEP 0: PREPARE OTP ==========
+        // given
         otpCacheService.saveOtp(TEST_EMAIL, TEST_OTP);
 
-        // ========== STEP 1: REGISTER ==========
         RegisterUserRequest registerRequest = RegisterUserRequest.builder()
                 .email(TEST_EMAIL)
                 .password(TEST_PASSWORD)
@@ -79,12 +78,12 @@ class AuthenticationIT extends BaseIT {
         String registerCookie = registerResult.getResponse().getHeader("Set-Cookie");
         assertThat(registerCookie).contains("refreshToken");
 
-        // ========== STEP 2: LOGIN ==========
         LoginUserRequest loginRequest = LoginUserRequest.builder()
                 .email(TEST_EMAIL)
                 .password(TEST_PASSWORD)
                 .build();
 
+        // when
         MvcResult loginResult = mockMvc.perform(post(LOGIN_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
@@ -97,7 +96,7 @@ class AuthenticationIT extends BaseIT {
         String loginCookie = loginResult.getResponse().getHeader("Set-Cookie");
         String refreshToken = extractRefreshToken(loginCookie);
 
-        // ========== STEP 3: REFRESH TOKEN ==========
+        // then
         mockMvc.perform(post(REFRESH_URL)
                         .cookie(createCookie("refreshToken", refreshToken)))
                 .andExpect(status().isOk())

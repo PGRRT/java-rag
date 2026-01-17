@@ -15,7 +15,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Set;
 
-public class RegisterUserRequestTest {
+class RegisterUserRequestTest {
     private Validator validator;
 
     @BeforeEach
