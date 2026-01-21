@@ -48,6 +48,7 @@ const useChatInput = ({
           chatType: mode,
         })
       );
+     
 
       if (createChatAction.rejected.match(res)) {
         // toast is shown in the thunk

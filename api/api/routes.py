@@ -9,6 +9,8 @@ from api.entry import ApiState
 from uuid import UUID
 
 from rag.document import Document
+
+# from api.rag.document import Document
 import logging
 
 logger = logging.getLogger("routes")
@@ -137,3 +139,8 @@ async def delete_conversation(converastion_id: UUID) -> DeleteResponse:
     logger.debug(f"Deleting conversation {converastion_id} data")
 
     return {"status": True, "message": "Collection deleted"}
+
+
+@rag_router.get("/health")
+async def health():
+    return {"status": "healthy"}

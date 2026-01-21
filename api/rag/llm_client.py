@@ -11,7 +11,7 @@ class LLM(ABC):
     def generate_response(self, prompt: str) -> str:
         pass
 
-    system_prompt = ("""Odpowiadaj na pytania użytkownika dotyczące fragmentow źródeł danych wymienionych w wiadomości.
+    system_prompt = ("""Odpowiadaj na pytania użytkownika wymienione w wiadomości.
 Przykład:
 
 Pytanie użytkownika: “Potrzebuję danych dotyczących migracji ludności w UE po 2015 roku.”
@@ -99,7 +99,7 @@ class BielikLLM(LLM):
         api_url: str,
         username: str,
         password: str,
-        max_response_length: int = 4096,
+        max_response_length: int = 4192,
         temperature: float = 0.0,
     ) -> None:
         self.client = httpx.Client(auth=(username, password), verify=False)
@@ -138,10 +138,6 @@ class BielikLLM(LLM):
 
 
 if __name__ == "__main__":
-    # openai = OpenAILLM()
-    # prompt = "What is your name?"
-    # openai.generate_response(prompt)
-
     load_dotenv()
 
     bielik = BielikLLM(

@@ -34,9 +34,6 @@ export const createChatAction = createAsyncThunk(
     { message, chatType }: { message: string; chatType: ChatRoomType },
     { rejectWithValue }
   ) => {
-    console.log("message",message);
-    console.log("chatType",chatType);
-    
     const response = await exceptionWrapper(async () => {
       return chatApi.createChat(message, chatType);
     }, "Chat created successfully");
@@ -46,6 +43,21 @@ export const createChatAction = createAsyncThunk(
     }
 
     // revalidateChats();
+
+    return response.data;
+  }
+);
+
+export const deleteChatAction = createAsyncThunk(
+  "chat/deleteChat",
+  async (chatId: string, { rejectWithValue }) => {
+    const response = await exceptionWrapper(async () => {
+      return chatApi.deleteChat(chatId);
+    }, "Chat deleted successfully");
+
+    if (!response.success) {
+      return rejectWithValue("Failed to delete chat");
+    }
 
     return response.data;
   }
@@ -61,6 +73,9 @@ const chatSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(createChatAction.fulfilled, (state) => {
+      state.chatsRefreshTrigger = true;
+    })
+    .addCase(deleteChatAction.fulfilled, (state) => {
       state.chatsRefreshTrigger = true;
     });
     // builder
