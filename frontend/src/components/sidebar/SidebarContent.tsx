@@ -5,7 +5,7 @@ import { typography } from "@/constants/typography";
 import { css, cx } from "@emotion/css";
 import { Loader, SegmentedControl } from "@mantine/core";
 import { SearchIcon, SquarePen } from "lucide-react";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   SidebarOption,
@@ -13,40 +13,41 @@ import {
   type SidebarItem,
 } from "@/types/sidebarOptions";
 import SidebarChats from "@/components/sidebar/SidebarChats";
+import { useTranslation } from "react-i18next";
 
-const generalOptions: SidebarItem[] = [
-  {
-    id: 1,
-    label: "New chat",
-    icon: SquarePen,
-    isDisabled: false,
-    type: SidebarOption.NewChat,
-  },
-  {
-    id: 2,
-    label: "Search chats",
-    icon: SearchIcon,
-    isDisabled: true,
-    type: SidebarOption.SearchChats,
-  },
-];
-
-const sidebarModeOptions = [
-  {
-    label: "All",
-    value: "ALL",
-  },
-  {
-    label: "Global",
-    value: "GLOBAL",
-  },
-  {
-    label: "Private",
-    value: "PRIVATE",
-  },
-];
 const SidebarContent = ({ expanded }) => {
   const [mode, setMode] = useState<chatMode>("ALL");
+
+  const { t } = useTranslation();
+
+  const generalOptions: SidebarItem[] = useMemo(
+    () => [
+      {
+        id: 1,
+        label: t("sidebar.newChat"),
+        icon: SquarePen,
+        isDisabled: false,
+        type: SidebarOption.NewChat,
+      },
+      {
+        id: 2,
+        label: t("sidebar.searchChats"),
+        icon: SearchIcon,
+        isDisabled: true,
+        type: SidebarOption.SearchChats,
+      },
+    ],
+    [t],
+  );
+
+  const sidebarModeOptions = useMemo(
+    () => [
+      { label: t("sidebar.all"), value: "ALL" },
+      { label: t("sidebar.global"), value: "GLOBAL" },
+      { label: t("sidebar.private"), value: "PRIVATE" },
+    ],
+    [t],
+  );
 
   if (!expanded) {
     return null;
@@ -82,10 +83,10 @@ const SidebarContent = ({ expanded }) => {
             css`
               display: block;
               color: ${colorPalette.textMuted};
-            `
+            `,
           )}
         >
-          Chats
+          {t("sidebar.chats")}
         </span>
         <SegmentedControl
           fullWidth

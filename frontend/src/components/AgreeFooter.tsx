@@ -1,19 +1,23 @@
 import { typography } from "@/constants/typography";
 import LinkRenderer from "@/components/ui/LinkRenderer";
 import { cx } from "@emotion/css";
+import { Trans } from "react-i18next";
+
 const AgreeFooter = () => {
   return (
     <>
       <span className={cx("text-center", typography.textS)}>
-        By continuing, you agree to Med AI{" "}
-        <LinkRenderer href="/terms" includeLinkStyles target="_blank">
-          Terms of Service
-        </LinkRenderer>{" "}
-        and{" "}
-        <LinkRenderer href="/privacy" includeLinkStyles target="_blank">
-          Privacy Notice
-        </LinkRenderer>
-        .
+        <Trans
+          i18nKey="auth.agreeText"
+          components={{
+            termsLink: (
+              <LinkRenderer href="/terms" includeLinkStyles target="_blank" />
+            ),
+            privacyLink: (
+              <LinkRenderer href="/privacy" includeLinkStyles target="_blank" />
+            ),
+          }}
+        />
       </span>
     </>
   );

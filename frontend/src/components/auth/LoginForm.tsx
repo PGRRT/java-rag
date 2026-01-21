@@ -13,8 +13,10 @@ import { showAsyncToastAndRedirect, showToast } from "@/utils/showToast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import AgreeFooter from "@/components/AgreeFooter";
+import { useTranslation } from "react-i18next";
 
 const LoginForm = () => {
+  const { t } = useTranslation();
   const { login: loginUser, clearAuthError, user, isLoading } = useAuth();
   const navigate = useNavigate();
   const {
@@ -57,10 +59,10 @@ const LoginForm = () => {
     }
     // this is used to make isSubmitting true after the user is logged in (so that the button is disabled while redirecting)
     await showAsyncToastAndRedirect(
-      "Login successful! Redirecting to homepage...",
+      t("auth.loginSuccess"),
       "/",
       2000,
-      navigate
+      navigate,
     );
   };
 
@@ -82,13 +84,13 @@ const LoginForm = () => {
         gap="30px"
       >
         <h4 className={cx(typography.textXl, "center")}>
-          Log into your account
+          {t("auth.loginTitle")}
         </h4>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <ContentWrapper direction="column" gap="30px">
             <Input
-              label="Email"
+              label={t("auth.email")}
               type="email"
               {...register("email")}
               error={errors.email?.message}
@@ -98,7 +100,7 @@ const LoginForm = () => {
             />
 
             <Input
-              label="Password"
+              label={t("auth.password")}
               type="password"
               {...register("password")}
               error={errors.password?.message}
@@ -108,14 +110,14 @@ const LoginForm = () => {
             />
 
             <Button type="submit" disabled={isSubmitting || isLoading}>
-              Log In
+              {t("auth.login")}
             </Button>
           </ContentWrapper>
         </form>
         <ContentWrapper gap="10px" customCss={cx("center")}>
-          <span className={typography.textM}>Don't have an account?</span>
+          <span className={typography.textM}>{t("auth.dontHaveAccount")}</span>
           <Link className={typography.textM} href="/sign-up" includeLinkStyles>
-            Sign up
+            {t("auth.signUp")}
           </Link>
         </ContentWrapper>
       </ContentWrapper>

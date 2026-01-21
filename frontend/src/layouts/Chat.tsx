@@ -1,24 +1,13 @@
 import ChatContainer from "@/components/chat/ChatContainer";
 import ChatAIInput from "@/components/chat/ChatAIInput";
 import ContentWrapper from "@/components/ui/ContentWrapper";
-import IconWrapper from "@/components/ui/IconWrapper";
-import { styles } from "@/constants/styles";
 import { typography } from "@/constants/typography";
 import { css, cx } from "@emotion/css";
-import {
-  Button,
-  FileButton,
-  FileInput,
-  Group,
-  Pill,
-  TextInput,
-} from "@mantine/core";
-import { ChevronUp, MoveUp, Paperclip } from "lucide-react";
-import { useState } from "react";
+import { Button } from "@mantine/core";
 import { useParams } from "react-router-dom";
 import Logo from "@/components/ui/Logo";
-import colorPalette from "@/constants/colorPalette";
 import type { UUID } from "@/types/global";
+import { useTranslation, Trans } from "react-i18next";
 
 const Chat = () => {
   const {
@@ -26,6 +15,7 @@ const Chat = () => {
   }: {
     chatId?: UUID;
   } = useParams();
+  const { t } = useTranslation();
 
   return (
     <ContentWrapper
@@ -66,9 +56,15 @@ const Chat = () => {
             justify="center"
             wrap="wrap"
           >
-            <Button variant="outline">Ingredient Checker</Button>
-            <Button variant="outline">BMI Calculator</Button>
-            <Button variant="outline">Brain Fixer</Button>
+            <Button variant="outline">
+              {t("chat.quickActions.ingredientChecker")}
+            </Button>
+            <Button variant="outline">
+              {t("chat.quickActions.bmiCalculator")}
+            </Button>
+            <Button variant="outline">
+              {t("chat.quickActions.sleepFixer")}
+            </Button>
           </ContentWrapper>
 
           <ContentWrapper width="100%" justify="center">
@@ -77,14 +73,15 @@ const Chat = () => {
                 typography.textS,
                 css`
                   text-align: center;
-                `
+                `,
               )}
             >
-              Remember to always{" "}
-              <span className={cx(typography.textBold)}>
-                verify the information
-              </span>{" "}
-              received from AI.
+              <Trans
+                i18nKey="chat.verifyWarning"
+                components={[
+                  <span key="0" className={cx(typography.textBold)}></span>,
+                ]}
+              />
             </p>
           </ContentWrapper>
         </ContentWrapper>

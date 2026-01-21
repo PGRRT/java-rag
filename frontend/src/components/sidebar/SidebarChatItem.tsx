@@ -14,6 +14,7 @@ import { chatApi } from "@/api/chatApi";
 import type { UUID } from "@/types/global";
 import { useAppDispatch } from "@/redux/hooks";
 import { deleteChatAction } from "@/redux/slices/chatSlice";
+import { useTranslation } from "react-i18next";
 
 const SidebarChatItem = ({
   label,
@@ -34,6 +35,7 @@ const SidebarChatItem = ({
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
 
   const getActionForOption = () => {
     switch (type) {
@@ -180,7 +182,7 @@ const SidebarChatItem = ({
                 >
                   <IconWrapper size={14} Icon={Trash2} />
                   <span className={typography.textM}>
-                    {isDeleting ? "Deleting..." : "Delete"}
+                    {isDeleting ? t("chat.deleting") : t("chat.delete")}
                   </span>
                 </button>
               </ContentWrapper>

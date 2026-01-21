@@ -7,6 +7,7 @@ import { styles } from "@/constants/styles";
 import CustomPopover from "@/components/ui/CustomPopover";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface AvatarProps {
   email?: string;
@@ -117,6 +118,7 @@ const dropdownItemStyle = css`
 export const Avatar = ({ email, size = 32 }: AvatarProps) => {
   const { user, logout, deleteAccount } = useAuth();
   const [isDeleting, setIsDeleting] = useState(false);
+  const { t } = useTranslation();
 
   const displayEmail = email || user?.email || "";
   const firstLetter = displayEmail.charAt(0).toUpperCase();
@@ -149,12 +151,11 @@ export const Avatar = ({ email, size = 32 }: AvatarProps) => {
   const handleDeleteAccount = async () => {
     if (isDeleting) return;
 
-    toast.warning("Delete Account", {
-      description:
-        "This action cannot be undone. All your data will be permanently deleted.",
+    toast.warning(t("userMenu.deleteAccountToastTitle"), {
+      description: t("userMenu.deleteAccountToastDescription"),
       duration: 10000,
       action: {
-        label: "Delete",
+        label: t("userMenu.deleteButton"),
         onClick: async () => {
           setIsDeleting(true);
           try {
@@ -165,7 +166,7 @@ export const Avatar = ({ email, size = 32 }: AvatarProps) => {
         },
       },
       cancel: {
-        label: "Cancel",
+        label: t("userMenu.cancelButton"),
         onClick: () => {
           toast.dismiss();
         },
@@ -180,7 +181,7 @@ export const Avatar = ({ email, size = 32 }: AvatarProps) => {
       trigger={
         <div
           className={avatarButtonStyle(size, avatarColor)}
-          aria-label="User menu"
+          aria-label={t("userMenu.userMenuAriaLabel")}
           role="button"
           tabIndex={0}
         >
@@ -209,7 +210,7 @@ export const Avatar = ({ email, size = 32 }: AvatarProps) => {
             onClick={handleDeleteAccount}
           >
             <Trash2 size={16} />
-            <span>Delete account</span>
+            <span>{t("userMenu.deleteAccount")}</span>
           </button>
 
           <button
@@ -217,7 +218,7 @@ export const Avatar = ({ email, size = 32 }: AvatarProps) => {
             onClick={handleLogout}
           >
             <LogOut size={16} />
-            <span>Sign out</span>
+            <span>{t("auth.logout")}</span>
           </button>
         </div>
       }

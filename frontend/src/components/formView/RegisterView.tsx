@@ -5,6 +5,7 @@ import { typography } from "@/constants/typography";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import type { RegisterFormData } from "@/api/schemas/registerSchema";
 import { cx } from "@emotion/css";
+import { useTranslation } from "react-i18next";
 
 const RegisterView = ({
   register,
@@ -15,15 +16,17 @@ const RegisterView = ({
   errors: FieldErrors<RegisterFormData>;
   children?: React.ReactNode;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <>
       <h4 className={cx("text-center", typography.textXl)}>
-        Create your account
+        {t("auth.register")}
       </h4>
 
       <ContentWrapper direction="column" gap="30px">
         <Input
-          label="Email"
+          label={t("auth.email")}
           type="email"
           autoComplete="email"
           {...register("email")}
@@ -31,18 +34,18 @@ const RegisterView = ({
         />
 
         <Input
-          label="Password"
+          label={t("auth.password")}
           type="password"
-          description="Password must be at least 6 characters with letters and numbers."
+          description={t("auth.passwordRequirements")}
           autoComplete="new-password"
           error={errors.password?.message}
           {...register("password")}
         />
 
         <Input
-          label="Confirm Password"
+          label={t("auth.confirmPassword")}
           type="password"
-          description="Please re-enter your password."
+          description={t("auth.passwordConfirmDescription")}
           autoComplete="new-password"
           error={errors.confirmPassword?.message}
           {...register("confirmPassword")}
@@ -51,9 +54,11 @@ const RegisterView = ({
         {children}
       </ContentWrapper>
       <ContentWrapper gap="10px" customCss={cx("center")}>
-        <span className={typography.textM}>Already have an account?</span>
+        <span className={typography.textM}>
+          {t("auth.alreadyHaveAccount")}
+        </span>
         <Link className={typography.textM} href="/sign-in" includeLinkStyles>
-          Log in
+          {t("auth.login")}
         </Link>
       </ContentWrapper>
     </>

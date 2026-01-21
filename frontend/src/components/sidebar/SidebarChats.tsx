@@ -8,6 +8,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useInfiniteChats } from "@/hooks/useInfiniteChats";
 import { SidebarOption } from "@/types/sidebarOptions";
 import { showToast, showToastAndRedirect } from "@/utils/showToast";
+import { useTranslation } from "react-i18next";
 
 const SidebarChats = ({ mode }) => {
   const {
@@ -21,6 +22,7 @@ const SidebarChats = ({ mode }) => {
   } = useInfiniteChats({
     mode,
   });
+  const { t } = useTranslation();
 
   const rowVirtualizer = useVirtualizer({
     count: chats?.length ?? 0,
@@ -44,15 +46,14 @@ const SidebarChats = ({ mode }) => {
       observer.observe(node);
       return () => observer.disconnect();
     },
-    [loadMore, isLoadingMore, isReachingEnd]
+    [loadMore, isLoadingMore, isReachingEnd],
   );
 
   useEffect(() => {
     if (isErrorInitial || error) {
-      showToast.error("Error loading chats.");
+      showToast.error(t("sidebar.errorLoadingChats"));
     }
-  }, [error, isErrorInitial]);
-  
+  }, [error, isErrorInitial, t]);
 
   const parentRef = useRef<HTMLDivElement>(null);
 

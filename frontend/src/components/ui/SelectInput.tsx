@@ -7,6 +7,7 @@ import colorPalette from "@/constants/colorPalette";
 import CustomPopover from "@/components/ui/CustomPopover";
 import { styles } from "@/constants/styles";
 import useViewport from "@/hooks/useViewport";
+import { useTranslation } from "react-i18next";
 
 interface options {
   label: string;
@@ -23,6 +24,7 @@ const SelectInput = ({
   options: options[];
 }) => {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const currentLabel = options?.find((option) => option.value === value)?.label;
 
@@ -66,7 +68,7 @@ const SelectInput = ({
               `
             )}
           >
-            {currentLabel ?? "Classical Rag"}
+            {currentLabel ?? t("ui.selectDefault")}
           </span>
           <IconWrapper
             Icon={ChevronDown}

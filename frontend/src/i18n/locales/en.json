@@ -1,0 +1,96 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "save": "Save"
+  },
+  "sidebar": {
+    "newChat": "New chat",
+    "searchChats": "Search chats",
+    "chats": "Chats",
+    "all": "All",
+    "global": "Global",
+    "private": "Private",
+    "loadingChats": "Loading chats...",
+    "errorLoadingChats": "Error loading chats."
+  },
+  "ui": {
+    "inputPlaceholder": "Type here...",
+    "selectPlaceholder": "Select...",
+    "avatarTooltip": "User avatar",
+    "popoverOpen": "Open menu",
+    "popoverClose": "Close menu",
+    "selectDefault": "Classical Rag"
+  },
+  "chat": {
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "deleteSuccess": "Chat deleted successfully",
+    "deleteError": "Failed to delete chat",
+    "title": "Chat",
+    "typeMessage": "Type a message...",
+    "send": "Send",
+    "placeholder": "How can I help you?",
+    "globalTooltip": "Global chat - visible to everyone",
+    "privateTooltip": "Private chat - only you can see it",
+    "loginToPrivate": "Log in to create private chats",
+    "quickActions": {
+      "ingredientChecker": "Ingredient Checker",
+      "bmiCalculator": "BMI Calculator",
+      "sleepFixer": "Fix Your Sleep"
+    },
+    "verifyWarning": "Remember to always <1>verify the information</1> received from AI."
+  },
+  "auth": {
+    "login": "Log In",
+    "loginTitle": "Log into your account",
+    "loginSuccess": "Login successful! Redirecting to homepage...",
+    "logout": "Log out",
+    "register": "Create your account",
+    "registerButton": "Verify email",
+    "createAccount": "Create your account",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot password?",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "signUp": "Sign up",
+    "signIn": "Sign in",
+    "passwordRequirements": "Password must be at least 6 characters with letters and numbers.",
+    "passwordConfirmDescription": "Please re-enter your password.",
+    "verifyEmail": "Verify your email",
+    "verifyEmailDescription": "We've emailed a one time security code to <strong>{{email}}</strong>, please enter the code below",
+    "verificationCode": "Verification Code",
+    "verificationCodePlaceholder": "Enter 6-digit code",
+    "accountCreatedSuccess": "Account created successfully! Redirecting to homepage...",
+    "agreeText": "By continuing, you agree to Med AI <termsLink>Terms of Service</termsLink> and <privacyLink>Privacy Notice</privacyLink>.",
+    "loginIllustration": "Login illustration"
+  },
+  "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Please try again",
+    "notFound": "Not found",
+    "unauthorized": "Unauthorized",
+    "serverError": "Server error"
+  },
+  "navbar": {
+    "ragOptions": {
+      "bielik": "Bielik",
+      "classical_rag": "Classical Rag"
+    }
+  },
+  "userMenu": {
+    "userMenuAriaLabel": "User menu",
+    "deleteAccount": "Delete account",
+    "deleteAccountToastTitle": "Delete Account",
+    "deleteAccountToastDescription": "This action cannot be undone. All your data will be permanently deleted.",
+    "deleteButton": "Delete",
+    "cancelButton": "Cancel"
+  }
+}

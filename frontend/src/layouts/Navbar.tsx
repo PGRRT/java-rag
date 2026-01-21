@@ -8,23 +8,24 @@ import useViewport from "@/hooks/useViewport";
 import { css } from "@emotion/css";
 import { Button } from "@mantine/core";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { email } from "zod";
-
-const ragOptions = [
-  {
-    label: "Bielik",
-    value: "bielik",
-  },
-  {
-    label: "Classical Rag",
-    value: "classical_rag",
-  },
-];
 
 export const navbarHeight = 66;
 
 const Navbar = () => {
+  const { t } = useTranslation();
+  const ragOptions = [
+    {
+      label: t("navbar.ragOptions.bielik"),
+      value: "bielik",
+    },
+    {
+      label: t("navbar.ragOptions.classical_rag"),
+      value: "classical_rag",
+    },
+  ];
+
   const [rag, setRag] = useState(ragOptions[0].value);
   const { isMobile } = useViewport();
   const margin = isMobile ? "0 0 0 60px" : "0";
@@ -59,11 +60,11 @@ const Navbar = () => {
           ) : (
             <>
               <Button component={Link} to="/sign-in">
-                Sign in
+                {t("auth.signIn")}
               </Button>
               {isMobile ? null : (
                 <Button variant="outline" component={Link} to="/sign-up">
-                  Sign up
+                  {t("auth.signUp")}
                 </Button>
               )}
             </>
