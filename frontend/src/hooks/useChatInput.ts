@@ -10,6 +10,7 @@ import { postMessagesAction } from "@/redux/slices/messageSlice";
 import { useUserSWR } from "@/hooks/useUser";
 import type { UUID } from "@/types/global";
 import { ChatRoom, type ChatRoomType } from "@/api/enums/ChatRoom";
+import { useTranslation } from "react-i18next";
 
 const useChatInput = ({
   chatId = "" as UUID,
@@ -25,6 +26,7 @@ const useChatInput = ({
   const { user } = useUserSWR();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const sendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -38,7 +40,7 @@ const useChatInput = ({
       // Create new chat if chatId is not provided
 
       if (mode == ChatRoom.PRIVATE && !user?.email) {
-        showToast.error("You must be logged in to start a private chat.");
+        showToast.error(t("toasts.mustBeLoggedIn"));
         return;
       }
 
@@ -46,9 +48,8 @@ const useChatInput = ({
         createChatAction({
           message,
           chatType: mode,
-        })
+        }),
       );
-     
 
       if (createChatAction.rejected.match(res)) {
         // toast is shown in the thunk
@@ -67,7 +68,7 @@ const useChatInput = ({
     }
 
     const messageResponse = await dispatch(
-      postMessagesAction({ chatId: tempChatId, content: message })
+      postMessagesAction({ chatId: tempChatId, content: message }),
     );
 
     if (postMessagesAction.rejected.match(messageResponse)) {

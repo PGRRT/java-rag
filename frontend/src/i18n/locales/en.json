@@ -92,5 +92,23 @@
     "deleteAccountToastDescription": "This action cannot be undone. All your data will be permanently deleted.",
     "deleteButton": "Delete",
     "cancelButton": "Cancel"
+  },
+  "toasts": {
+    "loggingIn": "Logging in...",
+    "loginSuccess": "Logged in successfully",
+    "loginFailed": "Login failed",
+    "registering": "Registering...",
+    "registerSuccess": "Registered successfully",
+    "registerFailed": "Registration failed",
+    "sendingOtp": "Sending OTP...",
+    "otpSentSuccess": "OTP sent successfully",
+    "otpSendFailed": "Failed to send OTP",
+    "loggingOut": "Logging out...",
+    "logoutSuccess": "Logged out successfully",
+    "logoutFailed": "Logout failed",
+    "deletingAccount": "Deleting account...",
+    "deleteAccountSuccess": "Account deleted successfully",
+    "deleteAccountFailed": "Account deletion failed",
+    "mustBeLoggedIn": "You must be logged in to start a private chat."
   }
 }

@@ -92,5 +92,23 @@
     "deleteAccountToastDescription": "Tej akcji nie można cofnąć. Wszystkie Twoje dane zostaną trwale usunięte.",
     "deleteButton": "Usuń",
     "cancelButton": "Anuluj"
+  },
+  "toasts": {
+    "loggingIn": "Logowanie...",
+    "loginSuccess": "Zalogowano pomyślnie",
+    "loginFailed": "Logowanie nie powiodło się",
+    "registering": "Rejestrowanie...",
+    "registerSuccess": "Zarejestrowano pomyślnie",
+    "registerFailed": "Rejestracja nie powiodła się",
+    "sendingOtp": "Wysyłanie OTP...",
+    "otpSentSuccess": "Wysłano OTP pomyślnie",
+    "otpSendFailed": "Nie udało się wysłać OTP",
+    "loggingOut": "Wylogowywanie...",
+    "logoutSuccess": "Wylogowano pomyślnie",
+    "logoutFailed": "Wylogowanie nie powiodło się",
+    "deletingAccount": "Usuwanie konta...",
+    "deleteAccountSuccess": "Konto usunięte pomyślnie",
+    "deleteAccountFailed": "Usuwanie konta nie powiodło się",
+    "mustBeLoggedIn": "Musisz być zalogowany, aby rozpocząć prywatny czat."
   }
 }

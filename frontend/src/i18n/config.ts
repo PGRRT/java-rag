@@ -21,8 +21,9 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: "en",
+    // fallbackLng: "pl",
 
+    
     // Supported languages
     supportedLngs: SUPPORTED_LANGUAGES,
 

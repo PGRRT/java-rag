@@ -57,13 +57,13 @@ const LoginForm = () => {
 
       return;
     }
-    // this is used to make isSubmitting true after the user is logged in (so that the button is disabled while redirecting)
-    await showAsyncToastAndRedirect(
-      t("auth.loginSuccess"),
-      "/",
-      2000,
-      navigate,
-    );
+    // // this is used to make isSubmitting true after the user is logged in (so that the button is disabled while redirecting)
+    // await showAsyncToastAndRedirect(
+    //   t("auth.loginSuccess"),
+    //   "/",
+    //   2000,
+    //   navigate,
+    // );
   };
 
   return (

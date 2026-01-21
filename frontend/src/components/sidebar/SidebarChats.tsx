@@ -27,7 +27,8 @@ const SidebarChats = ({ mode }) => {
   const rowVirtualizer = useVirtualizer({
     count: chats?.length ?? 0,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 42,
+    estimateSize: () => 37,
+    // estimateSize: () => 42,
     overscan: 5,
   });
 

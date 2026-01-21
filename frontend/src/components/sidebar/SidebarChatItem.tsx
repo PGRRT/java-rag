@@ -134,6 +134,11 @@ const SidebarChatItem = ({
                 className={cx(
                   "chat-menu",
                   css`
+                    position: absolute;
+                    top: 50%;
+                    right: 10px;
+                    transform: translateY(-50%);
+                    
                     display: flex;
                     align-items: center;
                     justify-content: center;

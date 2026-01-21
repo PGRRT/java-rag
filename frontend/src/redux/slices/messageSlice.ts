@@ -78,7 +78,8 @@ const messagesSlice = createSlice({
           state.isLoading = false;
           state.messages = action.payload;
         }
-      );
+      )
+   
   },
 });
 
