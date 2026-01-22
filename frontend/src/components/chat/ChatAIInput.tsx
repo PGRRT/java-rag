@@ -71,11 +71,11 @@ const ChatAIInput = ({
 
           textarea {
             border-radius: 24px;
-            padding: 15px 60px 15px 50px;
+            padding: 15px 100px 15px 50px;
           }
         `)}
         leftSection={
-          <ContentWrapper id="asdz">
+          <ContentWrapper>
             <FileButton onChange={setFile} accept="*">
               {(props) => <IconWrapper {...props} Icon={Paperclip} />}
             </FileButton>

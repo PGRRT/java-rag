@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { chatApi } from "@/api/chatApi";
 import type { PayloadAction } from "@reduxjs/toolkit";
@@ -25,7 +26,7 @@ export const fetchMessagesAction = createAsyncThunk(
     });
 
     if (!response.success) {
-      return rejectWithValue("Failed to fetch chats");
+      return rejectWithValue(i18n.t("toasts.fetchMessagesFailed"));
     }
     return response.data;
   }
@@ -42,7 +43,7 @@ export const postMessagesAction = createAsyncThunk(
     });
 
     if (!response.success) {
-      return rejectWithValue("Failed to post message");
+      return rejectWithValue(i18n.t("toasts.postMessageFailed"));
     }
     return response.data;
   }

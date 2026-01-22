@@ -1,3 +1,4 @@
+import i18n from "@/i18n/config";
 import { showToast } from "@/utils/showToast";
 import type { AxiosResponse } from "axios";
 
@@ -11,16 +12,18 @@ const exceptionWrapper = async <T>(
       showToast.info(message);
     }
 
-    const axiosData  = res?.data;
+    const axiosData = res?.data;
     return {
       success: true,
       data: axiosData,
     };
   } catch (error: unknown) {
     if (error instanceof Error) {
-      showToast.error(`Failed: ${error.message}`);
+      showToast.error(
+        i18n.t("errors.operationFailedWithError", { error: error.message })
+      );
     } else {
-      showToast.error("Operation failed due to an unknown error.");
+      showToast.error(i18n.t("errors.operationFailed"));
     }
     return {
       success: false,

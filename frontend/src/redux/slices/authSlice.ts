@@ -1,4 +1,4 @@
-// src/redux/slices/authSlice.ts
+import i18n from "@/i18n/config";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { authApi } from "@/api/authApi";
@@ -16,11 +16,12 @@ export const loginUserAction = createAsyncThunk(
   "auth/login",
   async (credentials: Credentials, { rejectWithValue }) => {
     try {
-      console.log("Logging in with credentials:", credentials);
       const response = await authApi.login(credentials);
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Login failed");
+      return rejectWithValue(
+        error.response?.data?.message || i18n.t("toasts.loginFailed")
+      );
     }
   }
 );
@@ -33,7 +34,7 @@ export const registerUserAction = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message || "Registration failed"
+        error.response?.data?.message || i18n.t("toasts.registerFailed")
       );
     }
   }
@@ -47,7 +48,7 @@ export const requestOtpAction = createAsyncThunk(
       return response.data;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message || "Failed to send OTP"
+        error.response?.data?.message || i18n.t("toasts.otpSendFailed")
       );
     }
   }
@@ -87,7 +88,7 @@ export const deleteAccountAction = createAsyncThunk(
       return true;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message || "Account deletion failed"
+        error.response?.data?.message || i18n.t("toasts.deleteAccountFailed")
       );
     }
   }

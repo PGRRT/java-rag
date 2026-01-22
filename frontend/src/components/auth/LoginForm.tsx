@@ -49,21 +49,16 @@ const LoginForm = () => {
     clearAuthError();
     const { data, error } = await loginUser(userData);
 
-    console.log("data, error", data, error);
-
     if (error) {
       setError("email", { type: "manual", message: " " }); // to highlight both fields
       setError("password", { type: "manual", message: error });
 
       return;
     }
-    // // this is used to make isSubmitting true after the user is logged in (so that the button is disabled while redirecting)
-    // await showAsyncToastAndRedirect(
-    //   t("auth.loginSuccess"),
-    //   "/",
-    //   2000,
-    //   navigate,
-    // );
+    
+    setTimeout(() => {
+      navigate("/");
+    }, 1500);
   };
 
   return (

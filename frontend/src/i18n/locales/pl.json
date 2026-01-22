@@ -32,6 +32,8 @@
     "deleting": "Usuwanie...",
     "deleteSuccess": "Czat został usunięty",
     "deleteError": "Nie udało się usunąć czatu",
+    "createSuccess": "Czat utworzony pomyślnie",
+    "createError": "Nie udało się utworzyć czatu",
     "title": "Czat",
     "typeMessage": "Wpisz wiadomość...",
     "send": "Wyślij",
@@ -77,7 +79,12 @@
     "tryAgain": "Spróbuj ponownie",
     "notFound": "Nie znaleziono",
     "unauthorized": "Brak autoryzacji",
-    "serverError": "Błąd serwera"
+    "serverError": "Błąd serwera",
+    "operationFailed": "Operacja nie powiodła się z powodu nieznanego błędu.",
+    "operationFailedWithError": "Błąd: {{error}}",
+    "authInitFailed": "[Auth] Nie udało się zainicjować uwierzytelniania, kontynuowanie bez tokenu:",
+    "authRetryFailed": "[Auth] Nie udało się ponowić żądania:",
+    "authTokenRefreshFailed": "[Auth] Odświeżenie tokenu nie powiodło się:"
   },
   "navbar": {
     "ragOptions": {
@@ -109,6 +116,8 @@
     "deletingAccount": "Usuwanie konta...",
     "deleteAccountSuccess": "Konto usunięte pomyślnie",
     "deleteAccountFailed": "Usuwanie konta nie powiodło się",
-    "mustBeLoggedIn": "Musisz być zalogowany, aby rozpocząć prywatny czat."
+    "mustBeLoggedIn": "Musisz być zalogowany, aby rozpocząć prywatny czat.",
+    "fetchMessagesFailed": "Nie udało się pobrać wiadomości",
+    "postMessageFailed": "Nie udało się wysłać wiadomości"
   }
 }

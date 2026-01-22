@@ -32,6 +32,8 @@
     "deleting": "Deleting...",
     "deleteSuccess": "Chat deleted successfully",
     "deleteError": "Failed to delete chat",
+    "createSuccess": "Chat created successfully",
+    "createError": "Failed to create chat",
     "title": "Chat",
     "typeMessage": "Type a message...",
     "send": "Send",
@@ -77,7 +79,12 @@
     "tryAgain": "Please try again",
     "notFound": "Not found",
     "unauthorized": "Unauthorized",
-    "serverError": "Server error"
+    "serverError": "Server error",
+    "operationFailed": "Operation failed due to an unknown error.",
+    "operationFailedWithError": "Failed: {{error}}",
+    "authInitFailed": "[Auth] Failed to initialize authentication, continuing without token:",
+    "authRetryFailed": "[Auth] Failed to retry request:",
+    "authTokenRefreshFailed": "[Auth] Token refresh failed:"
   },
   "navbar": {
     "ragOptions": {
@@ -109,6 +116,8 @@
     "deletingAccount": "Deleting account...",
     "deleteAccountSuccess": "Account deleted successfully",
     "deleteAccountFailed": "Account deletion failed",
-    "mustBeLoggedIn": "You must be logged in to start a private chat."
+    "mustBeLoggedIn": "You must be logged in to start a private chat.",
+    "fetchMessagesFailed": "Failed to fetch messages",
+    "postMessageFailed": "Failed to post message"
   }
 }

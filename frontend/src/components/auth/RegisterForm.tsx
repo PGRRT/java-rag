@@ -64,12 +64,9 @@ const RegisterForm = () => {
     }
 
     // this is used to make isSubmitting true after the user is registered (so that the button is disabled while redirecting)
-    await showAsyncToastAndRedirect(
-      t("auth.accountCreatedSuccess"),
-      "/",
-      2000,
-      navigate,
-    );
+    setTimeout(() => {
+      navigate("/");
+    }, 1500);
   };
 
   const createEmailVerificationPassword = async (data: RegisterFormData) => {
