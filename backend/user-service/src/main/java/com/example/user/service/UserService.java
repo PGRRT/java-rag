@@ -9,4 +9,5 @@ public interface UserService {
     UserResponse saveUser(RegisterUserRequest registerUserRequest);
     UserResponse getCurrentUser(UUID userId);
     void deleteCurrentUser(UUID userId);
+    boolean isEmailAvailable(String email);
 }

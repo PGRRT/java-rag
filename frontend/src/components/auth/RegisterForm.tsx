@@ -70,8 +70,6 @@ const RegisterForm = () => {
   };
 
   const createEmailVerificationPassword = async (data: RegisterFormData) => {
-    console.log("createEmailVerificationPassword");
-
     setVerifyEmailLoading(true);
 
     try {
@@ -79,15 +77,14 @@ const RegisterForm = () => {
 
       const { data, error } = await createOtp(userEmail);
 
+      setVerifyEmailLoading(false);
       if (error) {
         return;
       }
-
       setStep(step + 1);
     } catch (error) {
       console.error("Error creating email verification password:", error);
     }
-    setVerifyEmailLoading(false);
   };
 
   return (

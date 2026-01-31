@@ -277,11 +277,18 @@ services:
     env_file:
      - .env
      - .env.dev.local
-    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    command: >
+      redis-server 
+      --requirepass ${REDIS_PASSWORD} 
+      --save "" 
+      --appendonly no 
+      --maxmemory 256mb 
+      --maxmemory-policy allkeys-lru
+    # command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}", "--save", "", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
     networks:
       - app_network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 10

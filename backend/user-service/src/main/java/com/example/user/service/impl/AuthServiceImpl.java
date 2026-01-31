@@ -77,18 +77,6 @@ public class AuthServiceImpl implements AuthService {
         return new AuthResult(userResponse, tokens.getAccessToken(), tokens.getRefreshToken());
     }
 
-
-    @Override
-    public boolean isEmailAvailable(String email) {
-        String normalizedEmail = NormalizeEmail.normalize(email);
-
-        if (bloomFilterService.isEmailAvailable(normalizedEmail)) {
-            return true;
-        }
-
-        return !userRepository.existsByEmail(normalizedEmail);
-    }
-
     @Override
     public AuthResult registerUser(RegisterUserRequest request) {
         String normalizedEmail = NormalizeEmail.normalize(request.getEmail());
@@ -99,7 +87,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // if false, we have to make sure and check DB
-        boolean emailAvailable = isEmailAvailable(normalizedEmail);
+        boolean emailAvailable = userService.isEmailAvailable(normalizedEmail);
 
         if (!emailAvailable) {
            throw new EmailAlreadyTakenException("Email is already in use");

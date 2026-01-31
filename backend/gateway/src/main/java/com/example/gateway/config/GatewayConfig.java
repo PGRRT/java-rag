@@ -18,16 +18,10 @@ public class GatewayConfig {
                 .route("user-service", r -> r
                         .path("/api/v1/users/**", "/api/v1/auth/**", "/api/v1/user/**")
                         .filters(f -> f.filter(rateLimitFilter))
-//                        .filters(f -> f.requestRateLimiter(config -> config
-//                                .setRateLimiter(redisRateLimiter)
-//                                .setKeyResolver(keyResolver)))
                         .uri("lb://user-service"))
                 .route("chat-service", r -> r
                         .path("/api/v1/chats/**")
                         .filters(f -> f.filter(rateLimitFilter))
-//                        .filters(f -> f.requestRateLimiter(config -> config
-//                                .setRateLimiter(redisRateLimiter)
-//                                .setKeyResolver(keyResolver)))
                         .uri("lb://chat-service"))
                 .build();
     }

@@ -7,6 +7,7 @@ import com.example.user.domain.dto.user.request.RegisterUserRequest;
 import com.example.user.domain.dto.user.response.UserResponse;
 import com.example.user.exceptions.OtpInvalidException;
 import com.example.user.service.AuthService;
+import com.example.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +26,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-
-    @GetMapping("/check-email")
-    public ResponseEntity<Boolean> checkEmailAvailability(@RequestParam String email) {
-        boolean isAvailable = authService.isEmailAvailable(email);
-
-        return ResponseEntity.ok(isAvailable);
-    }
+    private final UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse<UserResponse>> login(@RequestBody @Valid LoginUserRequest loginUserRequest) {

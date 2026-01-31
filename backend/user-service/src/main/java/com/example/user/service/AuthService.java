@@ -13,5 +13,4 @@ public interface AuthService {
     void blacklistToken(long expiration, String jti);
     void getClaimsAndBlacklistToken(String token);
     ResponseCookie logout(String refreshToken);
-    boolean isEmailAvailable(String email);
 }

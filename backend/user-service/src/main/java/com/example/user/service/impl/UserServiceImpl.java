@@ -8,8 +8,10 @@ import com.example.user.exceptions.UserNotFoundException;
 import com.example.user.mapper.UserMapper;
 import com.example.user.publisher.UserEventPublisher;
 import com.example.user.repository.UserRepository;
+import com.example.user.service.BloomFilterService;
 import com.example.user.service.RoleService;
 import com.example.user.service.UserService;
+import com.example.user.utility.NormalizeEmail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
     private final UserEventPublisher userEventPublisher;
+    private final BloomFilterService bloomFilterService;
 
     @Override
     @Transactional
@@ -49,6 +52,16 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(user);
     }
 
+    @Override
+    public boolean isEmailAvailable(String email) {
+        String normalizedEmail = NormalizeEmail.normalize(email);
+
+        if (bloomFilterService.isEmailAvailable(normalizedEmail)) {
+            return true;
+        }
+
+        return !userRepository.existsByEmail(normalizedEmail);
+    }
 
     @Override
     public UserResponse getCurrentUser(UUID userId) {
