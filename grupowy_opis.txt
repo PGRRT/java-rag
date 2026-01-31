@@ -1,0 +1,423 @@
+Wydział_ETI_desktop 
+
+ 
+
+Dokumentacja projektu grupowego 
+
+Dokumentacja techniczna projektu 
+
+Wydział Elektroniki, Telekomunikacji i Informatyki 
+
+Politechnika Gdańska 
+
+ 
+
+{wersja dokumentu wzorcowego: wersja 1/2025} 
+
+ 
+
+ 
+
+ 
+
+Nazwa i akronim projektu: 
+
+Polskojęzyczny chatbot medyczny oparty na architekturze RAG 
+
+ 
+
+Zleceniodawca: 
+
+Projekt politechniczny (klient wewnętrzny Politechniki Gdańskiej) 
+
+ 
+
+Numer zlecenia:  
+
+ID-353 
+
+ 
+
+Kierownik projektu: 
+
+Bartosz Skorowski 
+
+ 
+
+Opiekun projektu: 
+
+Jan Majkutewicz 
+
+ 
+
+Nazwa dokumentu/akronim: 
+
+Dokumentacja procesu projektowania – DPP 
+
+Nr wersji:  
+
+1.0 
+
+ 
+
+Odpowiedzialny za dokument: 
+
+Bartosz Skorowski, Jakub Bot, Kamil Raubo 
+
+ 
+
+Data pierwszego sporządzenia:  
+
+ 
+
+27.01.2026 
+
+ 
+
+Data ostatniej aktualizacji:  
+
+27.01.2026 
+
+ 
+
+Studia I stopnia, inżynierskie 
+
+Semestr realizacji Projektu grupowego: 1 i 2 {nie zmieniać} 
+
+Historia zmian 
+
+Wersja 
+
+Opis modyfikacji 
+
+Rozdział / strona 
+
+Autor modyfikacji 
+
+Data 
+
+1.00 
+
+ 
+
+Wstępna wersja 
+
+ 
+
+całość 
+
+ 
+
+Bartosz Skorowski 
+
+27.01.2026 r. 
+
+ 
+
+{wersja} 
+
+ 
+
+{opis np. dodanie etapu C} 
+
+ 
+
+{np. pkt 2, 2.3} 
+
+ 
+
+{nazwisko, imię} 
+
+ 
+
+{data zmiany} 
+
+ 
+
+ 
+
+{UWAGA: w II semestrze dokumentacja jest rozszerzeniem dokumentacji z semestru I (nowa wersja dokumentu), może być też nowym plikiem; 
+
+UWAGA: Jeżeli dokumentacja została wytworzona za pomocą innego narzędzia do tworzenia dokumentacji, to należy wskazać plik z dokumentacją w niniejszym dokumencie, jako załącznik do tego dokumentu; tworzenie dokumentacji w inny sposób nie zwalania od obowiązku wytworzenia niniejszego dokumentu, ale zamiast opisu dokumentacyjnego wystarczy wskazać na dokument wytworzony w inny sposób}  
+
+ 
+
+Spis treści 
+
+ 
+
+ 
+
+ 
+
+Wprowadzenie - o dokumencie 
+
+Cel dokumentu 
+
+{Nie zmieniać} 
+
+Celem dokumentu jest udokumentowanie informacji dotyczących produktu, jego cech funkcjonalnych, parametrów technicznych, schematów blokowych, oprogramowania, wyników działania, zdjęć produktu, pomiarów, testów oraz innych elementów wymaganych przez opiekuna i klienta. 
+
+ 
+
+Zakres dokumentu 
+
+Niniejsza dokumentacja techniczna obejmuje projekt i specyfikację polskojęzycznego chatbota medycznego realizowanego w architekturze mikrousługowej. Zakres dokumentu w semestrze I obejmuje: 
+
+Opis architektury wysokopoziomowej (Hybrid Event-Driven Architecture). 
+
+Specyfikację warstwy prezentacji (React.js) oraz mechanizmów strumieniowania danych (SSE). 
+
+Szczegółowy opis warstwy logiki biznesowej opartej na Java 25 i wątkach wirtualnych. 
+
+Projekt integracji z modułem analitycznym (Python/FastAPI) oraz bazami danych (PostgreSQL, Milvus). 
+
+Zakres nie obejmuje instrukcji instalacyjnej dla użytkownika końcowego oraz raportów z testów obciążeniowych. 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Odbiorcy 
+
+{Określenie adresatów dokumentu, może być to typ odbiorcy; tu: zleceniobiorca (Katedra), członkowie zespołu projektowego oraz wymienione z nazwiska osoby, do których dokument ma dotrzeć} 
+
+ 
+
+Katedra Architektury Systemów Komputerowych (KASK), opiekun projektu, członkowie zespołu projektowego, klient (Projekt politechniczny) 
+
+ 
+
+ 
+
+ 
+
+Terminologia 
+
+{Wyjaśnienie używanych w dokumencie pojęć i skrótów, oznaczenia używane wewnątrz dokumentu np. oznaczenia wymagań} 
+
+ 
+
+RAG (Retrieval-Augmented Generation): Architektura wzbogacająca odpowiedzi modelu językowego o dane pobrane z zewnętrznej bazy wiedzy. 
+
+SSE (Server-Sent Events): Standard transmisji danych pozwalający na przesyłanie komunikatów z serwera do klienta w trybie rzeczywistym przez protokół HTTP. 
+
+LLM (Large Language Model): Wielkoskalowy model językowy odpowiedzialny za generowanie odpowiedzi naturalnych. 
+
+Virtual Threads (Project Loom): Lekkie wątki wprowadzone w nowszych wersjach Java, umożliwiające wysoką wydajność przy operacjach blokujących I/O. 
+
+JWT (JSON Web Token): Standard bezpiecznej transmisji informacji między stronami w formie obiektu JSON, używany do autoryzacji. 
+
+Topic Exchange (RabbitMQ): Model dystrybucji wiadomości, w którym komunikaty trafiają do kolejek na podstawie dopasowania klucza routingu (routing key). 
+
+Embedding: Liczbowa reprezentacja tekstu w postaci wektora, oddająca jego znaczenie semantyczne. 
+
+ 
+
+Dokumentacja techniczna projektu 
+
+{O zakresie dokumentacji decyduje opiekun, tu należy zacząć opis rozwiązania technicznego wg zaleceń opiekuna, w układzie redakcyjnym najlepiej oddającym charakter projektu – kolejne rozdziały, podrozdziały, punkty} 
+
+ 
+
+2.1. Architektura Systemu (Event-Driven Distributed Architecture) System został zaprojektowany w architekturze mikrousługowej, zorientowanej na zdarzenia (Event-Driven), co pozwala na asynchroniczne przetwarzanie długotrwałych operacji generowania treści przez AI bez blokowania zasobów serwera. 
+
+Klient (Frontend): Aplikacja SPA (Single Page Application) w technologii React.js/TypeScript, wykorzystująca protokół Server-Sent Events (SSE) do odbioru strumieniowanych odpowiedzi. 
+
+Serwer Aplikacji: Rdzeń systemu działający na maszynie wirtualnej Java 25. Wykorzystuje lekkie wątki wirtualne (Project Loom) do obsługi tysięcy równoległych połączeń SSE oraz dynamiczne routowanie wiadomości. 
+
+Serwer Analityczny: Niezależny serwis REST API (FastAPI) realizujący logikę RAG, wywoływany przez Backend Java na żądanie. 
+
+Message Broker (RabbitMQ): Wykorzystywany wyłącznie do horyzontalnej synchronizacji instancji backendu (dystrybucja odpowiedzi bota do właściwej instancji obsługującej użytkownika). 
+
+ 
+
+2.2. Warstwa Prezentacji (Frontend - React + TypeScript) Warstwa ta odpowiada za interakcję z użytkownikiem oraz wizualizację procesu myślowego sztucznej inteligencji. 
+
+Stos Technologiczny: React, Vite, TypeScript, Redux Toolkit (zarządzanie stanem globalnym)). 
+
+Komunikacja Asynchroniczna: 
+
+REST API (Axios): Wykorzystywane do operacji sterujących (wysłanie wiadomości, logowanie, zarządzanie historią). 
+
+Server-Sent Events: Implementacja jednokierunkowego kanału transmisji danych, który pozwala na wyświetlanie odpowiedzi "token po tokenie" (efekt pisania na żywo), eliminując konieczność wielokrotnego odpytywania serwera (polling). 
+
+ 
+
+2.3. Warstwa Logiki i Integracji (Backend - Spring Boot) Serwis zaimplementowany w Spring Boot 3.5.7 pełni rolę orkiestratora systemu. Dzięki zastosowaniu Wątków Wirtualnych (Virtual Threads), serwer jest w stanie obsłużyć dużą liczbę jednoczesnych połączeń SSE przy minimalnym narzucie na pamięć RAM. 
+
+Zarządzanie Użytkownikami: Wykorzystanie Spring Security oraz standardu JWT (JSON Web Token) do bezstanowej autoryzacji zapytań. 
+
+Dynamiczne Bindowanie (RabbitMQ Integration): 
+
+Implementacja mechanizmu dynamicznego tworzenia powiązań (Binding) w oparciu o TopicExchange. 
+
+Każda instancja serwisu nasłuchuje wyłącznie zdarzeń dotyczących aktualnie podłączonych do niej użytkowników, co umożliwia poziome skalowanie systemu (uruchomienie wielu instancji backendu). 
+
+Model Asynchroniczny: Przetwarzanie zapytań do AI odbywa się w tle, a wyniki są publikowane w systemie zdarzeń, co zapewnia separację logiki biznesowej od warstwy transportowej. 
+
+Trwałość Danych: Wykorzystanie bazy PostgreSQL oraz Spring Data JPA do relacyjnego mapowania encji użytkowników, czatów i wiadomości. 
+
+ 
+
+ 
+
+ 
+
+2.4. Moduł Inteligencji Obliczeniowej (API Python - FastAPI) Ten segment jest odpowiedzialny za procesy semantycznego przetwarzania tekstu i generowania odpowiedzi medycznych. 
+
+Szkielet API: Wykorzystanie frameworka FastAPI ze względu na wysoką wydajność i natywne wsparcie dla asynchroniczności (uvicorn). 
+
+Implementacja RAG : 
+
+Zastosowano klasyczną architekturę RAG (Retrieval-Augmented Generation), składającą się z dwóch głównych etapów: 
+
+Encoder (retrieval) 
+
+Reranking pięciu najlepszych dokumentów (top-5) spośród osiemdziesięciu dokumentów zwróconych przez wektorową bazę danych. 
+
+Proces indeksowania dokumentów 
+
+Korpus wejściowy składa się z ponad 2000 dokumentów medycznych. Każdy dokument jest przetwarzany w następujący sposób: 
+
+dokument dzielony jest na chunki o stałej długości 67 słów, 
+
+dla każdego chunka generowany jest embedding wektorowy, 
+
+embeddingi wraz z metadanymi (chunkiem w formie tekstowej itp.) zapisywane są w wektorowej bazie danych Milvus. 
+
+Proces wyszukiwania 
+
+Podczas zapytania: 
+
+zapytanie użytkownika jest kodowane do przestrzeni wektorowej przy użyciu tego samego encodera, 
+
+z bazy Milvus pobieranych jest 80 najbardziej podobnych chunków, 
+
+następnie model rerankujący ocenia ich relewantność względem zapytania, 
+
+do dalszego etapu generowania przekazywanych jest 5 najwyżej ocenionych dokumentów. 
+
+ 
+
+ 
+
+2.5. Model Danych i Persystencja 
+
+System operuje na dwóch niezależnych typach magazynów danych, dobranych do specyfiki przechowywanych informacji. 
+
+Relacyjna Baza Danych (PostgreSQL): Odpowiada za spójność transakcyjną i relacje między obiektami. Schemat bazy danych został zaprojektowany z uwzględnieniem normalizacji (3NF). 
+
+Tabela users: Przechowuje dane uwierzytelniające oraz hashe haseł. 
+
+Tabela chats: Reprezentuje sesję rozmowy; zawiera unikalny identyfikator UUID (kluczowy dla routingu RabbitMQ) oraz powiązanie z użytkownikiem. 
+
+Tabela messages: Zawiera treść wiadomości, znacznik czasu, rolę nadawcy (USER/BOT) oraz klucz obcy do czatu. 
+
+Wektorowa Baza Danych (Milvus): Wykorzystywana przez moduł Python do przechowywania "wiedzy" medycznej. 
+
+Przechowuje wektory (embeddings) wygenerowane z dokumentacji medycznej. 
+
+Umożliwia wyszukiwanie z wykorzystaniem metryki podobieństwa cosinusowego (Cosine Similarity) w celu znalezienia kontekstu dla RAG.  
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+Załączniki 
+
+{Wszelkie dokumenty nie dające się wkomponować w prosty sposób w tekst, należy dołączyć w osobnych plikach, a ich spis przedstawić w formie tabeli, przykładowo:} 
+
+ 
+
+Tabela 3.1. Lista załączników 
+
+ 
+
+L.p. 
+
+Nazwa dokumentu 
+
+Nazwa pliku 
+
+1. 
+
+Schemat funkcjonalny 
+
+ 
+
+2. 
+
+Schemat blokowy 
+
+ 
+
+3. 
+
+Schemat ideowy 
+
+ 
+
+4. 
+
+Wykaz elementów 
+
+wykaz_elementow.txt 
+
+5. 
+
+Karta katalogowa, itp. 
+
+ 
+
+6.  
+
+Dokumentacja tworzona za pomocą innego narzędzia 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 

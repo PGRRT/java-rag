@@ -26,6 +26,13 @@ import java.security.Principal;
 public class AuthController {
     private final AuthService authService;
 
+    @GetMapping("/check-email")
+    public ResponseEntity<Boolean> checkEmailAvailability(@RequestParam String email) {
+        boolean isAvailable = authService.isEmailAvailable(email);
+
+        return ResponseEntity.ok(isAvailable);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<AuthResponse<UserResponse>> login(@RequestBody @Valid LoginUserRequest loginUserRequest) {
         AuthResult result = authService.loginUser(loginUserRequest);

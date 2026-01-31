@@ -33,8 +33,6 @@ public class UserServiceImpl implements UserService {
     public UserResponse saveUser(RegisterUserRequest registerUserRequest) {
         if (!registerUserRequest.getPassword().equals(registerUserRequest.getConfirmPassword())) {
             throw new IllegalArgumentException("Password and Confirm Password do not match");
-        } else if (userRepository.findByEmail(registerUserRequest.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email is already in use");
         }
 
         User user = userMapper.toEntity(registerUserRequest); // email and password
@@ -50,6 +48,7 @@ public class UserServiceImpl implements UserService {
 
         return userMapper.toDto(user);
     }
+
 
     @Override
     public UserResponse getCurrentUser(UUID userId) {

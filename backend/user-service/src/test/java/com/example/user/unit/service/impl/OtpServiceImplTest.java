@@ -30,30 +30,15 @@ class OtpServiceImplTest {
     @DisplayName("Should process OTP request successfully")
     void shouldProcessOtpRequestSuccessfully() {
         // given
-        when(otpCodeGenerator.generateOtp(6)).thenReturn(OTP);
 
         // when
         otpService.processOtpRequest(EMAIL);
 
         // then
-        verify(otpCodeGenerator).generateOtp(6);
         verify(otpCacheService).saveOtp(EMAIL, OTP);
         verify(emailService).sendRegistrationEmail(EMAIL, OTP);
     }
 
-    @Test
-    @DisplayName("Should generate OTP successfully")
-    void shouldGenerateOtpSuccessfully() {
-        // given
-        when(otpCodeGenerator.generateOtp(6)).thenReturn(OTP);
-
-        // when
-        String result = otpService.generateOtp(EMAIL);
-
-        // then
-        assertThat(result).isEqualTo(OTP);
-        verify(otpCodeGenerator).generateOtp(6);
-    }
 
     @Test
     @DisplayName("Should verify OTP successfully when OTP is correct")
@@ -134,7 +119,6 @@ class OtpServiceImplTest {
     @DisplayName("Should handle email service call in processOtpRequest")
     void shouldHandleEmailServiceCallInProcessOtpRequest() {
         // given
-        when(otpCodeGenerator.generateOtp(6)).thenReturn(OTP);
         doNothing().when(emailService).sendRegistrationEmail(EMAIL, OTP);
 
         // when
@@ -148,7 +132,6 @@ class OtpServiceImplTest {
     @DisplayName("Should call cache service before email service in processOtpRequest")
     void shouldCallCacheServiceBeforeEmailServiceInProcessOtpRequest() {
         // given
-        when(otpCodeGenerator.generateOtp(6)).thenReturn(OTP);
 
         // when
         otpService.processOtpRequest(EMAIL);

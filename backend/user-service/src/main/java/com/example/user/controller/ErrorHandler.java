@@ -15,6 +15,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler extends GlobalErrorHandler {
+    @ExceptionHandler(EmailAlreadyTakenException.class)
+    public ResponseEntity<ApiErrorResponse> handleEmailAlreadyTakenException(EmailAlreadyTakenException e) {
+        log.warn("Registration conflict: {}", e.getMessage());
+
+        ApiErrorResponse error = ApiErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value()) // 409
+                .message(e.getMessage() != null ? e.getMessage() : "Email is already in use")
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler({
             JwtException.class,
             TokenRefreshException.class,

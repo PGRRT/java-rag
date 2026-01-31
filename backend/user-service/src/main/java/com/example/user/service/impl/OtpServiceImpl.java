@@ -3,6 +3,7 @@ package com.example.user.service.impl;
 import com.example.user.service.EmailService;
 import com.example.user.service.OtpCacheService;
 import com.example.user.service.OtpService;
+import com.example.user.utility.NormalizeEmail;
 import com.example.user.utility.OtpCodeGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,28 +17,25 @@ public class OtpServiceImpl implements OtpService {
 
     @Override
     public void processOtpRequest(String email) {
-        String otp = generateOtp(email);
-        otpCacheService.saveOtp(email, otp);
+        String normalizedEmail = NormalizeEmail.normalize(email);
 
-        emailService.sendRegistrationEmail(email,otp);
-    }
-
-    @Override
-    public String generateOtp(String email) {
         String otp = otpCodeGenerator.generateOtp(6);
+        otpCacheService.saveOtp(normalizedEmail, otp);
 
-        return otp;
+        emailService.sendRegistrationEmail(normalizedEmail,otp);
     }
 
     @Override
     public boolean verifyOtp(String email, String otp) {
-        String savedOtp = otpCacheService.getOtp(email);
+        String normalizedEmail = NormalizeEmail.normalize(email);
+
+        String savedOtp = otpCacheService.getOtp(normalizedEmail);
 
         if (savedOtp == null || !savedOtp.equals(otp)) {
             return false;
         }
 
-        otpCacheService.deleteOtp(email);
+        otpCacheService.deleteOtp(normalizedEmail);
         return true;
     }
 }

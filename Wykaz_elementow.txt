@@ -1,0 +1,27 @@
+================================================================================
+ZAŁĄCZNIK NR 4: WYKAZ ELEMENTÓW (SOFTWARE BILL OF MATERIALS)
+PROJEKT ID-353: POLSKOJĘZYCZNY CHATBOT MEDYCZNY RAG
+================================================================================
+
+Lp.  | Nazwa elementu (Komponent)       | Wersja     | Rola w systemie
+-----|----------------------------------|------------|--------------------------
+1.   | Java Development Kit (JDK)       | 25         | Środowisko (Virtual Threads)
+2.   | Spring Boot                      | 3.5.7      | Framework Backendowy
+3.   | React.js                         | 19.2.3     | Biblioteka UI (Frontend)
+4.   | FastAPI                          | 0.120.2    | Serwer AI (Python)
+5.   | RabbitMQ                         | 4.2        | Broker (Sync instancji)
+6.   | PostgreSQL                       | 17.0       | Relacyjna baza danych
+7.   | Milvus (Vector Database)         | 2.6.5      | Magazyn wiedzy RAG
+8.   | OpenAI SDK                       | 2.11.0     | Integracja z LLM
+9.   | Mantine UI                       | 8.3.5      | Komponenty graficzne
+10.  | Redux Toolkit                    | 2.9.2      | Zarządzanie stanem frontu
+11.  | Spring Security (JWT)            | 3.5.7      | Autoryzacja i bezpieczeństwo
+12.  | Sentence-Transformers            | 5.2.0      | Generowanie embeddingów
+13.  | Transformers (HuggingFace)       | 4.57.3     | Przetwarzanie NLP
+14.  | Axios                            | 1.12.2     | Klient HTTP (REST)
+15.  | Lombok                           | 1.18.38    | Automatyzacja kodu Java
+16.  | MapStruct                        | 1.6.3      | Mapowanie DTO/Entities
+17.  | Redis                            | 8.0-alpine | Cache i Rate Limiting
+18.  | MinIO                            | 2024-12-18 | Object Storage (dla Milvus)
+19.  | etcd                             | 3.5.25     | Metadane (dla Milvus)
+23.  | Docker / Docker Compose          | 2.x        | Konteneryzacja i orkiestracja
