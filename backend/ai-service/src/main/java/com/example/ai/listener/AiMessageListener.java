@@ -1,13 +1,12 @@
 package com.example.ai.listener;
 
-import com.example.ai.config.RabbitMqConfig;
 import com.example.ai.domain.dto.ai.response.AiResponse;
-import com.example.ai.events.AiResponseEvent;
-import com.example.ai.events.GenerateAiResponseEvent;
-import com.example.common.SharedRabbitTopology;
+import com.example.common.rabbitmq.SharedRabbitTopology;
 import com.example.common.grpc.ChatServiceGrpc;
 import com.example.common.grpc.GetMessagesRequest;
 import com.example.common.grpc.MessagesResponse;
+import com.example.common.rabbitmq.events.AiRequestEvent;
+import com.example.common.rabbitmq.events.AiResponseEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -30,7 +29,7 @@ public class AiMessageListener {
     private final RestClient restClient;
 
     @RabbitListener(queues = SharedRabbitTopology.QUEUE_GENERATE_NAME)
-    public void handleAiRequest(GenerateAiResponseEvent generateAiResponseEvent) {
+    public void handleAiRequest(AiRequestEvent generateAiResponseEvent) {
         UUID chatId = generateAiResponseEvent.chatId();
         String prompt = generateAiResponseEvent.content();
 

@@ -1,7 +1,7 @@
 package com.example.user.publisher;
 
-import com.example.common.SharedRabbitTopology;
-import com.example.user.events.UserDeletedEvent;
+import com.example.common.rabbitmq.SharedRabbitTopology;
+import com.example.common.rabbitmq.events.UserDeletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

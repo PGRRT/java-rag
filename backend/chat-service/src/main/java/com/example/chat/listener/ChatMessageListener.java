@@ -1,10 +1,9 @@
 package com.example.chat.listener;
 
 
-import com.example.chat.config.RabbitMqConfig;
 import com.example.chat.domain.enums.ChatEvent;
-import com.example.chat.events.BotMessageEvent;
 import com.example.chat.service.SseService;
+import com.example.common.rabbitmq.events.BotMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Queue;

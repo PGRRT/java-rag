@@ -1,10 +1,8 @@
 package com.example.chat.config;
 
-import com.example.common.SharedRabbitTopology;
+import com.example.common.rabbitmq.SharedRabbitTopology;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.threads.VirtualThreadExecutor;
-import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -16,8 +14,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.task.VirtualThreadTaskExecutor;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
-
-import java.util.UUID;
 
 
 @Slf4j

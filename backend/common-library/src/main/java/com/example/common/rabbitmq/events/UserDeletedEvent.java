@@ -1,4 +1,4 @@
-package com.example.user.events;
+package com.example.common.rabbitmq.events;
 
 import java.util.UUID;
 

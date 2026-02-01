@@ -50,8 +50,6 @@ public class MessageController {
         // emit new user message to SSE subscribers
         sseService.emit(chatId, ChatEvent.USER_MESSAGE, created.content());
 
-        // generating response from AI service and emitting it asynchronously
-//        aiService.processAiResponseAsync(chatId, created.content());
         aiPublisher.publishGenerateAiResponseEvent(chatId, created.content());
 
         return ResponseEntity.ok(created);

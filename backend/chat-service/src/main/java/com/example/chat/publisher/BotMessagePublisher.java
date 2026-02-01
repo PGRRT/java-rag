@@ -1,7 +1,7 @@
 package com.example.chat.publisher;
 
-import com.example.chat.events.BotMessageEvent;
-import com.example.common.SharedRabbitTopology;
+import com.example.common.rabbitmq.SharedRabbitTopology;
+import com.example.common.rabbitmq.events.BotMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

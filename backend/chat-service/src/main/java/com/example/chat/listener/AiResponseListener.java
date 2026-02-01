@@ -1,9 +1,8 @@
 package com.example.chat.listener;
 
-import com.example.chat.config.RabbitMqConfig;
-import com.example.chat.events.AiResponseEvent;
 import com.example.chat.service.MessageService;
-import com.example.common.SharedRabbitTopology;
+import com.example.common.rabbitmq.SharedRabbitTopology;
+import com.example.common.rabbitmq.events.AiResponseEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
