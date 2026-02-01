@@ -15,6 +15,7 @@
         <module>eureka</module>
         <module>chat-service</module>
         <module>user-service</module>
+        <module>ai-service</module>
     </modules>
 
     <build>

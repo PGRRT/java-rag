@@ -16,15 +16,15 @@ RUN ./mvnw -f common-library/pom.xml clean install -DskipTests
 COPY common-library/src common-library/src
 
 # Build and install user-service
-COPY chat-service/pom.xml chat-service/pom.xml
-RUN ./mvnw -f chat-service/pom.xml dependency:resolve
-COPY chat-service/src chat-service/src
+COPY ai-service/pom.xml ai-service/pom.xml
+RUN ./mvnw -f ai-service/pom.xml dependency:resolve
+COPY ai-service/src ai-service/src
 
 # Copy entrypoint script
-COPY chat-service/entrypoint.sh entrypoint.sh
+COPY ai-service/entrypoint.sh entrypoint.sh
 RUN chmod +x entrypoint.sh
 
-EXPOSE 8082 9090
+EXPOSE 8082
 
 ENTRYPOINT ["./entrypoint.sh"]
-CMD ["./mvnw", "spring-boot:run", "-f", "chat-service/pom.xml"]
+CMD ["./mvnw", "spring-boot:run", "-f", "ai-service/pom.xml"]

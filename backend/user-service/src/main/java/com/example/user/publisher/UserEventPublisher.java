@@ -1,5 +1,6 @@
 package com.example.user.publisher;
 
+import com.example.common.SharedRabbitTopology;
 import com.example.user.events.UserDeletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,13 +15,10 @@ import java.util.UUID;
 public class UserEventPublisher {
     private final RabbitTemplate rabbitTemplate;
 
-    public static final String EXCHANGE = "chat.topic.exchange";
-    public static final String ROUTING_KEY = "user.deleted";
-
     public void publishUserDeleted(UUID userId) {
         log.info("Publishing user deleted event for: {}", userId);
         UserDeletedEvent event = new UserDeletedEvent(userId);
 
-        rabbitTemplate.convertAndSend(EXCHANGE, ROUTING_KEY, event);
+        rabbitTemplate.convertAndSend(SharedRabbitTopology.TOPIC_EXCHANGE, SharedRabbitTopology.USER_DELETED_ROUTING_KEY, event);
     }
 }

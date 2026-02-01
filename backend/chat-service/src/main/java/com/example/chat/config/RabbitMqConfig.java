@@ -1,5 +1,6 @@
 package com.example.chat.config;
 
+import com.example.common.SharedRabbitTopology;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.VirtualThreadExecutor;
@@ -12,6 +13,7 @@ import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.task.VirtualThreadTaskExecutor;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 
@@ -21,35 +23,36 @@ import java.util.UUID;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
+@Import(SharedRabbitTopology.class)
 public class RabbitMqConfig {
-    public static final String TOPIC_EXCHANGE = "chat.topic.exchange";
-
-    public static final String USER_DELETED_QUEUE = "chat.user-deleted.queue";
-    public static final String USER_DELETED_ROUTING_KEY = "user.deleted";
-
-    // used for private chat message delivery
-    @Bean
-    public Queue instanceQueue() {
-        return new Queue("chat.private" + UUID.randomUUID(), false, true,true);
-    }
-
-    @Bean
-    public TopicExchange topicExchange() {
-        return new TopicExchange (TOPIC_EXCHANGE);
-    }
-
-    // User Deleted Queue and Binding
-    @Bean
-    public Queue userDeletedQueue() {
-        return new Queue(USER_DELETED_QUEUE, true, false, false);
-    }
-
-    @Bean
-    public Binding userDeletedBinding(Queue userDeletedQueue, TopicExchange topicExchange) {
-        return BindingBuilder.bind(userDeletedQueue)
-                .to(topicExchange)
-                .with(USER_DELETED_ROUTING_KEY);
-    }
+//    public static final String TOPIC_EXCHANGE = "chat.topic.exchange";
+//
+//    public static final String USER_DELETED_QUEUE = "chat.user-deleted.queue";
+//    public static final String USER_DELETED_ROUTING_KEY = "user.deleted";
+//
+//    // used for private chat message delivery
+//    @Bean
+//    public Queue instanceQueue() {
+//        return new Queue("chat.private" + UUID.randomUUID(), false, true,true);
+//    }
+//
+//    @Bean
+//    public TopicExchange topicExchange() {
+//        return new TopicExchange (TOPIC_EXCHANGE);
+//    }
+//
+//    // User Deleted Queue and Binding
+//    @Bean
+//    public Queue userDeletedQueue() {
+//        return new Queue(USER_DELETED_QUEUE, true, false, false);
+//    }
+//
+//    @Bean
+//    public Binding userDeletedBinding(Queue userDeletedQueue, TopicExchange topicExchange) {
+//        return BindingBuilder.bind(userDeletedQueue)
+//                .to(topicExchange)
+//                .with(USER_DELETED_ROUTING_KEY);
+//    }
 
     @Bean
     public RetryOperationsInterceptor retryInterceptor() {

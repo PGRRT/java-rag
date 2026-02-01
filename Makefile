@@ -99,7 +99,7 @@ restart-dev:
 	$(DEV) up
 
 restart-backend-dev:
-	$(DEV) restart user-service chat-service gateway
+	$(DEV) restart user-service chat-service ai-service gateway 
 
 rebuild-user-dev:
 	$(DEV) stop user-service
@@ -117,9 +117,9 @@ rebuild-frontend-dev:
 	$(DEV) up frontend
 
 rebuild-backend-dev:
-	$(DEV) stop user-service chat-service gateway
-	$(DEV) build user-service chat-service gateway
-	$(DEV) up user-service chat-service gateway
+	$(DEV) stop user-service chat-service ai-service gateway
+	$(DEV) build user-service chat-service ai-service gateway
+	$(DEV) up user-service chat-service ai-service gateway
 
 rebuild-dev:
 	$(DEV) down
@@ -157,7 +157,7 @@ logs-frontend-dev:
 	$(DEV) logs -f frontend
 
 logs-backend-dev:
-	$(DEV) logs -f eureka user-service chat-service gateway
+	$(DEV) logs -f eureka user-service chat-service ai-service gateway
 
 logs-dev-all:
 	$(DEV) logs -f

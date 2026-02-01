@@ -1,9 +1,8 @@
-package com.example.user.config;
+package com.example.ai.config;
 
 import com.example.common.SharedRabbitTopology;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
@@ -18,9 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.task.VirtualThreadTaskExecutor;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 
-@Slf4j
 @Configuration
-@RequiredArgsConstructor
 @Import(SharedRabbitTopology.class)
 public class RabbitMqConfig {
     @Bean

@@ -1,18 +1,18 @@
 spring:
   application:
-    name: chat-service
+    name: ai-service
   threads:
     virtual:
       enabled: true
   grpc:
-    server:
-      port: 9090
-
+    client:
+      chat-service:
+#        address: "static://chat-service:9090"
+        address: "dns:///chat-service:9090"
+        negotiation-type: plaintext
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
-  sql:
-    init:
-      mode: always
+
 
 jwt:
   secret: ${JWT_SECRET}
