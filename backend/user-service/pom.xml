@@ -31,6 +31,8 @@
 		<lombok.version>1.18.38</lombok.version>
 		<org.mapstruct.version>1.6.3</org.mapstruct.version>
 		<spring-cloud.version>2025.0.0</spring-cloud.version>
+
+		<argLine/>
 	</properties>
 
 	<dependencyManagement>
@@ -93,10 +95,14 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-starter-websocket</artifactId>-->
-<!--		</dependency>-->
+
+		<!-- Source: https://mvnrepository.com/artifact/org.redisson/redisson-spring-boot-starter -->
+		<dependency>
+			<groupId>org.redisson</groupId>
+			<artifactId>redisson-spring-boot-starter</artifactId>
+			<version>3.52.0</version>
+			<scope>compile</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -150,11 +156,23 @@
 			<artifactId>postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>rabbitmq</artifactId>
+			<version>1.20.4</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>${org.mapstruct.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>java-dotenv</artifactId>
+			<version>5.2.2</version>
 		</dependency>
 	</dependencies>
 
@@ -194,6 +212,88 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+
+
+<!--			http://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>properties</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+
+
+
+<!--            Test coverage plugin-->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.14</version>
+
+				<configuration>
+					<excludes>
+						<exclude>com/example/user/config/**</exclude>
+						<exclude>com/example/user/domain/entities/**</exclude>
+						<exclude>com/example/user/domain/dto/**</exclude>
+						<exclude>com/example/user/domain/enums/**</exclude>
+					</excludes>
+				</configuration>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!--			Plugin to enable Mockito inline mocking capabilities-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!--suppress UnresolvedMavenProperty -->
+					<argLine>@{argLine} -javaagent:&quot;${org.mockito:mockito-core:jar}&quot; -Xshare:off</argLine>
+
+					<forkedProcessExitTimeoutInSeconds>5</forkedProcessExitTimeoutInSeconds>
+				</configuration>
+			</plugin>
+
+<!--			Plugin to enable Mockito inline mocking capabilities for Failsafe integration tests-->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<configuration>
+					<argLine>@{argLine} -javaagent:&quot;${org.mockito:mockito-core:jar}&quot; -Xshare:off</argLine>
+
+					<forkCount>1</forkCount> <!-- Wymuszenie jednego forka -->
+					<reuseForks>true</reuseForks> <!-- Reużywanie forków -->
+					<parallel>none</parallel> <!-- Wyłączenie równoległości -->
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -15,7 +15,7 @@ import java.util.List;
 
 @Slf4j
 public abstract class GlobalErrorHandler {
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({Exception.class,IllegalStateException.class})
     public ResponseEntity<ApiErrorResponse> handleException(Exception e) {
         log.error("An error occurred: {}", e.getMessage(), e);
         ApiErrorResponse error = ApiErrorResponse.builder()
@@ -33,16 +33,6 @@ public abstract class GlobalErrorHandler {
                 .message(e.getMessage())
                 .build();
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ApiErrorResponse> handleIllegalStateException(IllegalStateException e) {
-        log.warn("An error occurred: {}", e.getMessage(), e);
-        ApiErrorResponse error = ApiErrorResponse.builder()
-                .status(HttpStatus.CONFLICT.value())
-                .message(e.getMessage())
-                .build();
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(BadCredentialsException.class)

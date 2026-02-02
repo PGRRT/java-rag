@@ -12,7 +12,7 @@ import com.example.chat.mapper.ChatMapper;
 import com.example.chat.mapper.MessageMapper;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.specificiation.ChatSpecification;
-import com.example.chat.service.AiService;
+//import com.example.chat.service.AiService;
 import com.example.chat.service.ChatService;
 import com.example.chat.service.MessageService;
 import jakarta.persistence.EntityNotFoundException;
@@ -37,7 +37,6 @@ public class ChatServiceImpl implements ChatService {
     @Override
     @Transactional(readOnly = true)
     public Page<ChatResponse> getGlobalAndUserChats(UUID userId, ChatType chatType, Pageable pageable) {
-//        Page<Chat> chatsPage = chatRepository.findChatsForUser(userId, chatType, pageable);
         Page<Chat> chatsPage = chatRepository.findAll(ChatSpecification.userChatsWithType(userId, chatType), pageable);
 
         return chatsPage.map(chatMapper::toChatResponse);

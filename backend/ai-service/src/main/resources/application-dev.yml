@@ -1,0 +1,16 @@
+server:
+  port: 8083
+spring:
+  devtools:
+    restart:
+      enabled: true
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    username: ${RABBITMQ_DEFAULT_USER}
+    password: ${RABBITMQ_DEFAULT_PASS}
+    port: ${RABBITMQ_PORT}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_USERNAME}:${EUREKA_PASSWORD}@eureka:8761/eureka/

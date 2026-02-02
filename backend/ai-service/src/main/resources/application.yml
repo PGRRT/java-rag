@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: ai-service
+  threads:
+    virtual:
+      enabled: true
+  grpc:
+    client:
+      chat-service:
+#        address: "static://chat-service:9090"
+        address: "dns:///chat-service:9090"
+        negotiation-type: plaintext
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE}
+
+
+jwt:
+  secret: ${JWT_SECRET}
+  accessTokenExpirationMs: ${JWT_EXPIRATION_ACCESS_TOKEN}
+  refreshTokenExpirationMs: ${JWT_EXPIRATION_REFRESH_TOKEN}
+
+common:
+  jwt:
+    enabled: true
+  exception:
+    handler:
+      enabled: true

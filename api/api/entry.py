@@ -6,7 +6,6 @@ import os
 from rag.rag import RAG, MockRAG, ClassicRAG
 from rag.llm_client import BielikLLM
 
-
 class ApiMode(Enum):
     Production = 0
     Development = 1

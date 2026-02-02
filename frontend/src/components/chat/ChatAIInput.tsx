@@ -9,6 +9,7 @@ import type { UUID } from "@/types/global";
 import type { ChatRoomType } from "@/api/enums/ChatRoom";
 import { typography } from "@/constants/typography";
 import { useUserSWR } from "@/hooks/useUser";
+import { useTranslation } from "react-i18next";
 
 const ChatAIInput = ({
   chatId,
@@ -19,6 +20,7 @@ const ChatAIInput = ({
 }) => {
   const [mode, setMode] = useState<ChatRoomType>("GLOBAL");
   const { user } = useUserSWR();
+  const { t } = useTranslation();
 
   const toggleMode = () => {
     if (!user && mode === "GLOBAL") {
@@ -53,29 +55,27 @@ const ChatAIInput = ({
         autosize
         minRows={1}
         maxRows={5}
-        className={cx(
-          css`
-            .mantine-Textarea-section[data-position="left"] {
-              width: 50px;
-              align-items: flex-end;
-              padding-bottom: 8px;
-            }
+        className={cx(css`
+          .mantine-Textarea-section[data-position="left"] {
+            width: 50px;
+            align-items: flex-end;
+            padding-bottom: 8px;
+          }
 
-            .mantine-Textarea-section[data-position="right"] {
-              align-items: flex-end;
-              justify-content: flex-end;
-              margin-right: 14px;
-              padding-bottom: 8px;
-            }
+          .mantine-Textarea-section[data-position="right"] {
+            align-items: flex-end;
+            justify-content: flex-end;
+            margin-right: 14px;
+            padding-bottom: 8px;
+          }
 
-            textarea {
-              border-radius: 24px;
-              padding: 15px 60px 15px 50px;
-            }
-          `
-        )}
+          textarea {
+            border-radius: 24px;
+            padding: 15px 100px 15px 50px;
+          }
+        `)}
         leftSection={
-          <ContentWrapper id="asdz">
+          <ContentWrapper>
             <FileButton onChange={setFile} accept="*">
               {(props) => <IconWrapper {...props} Icon={Paperclip} />}
             </FileButton>
@@ -87,10 +87,10 @@ const ChatAIInput = ({
               <Tooltip
                 label={
                   !user && mode === "GLOBAL"
-                    ? "Log in to create private chats"
+                    ? t("chat.loginToPrivate")
                     : mode === "GLOBAL"
-                    ? "Global chat - visible to everyone"
-                    : "Private chat - only you can see it"
+                      ? t("chat.globalTooltip")
+                      : t("chat.privateTooltip")
                 }
                 position="top"
               >
@@ -136,7 +136,7 @@ const ChatAIInput = ({
             </Button>
           </ContentWrapper>
         }
-        placeholder="What's up, Doc?"
+        placeholder={t("chat.placeholder")}
         style={{ flex: 1 }}
       />
     </form>

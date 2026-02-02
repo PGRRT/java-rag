@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { css } from "@emotion/css";
 import { Menu, TextAlignJustify, X } from "lucide-react";
@@ -10,6 +10,7 @@ import { navbarHeight } from "@/layouts/Navbar";
 import Logo from "@/components/ui/Logo";
 import ContentWrapper from "@/components/ui/ContentWrapper";
 import SidebarContent from "@/components/sidebar/SidebarContent";
+import { chatApi } from "@/api/chatApi";
 
 const buttonsStyle = css`
   display: flex;
@@ -159,12 +160,11 @@ export default function Sidebar() {
             `}
           `}
         >
-          <Logo  height={32} width={"fit-content"} />
+          <Logo height={32} width={"fit-content"} />
         </ContentWrapper>
       </div>
 
       <SidebarContent expanded={expanded} />
-     
     </div>
   );
 }

@@ -1,16 +1,19 @@
 from typing import Any
 from pymilvus import MilvusClient, CollectionSchema, DataType
 from pymilvus.milvus_client import IndexParams
-
 from uuid import UUID
 
 
 class VectorDatabase:
     def __init__(self, embedding_dim: int = 768):
-        # self.client: MilvusClient = MilvusClient(host="standalone",  port=19530)
-        self.client = MilvusClient(
-            uri="tcp://standalone:19530"   # <--- to JEDYNE które działa
-        )
+        self.client = MilvusClient(uri="http://standalone:19530")
+        # self.client = MilvusClient(
+        #     uri="tcp://standalone:19530"   # <--- to JEDYNE które działa
+        # )
+        # self.client = MilvusClient(
+        #     uri="http://localhost:19530",
+        #     token="root:Milvus"
+        # )
         self.embedding_dim: int = embedding_dim
 
     def __create_collection(self, conversation_d: UUID) -> None:
@@ -117,8 +120,8 @@ class VectorDatabase:
         self.client.flush(collection_name)
 
     def search(
-        self, conversation_id: UUID, query_embedding: list[int]
-    ) -> list[list[dict[Any, Any]]]:
+        self, conversation_id: UUID, query_embedding: list[list[float]]
+    ) -> list[str]:
         """
         This function searches for similar data in the vector database.
 
@@ -145,7 +148,7 @@ class VectorDatabase:
                 anns_field="embedding",
                 data=query_embedding,
                 search_params=search_params,
-                limit=5,
+                limit=80,
                 output_fields=["text"],
             )
 
@@ -155,3 +158,7 @@ class VectorDatabase:
             self.client.release_collection(collection_name)
 
         return results
+
+
+if __name__ == "__main__":
+    vector_database = VectorDatabase()

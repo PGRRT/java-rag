@@ -5,6 +5,9 @@ class Document:
         self.text = text
         self.metadata = metadata or {}
 
+    def __str__(self):
+        return self.text
+
 
 class DocumentLoaderFactory:
     @staticmethod

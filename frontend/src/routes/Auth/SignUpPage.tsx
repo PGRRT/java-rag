@@ -5,9 +5,11 @@ import { css, cx } from "@emotion/css";
 import loginBg from "@/assets/login-bg.png";
 import Logo from "@/components/ui/Logo";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const navigateToHome = () => {
     navigate("/");
   };
@@ -50,7 +52,7 @@ const SignUpPage = () => {
       >
         <img
           src={loginBg}
-          alt="Login illustration"
+          alt={t("auth.loginIllustration")}
           className={css`
             height: 100vh;
             max-height: inherit;

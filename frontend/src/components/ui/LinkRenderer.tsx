@@ -10,7 +10,7 @@ const LinkRenderer = ({
   className,
 }: {
   href: string;
-  children: React.ReactNode;
+  children?: React.ReactNode; 
   target?: "_blank" | "_self" | "_parent" | "_top";
   className?: string;
   includeLinkStyles?: boolean;

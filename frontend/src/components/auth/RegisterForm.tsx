@@ -17,8 +17,10 @@ import Link from "@/components/ui/LinkRenderer";
 import { useAuth } from "@/hooks/useAuth";
 import AgreeFooter from "@/components/AgreeFooter";
 import loginBg from "@/assets/login-bg.png";
+import { useTranslation } from "react-i18next";
 
 const RegisterForm = () => {
+  const { t } = useTranslation();
   const { register: registerUser, createOtp, clearAuthError, user } = useAuth();
   const navigate = useNavigate();
   // const [step, setStep] = useState<number>(1);
@@ -61,19 +63,13 @@ const RegisterForm = () => {
       return;
     }
 
-
     // this is used to make isSubmitting true after the user is registered (so that the button is disabled while redirecting)
-    await showAsyncToastAndRedirect(
-      "Account created successfully! Redirecting to homepage...",
-      "/",
-      2000,
-      navigate
-    );
+    setTimeout(() => {
+      navigate("/");
+    }, 1500);
   };
 
   const createEmailVerificationPassword = async (data: RegisterFormData) => {
-    console.log("createEmailVerificationPassword");
-
     setVerifyEmailLoading(true);
 
     try {
@@ -81,76 +77,72 @@ const RegisterForm = () => {
 
       const { data, error } = await createOtp(userEmail);
 
+      setVerifyEmailLoading(false);
       if (error) {
         return;
       }
-
       setStep(step + 1);
     } catch (error) {
       console.error("Error creating email verification password:", error);
     }
-    setVerifyEmailLoading(false);
   };
 
   return (
-   
+    <ContentWrapper
+      width="100%"
+      padding="20px"
+      height="100%"
+      direction="column"
+      justify="space-between"
+      align="center"
+    >
+      <div /> {/* Spacer */}
       <ContentWrapper
         width="100%"
-        padding="20px"
-        height="100%"
+        maxWidth="450px"
         direction="column"
-        justify="space-between"
-        align="center"
+        gap="30px"
       >
-        <div /> {/* Spacer */}
-        <ContentWrapper
-          width="100%"
-          maxWidth="450px"
-          direction="column"
-          gap="30px"
-        >
-          {step === 0 ? (
-            <form
-              onSubmit={handleSubmit(createEmailVerificationPassword)}
-              className={css`
-                width: inherit;
-                display: inherit;
-                flex-direction: inherit;
-                gap: inherit;
-              `}
+        {step === 0 ? (
+          <form
+            onSubmit={handleSubmit(createEmailVerificationPassword)}
+            className={css`
+              width: inherit;
+              display: inherit;
+              flex-direction: inherit;
+              gap: inherit;
+            `}
+          >
+            <RegisterView register={register} errors={errors}>
+              <Button type="submit" disabled={verifyEmailLoading}>
+                {t("auth.registerButton")}
+              </Button>
+            </RegisterView>
+          </form>
+        ) : step === 1 ? (
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className={css`
+              width: inherit;
+              display: inherit;
+              flex-direction: inherit;
+              gap: inherit;
+            `}
+          >
+            <VerifyEmail
+              register={register}
+              errors={errors}
+              email={getValues("email")}
             >
-              <RegisterView register={register} errors={errors}>
-                <Button type="submit" disabled={verifyEmailLoading}>
-                  Verify email
-                </Button>
-              </RegisterView>
-            </form>
-          ) : step === 1 ? (
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className={css`
-                width: inherit;
-                display: inherit;
-                flex-direction: inherit;
-                gap: inherit;
-              `}
-            >
-              <VerifyEmail
-                register={register}
-                errors={errors}
-                email={getValues("email")}
-              >
-                <Button type="submit" disabled={isSubmitting}>
-                  Create your account
-                </Button>
-              </VerifyEmail>
-            </form>
-          ) : null}
-        </ContentWrapper>
-        <AgreeFooter />
+              <Button type="submit" disabled={isSubmitting}>
+                {t("auth.createAccount")}
+              </Button>
+            </VerifyEmail>
+          </form>
+        ) : null}
       </ContentWrapper>
-
- 
+      <AgreeFooter />
+    </ContentWrapper>
   );
 };
 

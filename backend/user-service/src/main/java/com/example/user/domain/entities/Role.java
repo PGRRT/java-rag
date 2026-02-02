@@ -19,6 +19,6 @@ public class Role extends com.example.user.domain.entities.BaseClass<Long> {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String name; //  "ADMIN", "USER"
+    private String name; //  "ADMIN", "MODERATOR, "USER"
 }
 

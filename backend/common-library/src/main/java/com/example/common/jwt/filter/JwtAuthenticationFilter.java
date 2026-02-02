@@ -1,5 +1,6 @@
 package com.example.common.jwt.filter;
 
+import com.example.common.jwt.dto.JwtType;
 import com.example.common.jwt.service.JwtService;
 import com.example.common.jwt.dto.UserPrincipal;
 import io.jsonwebtoken.Claims;
@@ -44,6 +45,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UUID id = UUID.fromString(claims.getSubject());
             String email = claims.get("email", String.class);
             String role = claims.get("role", String.class);
+            JwtType type = JwtType.fromString(claims.get("type", String.class));
+
+            if (type != JwtType.ACCESS) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
             List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
 

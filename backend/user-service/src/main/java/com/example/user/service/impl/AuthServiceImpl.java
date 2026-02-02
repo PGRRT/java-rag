@@ -1,6 +1,7 @@
 package com.example.user.service.impl;
 
 import com.example.common.jwt.dto.AccessRefreshToken;
+import com.example.common.jwt.dto.JwtType;
 import com.example.common.jwt.dto.JwtUserClaims;
 import com.example.common.jwt.dto.UserPrincipal;
 import com.example.user.domain.dto.auth.AuthResult;
@@ -8,15 +9,14 @@ import com.example.user.domain.dto.user.request.LoginUserRequest;
 import com.example.user.domain.dto.user.request.RegisterUserRequest;
 import com.example.user.domain.dto.user.response.UserResponse;
 import com.example.user.domain.entities.User;
-import com.example.user.exceptions.InvalidTokenException;
-import com.example.user.exceptions.OtpInvalidException;
-import com.example.user.exceptions.TokenRefreshException;
-import com.example.user.exceptions.UserNotActiveException;
+import com.example.user.exceptions.*;
 import com.example.user.repository.UserRepository;
 import com.example.common.jwt.service.JwtService;
 import com.example.user.service.AuthService;
+import com.example.user.service.BloomFilterService;
 import com.example.user.service.OtpService;
 import com.example.user.service.UserService;
+import com.example.user.utility.NormalizeEmail;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -45,11 +45,12 @@ public class AuthServiceImpl implements AuthService {
     private final OtpService otpService;
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
+    private final BloomFilterService bloomFilterService;
 
     @Override
     public AuthResult loginUser(LoginUserRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(request.getEmail().toLowerCase().trim(), request.getPassword())
         );
 
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
@@ -78,13 +79,23 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResult registerUser(RegisterUserRequest request) {
-        boolean hasOtpValid = otpService.verifyOtp(request.getEmail(), request.getOtp());
+        String normalizedEmail = NormalizeEmail.normalize(request.getEmail());
 
+        boolean hasOtpValid = otpService.verifyOtp(normalizedEmail, request.getOtp());
         if (!hasOtpValid) {
             throw new OtpInvalidException("Invalid or expired OTP. Please request a new one.");
         }
 
-        UserResponse userResponse = userService.saveUser(request,true);
+        // if false, we have to make sure and check DB
+        boolean emailAvailable = userService.isEmailAvailable(normalizedEmail);
+
+        if (!emailAvailable) {
+           throw new EmailAlreadyTakenException("Email is already in use");
+        }
+
+        UserResponse userResponse = userService.saveUser(request);
+
+        bloomFilterService.addEmail(normalizedEmail);
 
         AccessRefreshToken tokens = jwtService.createSessionCookies(
                 userResponse.getId(),
@@ -100,16 +111,22 @@ public class AuthServiceImpl implements AuthService {
         try {
             // Validate the refresh token
             if (refreshTokenCookie == null || refreshTokenCookie.isEmpty()) {
-                throw new JwtException("Refresh token is missing");
+                throw new InvalidTokenException("Refresh token is missing");
             }
 
             Claims claims = jwtService.getClaims(refreshTokenCookie);
+
+            JwtType type = JwtType.fromString(claims.get("type", String.class));
+
+            if (type != JwtType.REFRESH) {
+                throw new InvalidTokenException("Invalid token type");
+            }
 
             String subjectId = claims.getSubject();
             String jti = claims.getId();
             long expiration = claims.getExpiration().getTime();
 
-//             Check if the jti is blacklisted
+//          Check if the jti is blacklisted
             if (isJtiBlacklisted(jti)) {
                 throw new InvalidTokenException("Refresh token is blacklisted");
             }
@@ -141,6 +158,9 @@ public class AuthServiceImpl implements AuthService {
         } catch (JwtException e) {
             log.warn("Invalid refresh token: {}", e.getMessage());
             throw new InvalidTokenException("Invalid refresh token");
+        } catch (InvalidTokenException | UserNotActiveException e) {
+            log.warn("Token refresh failed: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Error refreshing token", e);
             throw new TokenRefreshException("Failed to refresh token");
@@ -175,7 +195,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void blacklistToken(String token) {
+    public void getClaimsAndBlacklistToken(String token) {
         try {
             // Get token expiration time
             Claims claims = jwtService.getClaims(token);
@@ -192,7 +212,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseCookie logout(String refreshToken) {
         if (refreshToken != null && !refreshToken.isEmpty()) {
-            blacklistToken(refreshToken);
+            getClaimsAndBlacklistToken(refreshToken);
         }
 
         return cookieService.clearRefreshTokenCookie();

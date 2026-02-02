@@ -11,6 +11,6 @@ public interface AuthService {
     String refreshToken(String refreshTokenCookie);
     boolean isTokenBlacklisted(String token);
     void blacklistToken(long expiration, String jti);
-    void blacklistToken(String token);
+    void getClaimsAndBlacklistToken(String token);
     ResponseCookie logout(String refreshToken);
 }

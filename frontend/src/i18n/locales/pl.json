@@ -1,0 +1,123 @@
+{
+  "common": {
+    "loading": "Ładowanie...",
+    "error": "Błąd",
+    "success": "Sukces",
+    "cancel": "Anuluj",
+    "confirm": "Potwierdź",
+    "delete": "Usuń",
+    "edit": "Edytuj",
+    "save": "Zapisz"
+  },
+  "sidebar": {
+    "newChat": "Nowy czat",
+    "searchChats": "Szukaj czatów",
+    "chats": "Czaty",
+    "all": "Razem",
+    "global": "Globalne",
+    "private": "Moje",
+    "loadingChats": "Ładowanie czatów...",
+    "errorLoadingChats": "Błąd ładowania czatów."
+  },
+  "ui": {
+    "inputPlaceholder": "Wpisz tutaj...",
+    "selectPlaceholder": "Wybierz...",
+    "avatarTooltip": "Awatar użytkownika",
+    "popoverOpen": "Otwórz menu",
+    "popoverClose": "Zamknij menu",
+    "selectDefault": "Klasyczny Rag"
+  },
+  "chat": {
+    "delete": "Usuń",
+    "deleting": "Usuwanie...",
+    "deleteSuccess": "Czat został usunięty",
+    "deleteError": "Nie udało się usunąć czatu",
+    "createSuccess": "Czat utworzony pomyślnie",
+    "createError": "Nie udało się utworzyć czatu",
+    "title": "Czat",
+    "typeMessage": "Wpisz wiadomość...",
+    "send": "Wyślij",
+    "placeholder": "W czym mogę ci pomóc?",
+    "globalTooltip": "Czat globalny - widoczny dla wszystkich",
+    "privateTooltip": "Czat prywatny - widoczny tylko dla Ciebie",
+    "loginToPrivate": "Zaloguj się, aby utworzyć czat prywatny",
+    "quickActions": {
+      "ingredientChecker": "Sprawdzanie składników",
+      "bmiCalculator": "Kalkulator BMI",
+      "sleepFixer": "Zadbaj o sen"
+    },
+    "verifyWarning": "Pamiętaj, aby zawsze <1>weryfikować informacje</1> otrzymane od AI."
+  },
+  "auth": {
+    "login": "Zaloguj się",
+    "loginTitle": "Zaloguj się do konta",
+    "loginSuccess": "Logowanie udane! Przekierowanie do strony głównej...",
+    "logout": "Wyloguj się",
+    "register": "Utwórz konto",
+    "registerButton": "Zweryfikuj email",
+    "createAccount": "Utwórz konto",
+    "email": "Email",
+    "password": "Hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "forgotPassword": "Zapomniałeś hasła?",
+    "dontHaveAccount": "Nie masz konta?",
+    "alreadyHaveAccount": "Masz już konto?",
+    "signUp": "Zarejestruj się",
+    "signIn": "Zaloguj się",
+    "passwordRequirements": "Hasło musi mieć co najmniej 6 znaków, zawierać litery i cyfry.",
+    "passwordConfirmDescription": "Wprowadź ponownie swoje hasło.",
+    "verifyEmail": "Zweryfikuj swój email",
+    "verifyEmailDescription": "Wysłaliśmy jednorazowy kod bezpieczeństwa na adres <strong>{{email}}</strong>, wprowadź kod poniżej",
+    "verificationCode": "Kod weryfikacyjny",
+    "verificationCodePlaceholder": "Wprowadź 6-cyfrowy kod",
+    "accountCreatedSuccess": "Konto zostało utworzone! Przekierowanie do strony głównej...",
+    "agreeText": "Kontynuując, zgadzasz się z <termsLink>Warunkami użytkowania</termsLink> oraz <privacyLink>Polityką prywatności</privacyLink> Med AI.",
+    "loginIllustration": "Ilustracja logowania"
+  },
+  "errors": {
+    "somethingWentWrong": "Coś poszło nie tak",
+    "tryAgain": "Spróbuj ponownie",
+    "notFound": "Nie znaleziono",
+    "unauthorized": "Brak autoryzacji",
+    "serverError": "Błąd serwera",
+    "operationFailed": "Operacja nie powiodła się z powodu nieznanego błędu.",
+    "operationFailedWithError": "Błąd: {{error}}",
+    "authInitFailed": "[Auth] Nie udało się zainicjować uwierzytelniania, kontynuowanie bez tokenu:",
+    "authRetryFailed": "[Auth] Nie udało się ponowić żądania:",
+    "authTokenRefreshFailed": "[Auth] Odświeżenie tokenu nie powiodło się:"
+  },
+  "navbar": {
+    "ragOptions": {
+      "bielik": "Bielik",
+      "classical_rag": "Klasyczny Rag"
+    }
+  },
+  "userMenu": {
+    "userMenuAriaLabel": "Menu użytkownika",
+    "deleteAccount": "Usuń konto",
+    "deleteAccountToastTitle": "Usuń konto",
+    "deleteAccountToastDescription": "Tej akcji nie można cofnąć. Wszystkie Twoje dane zostaną trwale usunięte.",
+    "deleteButton": "Usuń",
+    "cancelButton": "Anuluj"
+  },
+  "toasts": {
+    "loggingIn": "Logowanie...",
+    "loginSuccess": "Zalogowano pomyślnie",
+    "loginFailed": "Logowanie nie powiodło się",
+    "registering": "Rejestrowanie...",
+    "registerSuccess": "Zarejestrowano pomyślnie",
+    "registerFailed": "Rejestracja nie powiodła się",
+    "sendingOtp": "Wysyłanie OTP...",
+    "otpSentSuccess": "Wysłano OTP pomyślnie",
+    "otpSendFailed": "Nie udało się wysłać OTP",
+    "loggingOut": "Wylogowywanie...",
+    "logoutSuccess": "Wylogowano pomyślnie",
+    "logoutFailed": "Wylogowanie nie powiodło się",
+    "deletingAccount": "Usuwanie konta...",
+    "deleteAccountSuccess": "Konto usunięte pomyślnie",
+    "deleteAccountFailed": "Usuwanie konta nie powiodło się",
+    "mustBeLoggedIn": "Musisz być zalogowany, aby rozpocząć prywatny czat.",
+    "fetchMessagesFailed": "Nie udało się pobrać wiadomości",
+    "postMessageFailed": "Nie udało się wysłać wiadomości"
+  }
+}

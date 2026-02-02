@@ -8,6 +8,7 @@ import { mantineTheme } from "@/config/mantineConfigStyles";
 
 import "@mantine/core/styles.css";
 import "./styles/main.scss";
+import "@/i18n";
 
 const container = document.getElementById("root");
 

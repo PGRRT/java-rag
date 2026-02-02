@@ -2,9 +2,7 @@ package com.example.user.controller;
 
 import com.example.common.exception.ApiErrorResponse;
 import com.example.common.exception.GlobalErrorHandler;
-import com.example.user.exceptions.OtpInvalidException;
-import com.example.user.exceptions.TokenRefreshException;
-import com.example.user.exceptions.UserNotActiveException;
+import com.example.user.exceptions.*;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,14 +15,25 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler extends GlobalErrorHandler {
+    @ExceptionHandler(EmailAlreadyTakenException.class)
+    public ResponseEntity<ApiErrorResponse> handleEmailAlreadyTakenException(EmailAlreadyTakenException e) {
+        log.warn("Registration conflict: {}", e.getMessage());
+
+        ApiErrorResponse error = ApiErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value()) // 409
+                .message(e.getMessage() != null ? e.getMessage() : "Email is already in use")
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler({
             JwtException.class,
-            UsernameNotFoundException.class,
-            TokenRefreshException.class
+            TokenRefreshException.class,
+            InvalidTokenException.class
     })
     public ResponseEntity<ApiErrorResponse> handleAuthenticationExceptions(RuntimeException e) {
         // Authentication related exceptions - invalid tokens, user not found, token refresh issues
-        log.error("Authentication exception: {} - {}", e.getClass().getSimpleName(), e.getMessage(), e);
 
         ApiErrorResponse error = ApiErrorResponse.builder()
                 .status(HttpStatus.UNAUTHORIZED.value())
@@ -33,10 +42,25 @@ public class ErrorHandler extends GlobalErrorHandler {
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler({
+            UserNotFoundException.class,
+            UsernameNotFoundException.class,
+    })
+    public ResponseEntity<ApiErrorResponse> handleUserNotFoundException(RuntimeException e) {
+        // User not found exceptions
+        log.warn("User not found exception: {}", e.getMessage(), e);
+
+        ApiErrorResponse error = ApiErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .message(e.getMessage() != null ? e.getMessage() : "User not found")
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(UserNotActiveException.class)
     public ResponseEntity<ApiErrorResponse> handleUserNotActiveException(UserNotActiveException e) {
         // User exists but is not active - authorization issue
-        log.error("User not active exception: {}", e.getMessage(), e);
+        log.warn("User not active exception: {}", e.getMessage(), e);
 
         ApiErrorResponse error = ApiErrorResponse.builder()
                 .status(HttpStatus.FORBIDDEN.value())
@@ -48,7 +72,7 @@ public class ErrorHandler extends GlobalErrorHandler {
     @ExceptionHandler(OtpInvalidException.class)
     public ResponseEntity<ApiErrorResponse> handleOtpInvalidException(OtpInvalidException e) {
         // Invalid OTP code provided
-        log.error("OTP validation exception: {}", e.getMessage(), e);
+        log.warn("OTP validation exception: {}", e.getMessage(), e);
 
         ApiErrorResponse error = ApiErrorResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())

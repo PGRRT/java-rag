@@ -4,48 +4,57 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { chatApi } from "@/api/chatApi";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { ChatRoomType } from "@/api/enums/ChatRoom";
+import i18n from "@/i18n/config";
 import exceptionWrapper from "@/utils/exceptionWrapper";
 import { revalidateChats } from "@/hooks/useInfiniteChats";
-
 const initialState = {
   chats: [] as Array<{ id: string; title: string }>,
   isLoading: false,
   error: null as string | null,
   chatsRefreshTrigger: false as boolean,
 };
-
 // export const fetchChatsAction = createAsyncThunk(
 //   "chat/fetchChats",
 //   async (_, { rejectWithValue }) => {
 //     const response = await exceptionWrapper(async () => {
 //       return chatApi.getChats();
 //     });
-
 //     if (!response.success) {
 //       return rejectWithValue("Failed to fetch chats");
 //     }
 //     return response.data;
 //   }
 // );
-
 export const createChatAction = createAsyncThunk(
   "chat/createChat",
   async (
     { message, chatType }: { message: string; chatType: ChatRoomType },
     { rejectWithValue }
   ) => {
-    console.log("message",message);
-    console.log("chatType",chatType);
-    
     const response = await exceptionWrapper(async () => {
       return chatApi.createChat(message, chatType);
-    }, "Chat created successfully");
+    }, i18n.t("chat.createSuccess"));
 
     if (!response.success) {
-      return rejectWithValue("Failed to create chat");
+      return rejectWithValue(i18n.t("chat.createError"));
     }
 
     // revalidateChats();
+
+    return response.data;
+  }
+);
+
+export const deleteChatAction = createAsyncThunk(
+  "chat/deleteChat",
+  async (chatId: string, { rejectWithValue }) => {
+    const response = await exceptionWrapper(async () => {
+      return chatApi.deleteChat(chatId);
+    }, i18n.t("chat.deleteSuccess"));
+
+    if (!response.success) {
+      return rejectWithValue(i18n.t("chat.deleteError"));
+    }
 
     return response.data;
   }
@@ -61,6 +70,9 @@ const chatSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(createChatAction.fulfilled, (state) => {
+      state.chatsRefreshTrigger = true;
+    })
+    .addCase(deleteChatAction.fulfilled, (state) => {
       state.chatsRefreshTrigger = true;
     });
     // builder

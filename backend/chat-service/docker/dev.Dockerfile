@@ -24,7 +24,7 @@ COPY chat-service/src chat-service/src
 COPY chat-service/entrypoint.sh entrypoint.sh
 RUN chmod +x entrypoint.sh
 
-EXPOSE 8082
+EXPOSE 8082 9090
 
 ENTRYPOINT ["./entrypoint.sh"]
 CMD ["./mvnw", "spring-boot:run", "-f", "chat-service/pom.xml"]

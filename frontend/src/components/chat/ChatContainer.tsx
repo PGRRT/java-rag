@@ -12,6 +12,8 @@ import remarkGfm from "remark-gfm";
 import type { UUID } from "@/types/global";
 import { useEffect, useRef } from "react";
 
+import SkeletonBlock from "@/components/chat/SkeletonBlock";
+
 export const AiInputHeight = 90;
 const chatPadding = 12;
 const additionalSpace = 30;
@@ -26,6 +28,9 @@ const ChatContainer = ({ chatId }: { chatId: UUID }) => {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+  const isResponding =
+    messages.length > 0 && messages[messages.length - 1]?.sender != Sender.BOT;
 
   return (
     <ContentWrapper
@@ -42,7 +47,7 @@ const ChatContainer = ({ chatId }: { chatId: UUID }) => {
               ${additionalSpace}px
           );
           overflow-y: auto;
-        `
+        `,
       )}
       padding="10px 0 0"
     >
@@ -50,7 +55,7 @@ const ChatContainer = ({ chatId }: { chatId: UUID }) => {
         width="100%"
         flexValue="1 1 auto"
         direction="column"
-        gap="3rem"
+        gap="45px"
         maxWidth="750px"
         padding={`0 ${chatPadding}px ${AiInputHeight + 20}px`}
       >
@@ -85,6 +90,15 @@ const ChatContainer = ({ chatId }: { chatId: UUID }) => {
             </Markdown>
           </ContentWrapper>
         ))}
+
+        {isResponding && (
+          <ContentWrapper direction="column" gap="20px">
+            <SkeletonBlock width="75%" height="60px" />
+            <SkeletonBlock width="55%" />
+            <SkeletonBlock width="85%" height="60px" />
+          </ContentWrapper>
+        )}
+
         {/* Scroll anchor for auto-scrolling to latest message */}
         <div ref={messagesEndRef} />
       </ContentWrapper>

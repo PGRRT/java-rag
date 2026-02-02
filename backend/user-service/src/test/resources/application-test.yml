@@ -1,0 +1,46 @@
+spring:
+  datasource:
+    hikari:
+      connection-timeout: 60000
+      validation-timeout: 10000
+      max-lifetime: 1800000
+      maximum-pool-size: 10
+      minimum-idle: 2
+      leak-detection-threshold: 60000
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  sql:
+    init:
+      mode: never
+#  data:
+#    redis:
+#      host: localhost
+#      port: 6379
+  data:
+    redis:
+      timeout: 30000
+      connect-timeout: 10000
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+  rabbitmq:
+    host: localhost
+  mail:
+    host: localhost
+    port: 3025
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false

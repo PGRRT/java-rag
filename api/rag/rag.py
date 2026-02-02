@@ -1,25 +1,16 @@
-import uuid
-from typing import Any
 from typing_extensions import override
 from abc import ABC, abstractmethod
 from uuid import UUID
-from transformers import DPRQuestionEncoder, DPRContextEncoder, DPRQuestionEncoderTokenizer
-from transformers.utils import logging
+from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
 import os
-import time
-import torch
-import torch.nn.functional as F
-from tqdm import tqdm
+import torch.nn
+from sentence_transformers import CrossEncoder
 
-from rag.document import Document, DocumentLoaderFactory
-from rag.vector_database import VectorDatabase
-from rag.llm_client import LLM
-from rag.llm_client import BielikLLM
-
-
-logging.set_verbosity_debug()
-
+from .document import Document, DocumentLoaderFactory
+from .vector_database import VectorDatabase
+from .llm_client import LLM
+from .llm_client import BielikLLM
 
 class RAG(ABC):
     @abstractmethod
@@ -43,15 +34,31 @@ class MockRAG(RAG):
 
 class ClassicRAG(RAG):
     def __init__(self, llm: LLM):
-        self.client = VectorDatabase(embedding_dim=768)
+        self.client = VectorDatabase(embedding_dim=1024)
         self.llm = llm
-        self.question_encoder = DPRQuestionEncoder.from_pretrained("facebook/dpr-question_encoder-single-nq-base")
-        self.context_encoder = DPRContextEncoder.from_pretrained("facebook/dpr-ctx_encoder-single-nq-base")
-        self.tokenizer = DPRQuestionEncoderTokenizer.from_pretrained("facebook/dpr-question_encoder-single-nq-base")
-        self.chunk_size = 100
+        print("Loading encoder...")
+        self.encoder = SentenceTransformer(
+    "sdadas/stella-pl-retrieval-mini-8k",
+                    trust_remote_code=True,
+                    device="cuda",
+                    
+        )
+        print("Encoder loaded!")
+        # self.encoder.bfloat16()
+        self.encoder.half()
 
-        self.question_encoder.eval() # Evaluation mode on
-        self.context_encoder.eval() # Evaluation mode on
+        print("Loading crossencoder...")
+        self.crossencoder = CrossEncoder(
+            "sdadas/polish-reranker-roberta-v3",
+            activation_fn=torch.nn.Identity(),
+            max_length=8192,
+            device="cuda",
+            trust_remote_code=True,
+            # model_kwargs={"dtype": torch.bfloat16}
+            model_kwargs={"dtype": torch.float16}
+        )
+        print("Crossencoder loaded!")
+        self.chunk_size = 67
 
 
     @override
@@ -73,29 +80,19 @@ class ClassicRAG(RAG):
         return chunks
 
 
-    def __get_chunks_embeddings(self, chunks, batch_size=16):
-        embeddings = []
+    def __get_chunks_embeddings(self, chunks, batch_size=8):
+        embeddings = self.encoder.encode(
+            sentences=chunks,
+            batch_size=batch_size,
+            convert_to_tensor=True,
+            show_progress_bar=True,
+            normalize_embeddings=True
+        )
 
-        for i in tqdm(range(0, len(chunks), batch_size), desc="Generating embeddings"):
-            batch = chunks[i:i + batch_size]
-
-            inputs = self.tokenizer(
-                batch,
-                return_tensors="pt",
-                padding=True,
-            )
-
-            with torch.no_grad():
-                emb = self.context_encoder(**inputs).pooler_output  # [B, 768]
-
-            emb = F.normalize(emb, p=2, dim=1)
-
-            embeddings.append(emb)
-
-        return torch.cat(embeddings, dim=0)
+        return embeddings
 
 
-    def __get_chunks_with_embeddings(self, text, batch_size=16):
+    def __get_chunks_with_embeddings(self, text, batch_size=8):
         chunks = self.__text_splitter(text)
         embeddings = self.__get_chunks_embeddings(chunks, batch_size=batch_size)
 
@@ -105,35 +102,58 @@ class ClassicRAG(RAG):
 
 
     @override
-    def process_query(self, query: str, conversation_id: UUID) -> str:
-        base_conversation_id = 1234 # Nwm jakis cwel na frontendzie wymyslil sobie chaty, mimo ze tego nie potrzebujemy teraz
-
+    def process_query(self, query: str, conversation_id: UUID = 0) -> str:
         query_embedding = self.__get_query_embedding(query)
-        contexts = self.client.search(base_conversation_id, query_embedding)
-        prompt = self.__create_prompt(query, contexts)
+        contexts = self.client.search(conversation_id, query_embedding)
+        reranked_contexts = self.__rerank(contexts, query)
+        prompt = self.__create_prompt(query, reranked_contexts)
+        print(prompt)
         response = self.llm.generate_response(prompt)
+        torch.cuda.empty_cache()
 
         return response
 
+    def process_query_evaluate(self, query: str, conversation_id: UUID = 0) -> dict:
+        query_embedding = self.__get_query_embedding(query)
+        contexts = self.client.search(conversation_id, query_embedding)
+        reranked_contexts = self.__rerank(contexts, query)
+        prompt = self.__create_prompt(query, reranked_contexts)
+        print(prompt)
+        response = self.llm.generate_response(prompt)
+        torch.cuda.empty_cache()
+
+        return {"response": response, "contexts": reranked_contexts}
+
 
     def __get_query_embedding(self, query: str):
-        inputs = self.tokenizer(
-                query,
-                return_tensors="pt",
-                padding=True,
-                truncation=True,
+        embedding = self.encoder.encode(
+            sentences=query,
+            convert_to_tensor=True,
+            show_progress_bar=True,
+            normalize_embeddings=True
         )
 
+        return [embedding.tolist()] # Milvus require list[list]
+
+
+    def __rerank(self, contexts: list[str], query: str, top_k: int = 5) -> list[str]:
         with torch.no_grad():
-            emb = self.question_encoder(**inputs).pooler_output
+            results = self.crossencoder.predict([[query, answer] for answer in contexts])
+        reranked = [
+            ctx for ctx, _ in sorted(
+                zip(contexts, results),
+                key=lambda x: x[1],
+                reverse=True
+            )
+        ]
 
-        emb = F.normalize(emb, p=2, dim=1)
-
-        return emb.tolist()
+        return reranked[:top_k]
 
 
     def __create_prompt(self, query: str, contexts: list):
-        contexts = "\n".join(contexts)
+        for i in range(len(contexts)):
+            contexts[i] = f"\n<zrodlo>{contexts[i]}</zrodlo>"
+        contexts = "".join(contexts)
 
         return f"""Pytanie użytkownika: "{query}"\nŹródła wymienione przez użytkownika: "{contexts}"\n"""
 
@@ -149,4 +169,9 @@ if __name__ == "__main__":
 
     rag = ClassicRAG(bielik)
 
-    print(rag.process_query("Ile lat ma 5 letni pies?", 1234))
+    document = DocumentLoaderFactory.load("../requirements.txt")
+    rag.process_document(document, conversation_id=1234)
+
+    response = rag.process_query("PyTorch", 1234)
+    print(response)
+    rag.client.remove_collection(1234)

@@ -40,6 +40,13 @@ const CustomPopover = ({
         {...popoverProps}
         width={width ?? 200}
         position={position ?? "bottom-start"}
+  //       withinPortal
+  //       middlewares={{ 
+  //   flip: false, // Blokuje przeskakiwanie na dół/górę
+  //   shift: true, // Pozwala na korektę góra/dół, żeby nie wystawało poza ekran
+  //   inline: true 
+  // }}
+        // middlewares={{ flip: false, shift: true }}
         styles={{
           dropdown: {
             borderRadius: styles.borderRadius.small,

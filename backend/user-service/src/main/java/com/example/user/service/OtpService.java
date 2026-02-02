@@ -1,6 +1,8 @@
 package com.example.user.service;
 
+import com.example.user.domain.dto.otp.request.OtpRequest;
+
 public interface OtpService {
-    String generateOtp(String email);
+    void processOtpRequest(String email);
     boolean verifyOtp(String email, String otp);
 }

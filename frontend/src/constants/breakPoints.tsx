@@ -1,19 +1,18 @@
 // Breakpoints w px (mobile-first approach)
 export const breakPoints = {
-  mobile: 0, // < 768px
-  tablet: 768, // 768px - 1024px
-  laptop: 1024, // 1024px - 1440px
-  desktop: 1440, // >= 1440px
+  mobile: 0,
+  tablet: 768, 
+  laptop: 1024, 
+  desktop: 1440,
 } as const;
 
 // Media queries dla CSS-in-JS / Emotion
 export const breakPointsMediaQueries = {
-  mobile: `@media (max-width: ${breakPoints.tablet - 1}px)`, // < 768px
-  tablet: `@media (min-width: ${breakPoints.tablet}px)`, // >= 768px
-  laptop: `@media (min-width: ${breakPoints.laptop}px)`, // >= 1024px
-  desktop: `@media (min-width: ${breakPoints.desktop}px)`, // >= 1440px
+  mobile: `@media (max-width: ${breakPoints.tablet - 1}px)`, 
+  tablet: `@media (min-width: ${breakPoints.tablet}px)`, 
+  laptop: `@media (min-width: ${breakPoints.laptop}px)`, 
+  desktop: `@media (min-width: ${breakPoints.desktop}px)`,
 
-  // Dodatkowo: zakresy
   onlyMobile: `@media (max-width: ${breakPoints.tablet - 1}px)`,
   onlyTablet: `@media (min-width: ${breakPoints.tablet}px) and (max-width: ${
     breakPoints.laptop - 1

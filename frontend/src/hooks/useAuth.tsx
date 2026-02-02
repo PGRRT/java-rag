@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hooks";
 import {
   loginUserAction,
   registerUserAction,
@@ -15,6 +15,7 @@ import { showToast } from "@/utils/showToast";
 import type { Credentials, RegisterData, User } from "@/types/user";
 import { useUserSWR } from "@/hooks/useUser";
 import { useSWRConfig } from "swr";
+import { useTranslation } from "react-i18next";
 
 interface UseAuthReturn {
   // State
@@ -23,14 +24,14 @@ interface UseAuthReturn {
   error: string | null;
 
   // Actions
-  login: (credentials: Credentials) => Promise<void>;
-  register: (userData: RegisterData) => Promise<void>;
+  login: (credentials: Credentials) => Promise<any>;
+  register: (userData: RegisterData) => Promise<any>;
   logout: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   updateProfile: (updates: Partial<User>) => void;
   clearAuthError: () => void;
 
-  createOtp: (email: string) => Promise<void>;
+  createOtp: (email: string) => Promise<any>;
 
   // Utilities
   hasRole: (role: string | string[]) => boolean;
@@ -40,6 +41,7 @@ interface UseAuthReturn {
 export const useAuth = (): UseAuthReturn => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const { user, loading: isLoading, error } = useUserSWR();
   const { mutate } = useSWRConfig();
@@ -49,17 +51,17 @@ export const useAuth = (): UseAuthReturn => {
       const response = await showToast.async.withLoading(
         () => dispatch(loginUserAction(credentials)).unwrap(),
         {
-          loadingMessage: "Logging in...",
-          successMessage: "Logged in successfully",
-          errorMessage: (err) => err || "Login failed",
-        }
+          loadingMessage: t("toasts.loggingIn"),
+          successMessage: t("toasts.loginSuccess"),
+          errorMessage: (err) => err || t("toasts.loginFailed"),
+        },
       );
 
       await mutate(() => true, undefined, { revalidate: false });
 
       return response;
     },
-    [dispatch, mutate]
+    [dispatch, mutate, t],
   );
 
   const register = useCallback(
@@ -67,16 +69,16 @@ export const useAuth = (): UseAuthReturn => {
       const response = await showToast.async.withLoading(
         () => dispatch(registerUserAction(data)).unwrap(),
         {
-          loadingMessage: "Registering...",
-          successMessage: "Registered successfully",
-          errorMessage: (err) => err || "Registration failed",
-        }
+          loadingMessage: t("toasts.registering"),
+          successMessage: t("toasts.registerSuccess"),
+          errorMessage: (err) => err || t("toasts.registerFailed"),
+        },
       );
       await mutate(() => true, undefined, { revalidate: false });
 
       return response;
     },
-    [dispatch, mutate]
+    [dispatch, mutate, t],
   );
 
   const createOtp = useCallback(
@@ -84,25 +86,25 @@ export const useAuth = (): UseAuthReturn => {
       const response = await showToast.async.withLoading(
         () => dispatch(requestOtpAction(email)).unwrap(),
         {
-          loadingMessage: "Sending OTP...",
-          successMessage: "OTP sent successfully",
-          errorMessage: (err) => err || "Failed to send OTP",
-        }
+          loadingMessage: t("toasts.sendingOtp"),
+          successMessage: t("toasts.otpSentSuccess"),
+          errorMessage: (err) => err || t("toasts.otpSendFailed"),
+        },
       );
 
       return response;
     },
-    [dispatch]
+    [dispatch, t],
   );
 
   const logout = useCallback(async (): Promise<void> => {
     const response = await showToast.async.withLoading(
       () => dispatch(logoutUserAction()).unwrap(),
       {
-        loadingMessage: "Logging out...",
-        successMessage: "Logged out successfully",
-        errorMessage: (err) => err || "Logout failed",
-      }
+        loadingMessage: t("toasts.loggingOut"),
+        successMessage: t("toasts.logoutSuccess"),
+        errorMessage: (err) => err || t("toasts.logoutFailed"),
+      },
     );
 
     await mutate(() => true, undefined, { revalidate: false });
@@ -115,16 +117,16 @@ export const useAuth = (): UseAuthReturn => {
       dispatch(resetAuth());
       navigate("/sign-in");
     }
-  }, [dispatch, navigate, mutate]);
+  }, [dispatch, navigate, mutate, t]);
 
   const deleteAccount = useCallback(async (): Promise<void> => {
     const response = await showToast.async.withLoading(
       () => dispatch(deleteAccountAction()).unwrap(),
       {
-        loadingMessage: "Deleting account...",
-        successMessage: "Account deleted successfully",
-        errorMessage: (err) => err || "Account deletion failed",
-      }
+        loadingMessage: t("toasts.deletingAccount"),
+        successMessage: t("toasts.deleteAccountSuccess"),
+        errorMessage: (err) => err || t("toasts.deleteAccountFailed"),
+      },
     );
 
     await mutate(() => true, undefined, { revalidate: false });
@@ -137,13 +139,13 @@ export const useAuth = (): UseAuthReturn => {
       dispatch(resetAuth());
       navigate("/sign-in");
     }
-  }, [dispatch, navigate, mutate]);
+  }, [dispatch, navigate, mutate, t]);
 
   const updateProfile = useCallback(
     (updates: Partial<User>): void => {
       dispatch(updateUser(updates));
     },
-    [dispatch]
+    [dispatch],
   );
 
   const clearAuthError = useCallback((): void => {
@@ -157,7 +159,7 @@ export const useAuth = (): UseAuthReturn => {
       const roles = Array.isArray(role) ? role : [role];
       return roles.includes(user.role);
     },
-    [user]
+    [user],
   );
 
   const hasPermission = useCallback(
@@ -166,7 +168,7 @@ export const useAuth = (): UseAuthReturn => {
       // Adjust based on your User type - remove attributes check if not needed
       return false;
     },
-    [user]
+    [user],
   );
 
   const authState = useMemo(
@@ -197,7 +199,7 @@ export const useAuth = (): UseAuthReturn => {
       clearAuthError,
       hasRole,
       hasPermission,
-    ]
+    ],
   );
 
   return authState;
