@@ -1,6 +1,5 @@
 package com.example.chat.service.impl;
 
-import com.example.chat.domain.dto.message.request.CreateMessageRequest;
 import com.example.chat.domain.dto.message.response.CreateMessageResponse;
 import com.example.chat.domain.dto.message.response.MessageResponse;
 import com.example.chat.domain.entities.Chat;
@@ -8,10 +7,12 @@ import com.example.chat.domain.entities.Message;
 import com.example.chat.domain.enums.ChatType;
 import com.example.chat.domain.enums.Sender;
 import com.example.chat.mapper.MessageMapper;
+import com.example.chat.publisher.AiPublisher;
 import com.example.chat.repository.ChatRepository;
 import com.example.chat.repository.MessageRepository;
 import com.example.chat.service.MessageService;
-import com.example.common.rabbitmq.events.BotMessageEvent;
+import com.example.common.rabbitmq.enums.ChatEvent;
+import com.example.common.rabbitmq.events.ChatMessageEvent;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public class MessageServiceImpl implements MessageService {
     private final MessageMapper messageMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final ChatRepository chatRepository;
+    private final AiPublisher aiPublisher;
 
     @Override
     @Transactional(readOnly = true)
@@ -46,25 +48,33 @@ public class MessageServiceImpl implements MessageService {
         return messageMapper.toMessageResponse(message);
     }
 
+
+
     @Override
     @Transactional
-    public CreateMessageResponse createMessage(CreateMessageRequest createMessageRequest, UUID chatId, UUID userId) {
+    public CreateMessageResponse createMessage(String content, Sender sender, UUID chatId, UUID userId) {
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("Chat not found"));
 
         boolean isGlobal = chat.getChatType() == ChatType.GLOBAL;
         boolean isOwner = chat.getUserId() != null && chat.getUserId().equals(userId);
-        boolean isBot = createMessageRequest.sender() == Sender.BOT;
+        boolean isBot = sender == Sender.BOT;
 
         if (!isGlobal && !isOwner && !isBot) {
             log.error("User {} is not authorized to add messages to chat {}", userId, chatId);
             throw new EntityNotFoundException("Chat not found");
         }
 
-        Message message = messageMapper.toEntity(createMessageRequest);
+        Message message = Message.builder()
+                .content(content)
+                .sender(sender)
+                .chat(chat)
+                .userId(userId)
+                .build();
+//        Message message = messageMapper.toEntity(createMessageRequest);
 
-        message.setChat(chat);
-        message.setUserId(userId);
+//        message.setChat(chat);
+//        message.setUserId(userId);
 
         Message save = messageRepository.save(message);
 
@@ -74,10 +84,25 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional
     public void saveBotMessage(UUID chatId, String generatedResponse) {
-        createMessage(new CreateMessageRequest(generatedResponse, Sender.BOT), chatId, null);
+        createMessage(generatedResponse, Sender.BOT, chatId, null);
 
         // Publish event to notify SSE listeners
-        applicationEventPublisher.publishEvent(new BotMessageEvent(chatId, generatedResponse));
+        applicationEventPublisher.publishEvent(new ChatMessageEvent(chatId, generatedResponse, ChatEvent.BOT_MESSAGE));
+    }
+
+    @Override
+    @Transactional
+    public CreateMessageResponse saveUserMessage(String content, Sender sender, UUID chatId, UUID userId) {
+        CreateMessageResponse message = createMessage(content, sender, chatId, userId);
+
+        // Publish event to notify SSE listeners
+        applicationEventPublisher.publishEvent(new ChatMessageEvent(chatId, message.content(), ChatEvent.USER_MESSAGE));
+//        sseService.emit(chatId, ChatEvent.USER_MESSAGE, created.content());
+
+
+        aiPublisher.publishGenerateAiResponseEvent(chatId, content);
+
+        return message;
     }
 
     @Override

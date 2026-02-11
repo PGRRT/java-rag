@@ -1,8 +1,8 @@
 package com.example.chat.service.impl;
 
-import com.example.chat.domain.enums.ChatEvent;
 import com.example.chat.service.ChatBindingService;
 import com.example.chat.service.SseService;
+import com.example.common.rabbitmq.enums.ChatEvent;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

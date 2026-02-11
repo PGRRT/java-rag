@@ -1,7 +1,7 @@
 package com.example.chat.publisher;
 
 import com.example.common.rabbitmq.SharedRabbitTopology;
-import com.example.common.rabbitmq.events.BotMessageEvent;
+import com.example.common.rabbitmq.events.ChatMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -18,7 +18,7 @@ public class BotMessagePublisher {
     private final RabbitTemplate rabbitTemplate;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void publish(BotMessageEvent event) {
+    public void publish(ChatMessageEvent event) {
         log.debug("Published bot message for chatId {}", event.chatId());
         rabbitTemplate.convertAndSend(SharedRabbitTopology.TOPIC_EXCHANGE, "chat." + event.chatId(), event);
     }

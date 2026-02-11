@@ -1,4 +1,4 @@
-package com.example.chat.domain.enums;
+package com.example.common.rabbitmq.enums;
 
 public enum ChatEvent {
     USER_MESSAGE,

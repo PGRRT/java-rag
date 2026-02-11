@@ -164,19 +164,25 @@ services:
         condition: service_healthy
 
   user-service:
-    container_name: user-service
+    # container_name: user-service
     build:
       context: ./backend
       dockerfile: user-service/docker/dev.Dockerfile
     env_file:
       - .env
       - .env.dev.local
-    ports:
-      - 8081:8081
+    # ports:
+      # - 8081:8081
+    deploy: 
+      replicas: 1
+
     volumes:
       - ./backend/user-service:/app/user-service
       - ./backend/common-library:/app/common-library
       - ~/.m2:/root/.m2
+
+      # Isolates the build directory for each replica to prevent filesystem race conditions on the host
+      - /app/user-service/target
     networks:
       - app_network
     healthcheck:
@@ -189,20 +195,26 @@ services:
       eureka:
         condition: service_healthy
   chat-service:
-    container_name: chat-service
+    # container_name: chat-service
     build:
       context: ./backend
       dockerfile: chat-service/docker/dev.Dockerfile
     env_file:
       - .env
       - .env.dev.local
-    ports:
-      - 8082:8082
-      - 9090:9090
+    
+    deploy:
+      replicas: 2
+    # ports:
+      # - 8082:8082
+      # - 9090:9090
     volumes:
       - ./backend/chat-service:/app/chat-service
       - ./backend/common-library:/app/common-library
       - ~/.m2:/root/.m2
+
+      # Isolates the build directory for each replica to prevent filesystem race conditions on the host
+      - /app/chat-service/target
     networks:
       - app_network
     healthcheck:
@@ -216,19 +228,24 @@ services:
         condition: service_healthy
 
   ai-service:
-   container_name: ai-service
+  #  container_name: ai-service
    build:
      context: ./backend
      dockerfile: ai-service/docker/dev.Dockerfile
    env_file:
      - .env
      - .env.dev.local
-   ports:
-     - 8083:8083
+  #  ports:
+    #  - 8083:8083
+   deploy:
+     replicas: 1
    volumes:
      - ./backend/ai-service:/app/ai-service
      - ./backend/common-library:/app/common-library
      - ~/.m2:/root/.m2
+
+    # Isolates the build directory for each replica to prevent filesystem race conditions on the host
+     - /app/ai-service/target
    networks:
      - app_network
    healthcheck:

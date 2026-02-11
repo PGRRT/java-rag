@@ -17,7 +17,7 @@ spring:
 eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    prefer-ip-address: false
+    prefer-ip-address: true
     metadata-map:
       grpc-port: "9090"
     hostname: chat-service

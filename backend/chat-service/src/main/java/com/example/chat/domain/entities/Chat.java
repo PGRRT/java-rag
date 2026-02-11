@@ -37,6 +37,7 @@ public class Chat extends BaseClass<UUID> {
 
     @Builder.Default
     @OneToMany(mappedBy = "chat", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @OrderBy("createdAt ASC")
     List<Message> messages = new ArrayList<>();
 
     @CreatedDate
