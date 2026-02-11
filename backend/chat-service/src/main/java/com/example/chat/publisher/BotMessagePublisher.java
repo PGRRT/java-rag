@@ -19,8 +19,8 @@ public class BotMessagePublisher {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void publish(BotMessageEvent event) {
-        rabbitTemplate.convertAndSend(SharedRabbitTopology.TOPIC_EXCHANGE, "chat." + event.chatId(), event);
         log.debug("Published bot message for chatId {}", event.chatId());
+        rabbitTemplate.convertAndSend(SharedRabbitTopology.TOPIC_EXCHANGE, "chat." + event.chatId(), event);
     }
 
 }

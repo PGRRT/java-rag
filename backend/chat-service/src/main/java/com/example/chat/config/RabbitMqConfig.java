@@ -3,6 +3,7 @@ package com.example.chat.config;
 import com.example.common.rabbitmq.SharedRabbitTopology;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -15,12 +16,21 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.task.VirtualThreadTaskExecutor;
 import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 
+import java.util.UUID;
+
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 @Import(SharedRabbitTopology.class)
 public class RabbitMqConfig {
+
+    // Unique queue for each instance to receive private chat messages
+    @Bean
+    public Queue instanceQueue() {
+        return new Queue("chat.private" + UUID.randomUUID(), false, true,true);
+    }
+
 //    public static final String TOPIC_EXCHANGE = "chat.topic.exchange";
 //
 //    public static final String USER_DELETED_QUEUE = "chat.user-deleted.queue";

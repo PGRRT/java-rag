@@ -53,10 +53,9 @@ public class SharedRabbitTopology {
 
     public static final String USER_DELETED_QUEUE = "chat.user-deleted.queue";
     public static final String USER_DELETED_ROUTING_KEY = "user.deleted";
-    @Bean
-    public Queue instanceQueue() {
-        return new Queue("chat.private" + UUID.randomUUID(), false, true,true);
-    }
+
+
+
 
     @Bean
     public TopicExchange topicExchange() {
