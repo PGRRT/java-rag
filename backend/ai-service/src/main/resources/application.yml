@@ -4,15 +4,25 @@ spring:
   threads:
     virtual:
       enabled: true
+  cloud:
+    discovery:
+      enabled: true
   grpc:
     client:
       chat-service:
-#        address: "static://chat-service:9090"
-        address: "dns:///chat-service:9090"
-        negotiation-type: plaintext
+       address: "dns:///chat-service:9090"
+       negotiation-type: plaintext
+       default-load-balancing-policy: round_robin
+       enable-retry: true
+
   profiles:
     active: ${SPRING_PROFILES_ACTIVE}
 
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+    hostname: ai-service
 
 jwt:
   secret: ${JWT_SECRET}

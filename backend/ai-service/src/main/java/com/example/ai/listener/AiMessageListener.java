@@ -24,12 +24,16 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class AiMessageListener {
+
     private final ChatServiceGrpc.ChatServiceBlockingStub chatStub;
     private final RabbitTemplate rabbitTemplate;
     private final RestClient restClient;
 
+
+
     @RabbitListener(queues = SharedRabbitTopology.QUEUE_GENERATE_NAME)
     public void handleAiRequest(AiRequestEvent generateAiResponseEvent) {
+        
         UUID chatId = generateAiResponseEvent.chatId();
         String prompt = generateAiResponseEvent.content();
 
@@ -41,6 +45,8 @@ public class AiMessageListener {
 
             // fetch 10 most recent messages from chat service to provide context
             MessagesResponse chatHistory = chatStub.getChatHistory(historyRequest);
+
+            log.info("Fetched chat history with length: {} for chatId: {}", chatHistory.getMessagesCount(), chatId);
 
             List<String> lastMessages = chatHistory.getMessagesList().stream()
                     .map(msg -> msg.getSender() + ": " + msg.getContent())

@@ -12,7 +12,10 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
-@Table(name = "chats")
+@Table(name = "chats", indexes = {
+        @Index(name = "idx_chats_user_id", columnList = "user_id"),
+        @Index(name = "idx_chats_type_user", columnList = "chatType, user_id")
+})
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -37,6 +40,7 @@ public class Chat extends BaseClass<UUID> {
 
     @Builder.Default
     @OneToMany(mappedBy = "chat", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @OrderBy("createdAt ASC")
     List<Message> messages = new ArrayList<>();
 
     @CreatedDate

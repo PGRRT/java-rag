@@ -1,9 +1,8 @@
 package com.example.chat.listener;
 
 
-import com.example.chat.domain.enums.ChatEvent;
 import com.example.chat.service.SseService;
-import com.example.common.rabbitmq.events.BotMessageEvent;
+import com.example.common.rabbitmq.events.ChatMessageEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Queue;
@@ -18,12 +17,12 @@ public class ChatMessageListener {
     private final Queue instanceQueue;
 
     @RabbitListener(queues = "#{instanceQueue.name}")
-    public void onMessage(BotMessageEvent event) {
+    public void onMessage(ChatMessageEvent event) {
         if (!sseService.hasEmitters(event.chatId())) {
             log.debug("No active SSE emitter for chatId {}, skipping message", event.chatId());
             return;
         }
 
-        sseService.emit(event.chatId(), ChatEvent.BOT_MESSAGE, event.message());
+        sseService.emit(event.chatId(), event.chatEvent(), event.message());
     }
 }

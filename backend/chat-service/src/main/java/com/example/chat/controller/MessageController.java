@@ -3,7 +3,6 @@ package com.example.chat.controller;
 import com.example.chat.domain.dto.message.request.CreateMessageRequest;
 import com.example.chat.domain.dto.message.response.CreateMessageResponse;
 import com.example.chat.domain.dto.message.response.MessageResponse;
-import com.example.chat.domain.enums.ChatEvent;
 import com.example.chat.publisher.AiPublisher;
 import com.example.chat.service.ChatService;
 import com.example.chat.service.SseService;
@@ -24,8 +23,6 @@ import java.util.UUID;
 public class MessageController {
     private final MessageServiceImpl messageService;
     private final ChatService chatService;
-    private final SseService sseService;
-    private final AiPublisher aiPublisher;
 
     @GetMapping
     public ResponseEntity<List<MessageResponse>> getAllMessages(
@@ -45,12 +42,13 @@ public class MessageController {
     ) {
         UUID userId = (user != null) ? user.id() : null;
 
-        CreateMessageResponse created = messageService.createMessage(createMessageRequest, chatId,userId);
-
-        // emit new user message to SSE subscribers
-        sseService.emit(chatId, ChatEvent.USER_MESSAGE, created.content());
-
-        aiPublisher.publishGenerateAiResponseEvent(chatId, created.content());
+        CreateMessageResponse created = messageService.saveUserMessage(createMessageRequest.content(), createMessageRequest.sender(), chatId,userId);
+//        CreateMessageResponse created = messageService.createMessage(createMessageRequest, chatId,userId);
+//
+//        // emit new user message to SSE subscribers
+//        sseService.emit(chatId, ChatEvent.USER_MESSAGE, created.content());
+//
+//        aiPublisher.publishGenerateAiResponseEvent(chatId, created.content());
 
         return ResponseEntity.ok(created);
     }

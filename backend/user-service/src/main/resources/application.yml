@@ -35,6 +35,12 @@ spring:
     password: ${RABBITMQ_DEFAULT_PASS}
     port: ${RABBITMQ_PORT}
 
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
+    hostname: user-service
+
 app:
   company:
     email: ${COMPANY_EMAIL}

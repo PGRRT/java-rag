@@ -1,6 +1,6 @@
 package com.example.chat.service;
 
-import com.example.chat.domain.enums.ChatEvent;
+import com.example.common.rabbitmq.enums.ChatEvent;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;

@@ -17,3 +17,7 @@ app:
 #     service-url:
 #       defaultZone: http://eureka-server:8761/eureka/
 
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    prefer-ip-address: true
