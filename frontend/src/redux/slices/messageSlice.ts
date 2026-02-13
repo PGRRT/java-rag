@@ -29,14 +29,14 @@ export const fetchMessagesAction = createAsyncThunk(
       return rejectWithValue(i18n.t("toasts.fetchMessagesFailed"));
     }
     return response.data;
-  }
+  },
 );
 
 export const postMessagesAction = createAsyncThunk(
   "messages/postMessage",
   async (
     { chatId, content }: { chatId: UUID; content: string },
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     const response = await exceptionWrapper(async () => {
       return chatApi.postMessageForChat(chatId, content, "USER");
@@ -46,7 +46,7 @@ export const postMessagesAction = createAsyncThunk(
       return rejectWithValue(i18n.t("toasts.postMessageFailed"));
     }
     return response.data;
-  }
+  },
 );
 
 const messagesSlice = createSlice({
@@ -55,6 +55,9 @@ const messagesSlice = createSlice({
   reducers: {
     addMessage: (state, action: PayloadAction<MessageResponse>) => {
       state.messages.push(action.payload);
+    },
+    setMessages: (state, action: PayloadAction<MessageResponse[]>) => {
+      state.messages = action.payload;
     },
     deleteMessage: (state, action: PayloadAction<string>) => {
       state.messages = state.messages.filter((m) => m.id !== action.payload);
@@ -78,12 +81,11 @@ const messagesSlice = createSlice({
         (state, action: PayloadAction<any>) => {
           state.isLoading = false;
           state.messages = action.payload;
-        }
-      )
-   
+        },
+      );
   },
 });
 
-export const { addMessage, deleteMessage, clearMessages } =
+export const { addMessage, setMessages, deleteMessage, clearMessages } =
   messagesSlice.actions;
 export default messagesSlice.reducer;

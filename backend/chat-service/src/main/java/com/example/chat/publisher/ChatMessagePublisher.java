@@ -13,7 +13,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class BotMessagePublisher {
+public class ChatMessagePublisher {
 
     private final RabbitTemplate rabbitTemplate;
 

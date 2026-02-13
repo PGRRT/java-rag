@@ -41,11 +41,11 @@ public class GrpcChatService extends ChatServiceGrpc.ChatServiceImplBase {
         responseObserver.onCompleted();
     }
 
-    private Message mapToProto(MessageResponse entity) {
+    private Message mapToProto(com.example.chat.domain.entities.Message entity) {
         return Message.newBuilder()
-                .setId(entity.id().toString())
-                .setContent(entity.content())
-                .setSender(entity.sender() == Sender.USER ? MessageSender.USER : MessageSender.BOT)
+                .setId(entity.getId().toString())
+                .setContent(entity.getContent())
+                .setSender(entity.getSender() == Sender.USER ? MessageSender.USER : MessageSender.BOT)
                 .build();
     }
 }

@@ -18,7 +18,7 @@ public interface ChatService {
     Page<ChatResponse> getGlobalAndUserChats(UUID userId, ChatType chatType, Pageable pageable);
     CreateChatResponse saveChat(CreateChatRequest chatRequest, UUID userId);
 
-    List<MessageResponse> getAllMessagesInChat(UUID chatId, UUID userId);
+    Page<MessageResponse> getMessagesInChat(UUID chatId, UUID userId, Pageable pageable);
     void deleteChat(UUID chatId,UUID userId);
     public void deleteAllChatsByUserId(UUID userId);
 

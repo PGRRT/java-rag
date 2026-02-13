@@ -1,13 +1,9 @@
 import useSWRInfinite from "swr/infinite";
 import { mutate, useSWRConfig } from "swr";
-import axios from "axios";
-import { chatApi } from "@/api/chatApi";
 import apiClient from "@/api/apiClient";
-import type { UUID } from "@/types/global";
 import type { PageResponse } from "@/types/backendResponse";
 import type { chatMode } from "@/types/sidebarOptions";
 import { useEffect } from "react";
-import type { ChatResponse } from "@/types/chat";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { clearChatsRefreshTrigger } from "@/redux/slices/chatSlice";
 

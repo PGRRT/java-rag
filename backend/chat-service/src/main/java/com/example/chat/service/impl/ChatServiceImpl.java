@@ -6,11 +6,13 @@ import com.example.chat.domain.dto.chat.response.ChatWithMessagesResponse;
 import com.example.chat.domain.dto.chat.response.CreateChatResponse;
 import com.example.chat.domain.dto.message.response.MessageResponse;
 import com.example.chat.domain.entities.Chat;
+import com.example.chat.domain.entities.Message;
 import com.example.chat.domain.enums.ChatType;
 import com.example.chat.domain.enums.Sender;
 import com.example.chat.mapper.ChatMapper;
 import com.example.chat.mapper.MessageMapper;
 import com.example.chat.repository.ChatRepository;
+import com.example.chat.repository.MessageRepository;
 import com.example.chat.repository.specificiation.ChatSpecification;
 //import com.example.chat.service.AiService;
 import com.example.chat.service.ChatService;
@@ -33,6 +35,7 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final ChatMapper chatMapper;
     private final MessageMapper messageMapper;
+    private final MessageRepository messageRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -55,21 +58,24 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MessageResponse> getAllMessagesInChat(UUID chatId, UUID userId) {
-        Chat chat = chatRepository.findChatWithMessagesById(chatId).orElseThrow(() -> {
+    public Page<MessageResponse> getMessagesInChat(UUID chatId, UUID userId, Pageable pageable) {
+        Chat chat = chatRepository.findById((chatId)).orElseThrow(() -> {
             log.warn("Chat with id {} not found when fetching messages.", chatId);
             return new EntityNotFoundException("Chat not found");
         });
 
         boolean isOwner = chat.getUserId() != null && chat.getUserId().equals(userId);
-        boolean isGlobal = Boolean.TRUE.equals(chat.getChatType() == ChatType.GLOBAL);
+        boolean isGlobal = chat.getChatType() == ChatType.GLOBAL;
 
         if (!isGlobal && !isOwner) {
             log.warn("User {} tried to access messages of chat {} belonging to {}", userId, chatId, chat.getUserId());
 
             throw new EntityNotFoundException("Chat not found");
         }
-        return chat.getMessages().stream().map(messageMapper::toMessageResponse).toList();
+
+        Page<Message> messages = messageRepository.findByChatId(chatId, pageable);
+
+        return messages.map(messageMapper::toMessageResponse);
     }
 
     @Override

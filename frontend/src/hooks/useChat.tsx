@@ -1,11 +1,9 @@
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { addMessage, fetchMessagesAction } from "@/redux/slices/messageSlice";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useCallback } from "react";
 import { ChatEvent } from "@/api/enums/ChatEvent";
 import type { MessageResponse } from "@/types/message";
 import { Sender, type SenderType } from "@/api/enums/Sender";
 import type { UUID } from "@/types/global";
+import { useInfiniteMessages } from "./useInfiniteMessages";
 
 const formMessage = ({
   id,
@@ -23,10 +21,10 @@ const formMessage = ({
 
 const connectSse = ({
   chatId,
-  addMessage,
+  onNewMessage,
 }: {
   chatId: string;
-  addMessage: (message: MessageResponse) => void;
+  onNewMessage: (message: MessageResponse) => void;
 }) => {
   const url = `http://localhost:8080/api/v1/chats/${chatId}/stream`;
   let sse: EventSource | null = null;
@@ -58,7 +56,7 @@ const connectSse = ({
         sender: Sender.USER,
       });
 
-      addMessage(message);
+      onNewMessage(message);
     });
 
     sse.addEventListener(ChatEvent.BOT_MESSAGE, (event) => {
@@ -69,7 +67,7 @@ const connectSse = ({
         sender: Sender.BOT,
       });
 
-      addMessage(message);
+      onNewMessage(message);
     });
 
     sse.addEventListener(ChatEvent.ERROR, (event) => {
@@ -124,32 +122,55 @@ const connectSse = ({
 };
 
 const useChat = ({ chatId }: { chatId?: UUID }) => {
-  const messages = useAppSelector((state) => state.message.messages);
-  const dispatch = useAppDispatch();
+  const {
+    messages,
+    isLoading,
+    isLoadingMore,
+    isReachingEnd,
+    loadMoreMessages,
+    error,
+    isErrorInitial,
+    refresh,
+  } = useInfiniteMessages({ chatId });
+
+  const handleNewMessage = useCallback(
+    (newMessage: MessageResponse) => {
+      if (!chatId) return;
+
+      console.log("New message received:", newMessage);
+      refresh();
+    },
+    [chatId, refresh],
+  );
 
   useEffect(() => {
     if (!chatId) return;
 
     let manager: { close: () => void } | null = null;
-    const loadMessages = async () => {
-      dispatch(fetchMessagesAction(chatId));
-
-      console.log("Starting loading messages");
+    const setupRealTimeChat = () => {
+      console.log("Starting real-time chat connection");
 
       manager = connectSse({
         chatId,
-        addMessage: (message: MessageResponse) => dispatch(addMessage(message)),
+        onNewMessage: handleNewMessage,
       });
     };
 
-    loadMessages();
+    setupRealTimeChat();
 
     return () => {
       manager?.close();
     };
-  }, [chatId, dispatch]);
+  }, [chatId, handleNewMessage]);
+
   return {
     messages,
+    isLoading,
+    isLoadingMore,
+    isReachingEnd,
+    loadMoreMessages,
+    error,
+    isErrorInitial,
   };
 };
 

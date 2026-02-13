@@ -12,10 +12,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ChatRepository extends JpaRepository<Chat, UUID>, JpaSpecificationExecutor<Chat> {
-    @EntityGraph(attributePaths = "messages")
-    Optional<Chat> findChatWithMessagesById(UUID id);
+//    @EntityGraph(attributePaths = "messages")
+//    Optional<Chat> findChatWithMessagesById(UUID id);
 
     @Modifying(clearAutomatically = true)
     @Query("delete from Chat c where c.userId = :userId")
     void deleteAllByUserId(UUID userId);
+
 }

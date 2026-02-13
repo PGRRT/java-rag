@@ -10,7 +10,8 @@ import { css, cx } from "@emotion/css";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { UUID } from "@/types/global";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
+import { Loader } from "@mantine/core";
 
 import SkeletonBlock from "@/components/chat/SkeletonBlock";
 
@@ -18,14 +19,45 @@ export const AiInputHeight = 90;
 const chatPadding = 12;
 const additionalSpace = 30;
 const ChatContainer = ({ chatId }: { chatId: UUID }) => {
-  const { messages } = useChat({ chatId });
+  const {
+    messages,
+    isLoading,
+    isLoadingMore,
+    isReachingEnd,
+    loadMoreMessages,
+  } = useChat({ chatId });
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const triggerOnceScroll = useRef<boolean>(false);
+
+  // Detect when user scrolls near top to trigger loadMoreMessages
+  const topItemRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && !isLoadingMore && !isReachingEnd) {
+          console.log("Loading more messages...");
+          loadMoreMessages();
+        }
+      });
+
+      observer.observe(node);
+      return () => observer.disconnect();
+    },
+    [loadMoreMessages, isLoadingMore, isReachingEnd],
+  );
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (
+      messages?.length > 0 &&
+      messagesEndRef.current &&
+      !triggerOnceScroll.current
+    ) {
+      messagesEndRef.current.scrollIntoView();
+      triggerOnceScroll.current = true;
     }
   }, [messages]);
 
@@ -59,6 +91,16 @@ const ChatContainer = ({ chatId }: { chatId: UUID }) => {
         maxWidth="750px"
         padding={`0 ${chatPadding}px ${AiInputHeight + 20}px`}
       >
+        {/* Loading indicator for older messages */}
+        {isLoadingMore && (
+          <ContentWrapper justify="center" padding="10px">
+            <Loader size="sm" />
+          </ContentWrapper>
+        )}
+
+        {/* Top trigger for loading more messages */}
+        {!isLoading && !isReachingEnd && <div ref={topItemRef} />}
+
         {messages.map((msg: MessageResponse) => (
           <ContentWrapper
             key={msg.id}
@@ -91,6 +133,7 @@ const ChatContainer = ({ chatId }: { chatId: UUID }) => {
           </ContentWrapper>
         ))}
 
+        {/* Skeleton for bot response */}
         {isResponding && (
           <ContentWrapper direction="column" gap="20px">
             <SkeletonBlock width="75%" height="60px" />
