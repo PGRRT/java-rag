@@ -19,7 +19,7 @@ EXPOSE 8080
 
 # Fixes problem with mvnw \r ending on linux
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN dos2unix /usr/local/bin/entrypoint.sh && chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # Start aplikacji w trybie developerskim z hot reload
