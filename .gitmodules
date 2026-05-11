@@ -1,0 +1,3 @@
+[submodule "Agent-Orchestrated-Hybrid-Rag"]
+	path = Agent-Orchestrated-Hybrid-Rag
+	url = https://github.com/quuixly/Agent-Orchestrated-Hybrid-Rag
