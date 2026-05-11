@@ -52,7 +52,7 @@ public class AiMessageListener {
                     .map(msg -> msg.getSender() + ": " + msg.getContent())
                     .toList();
 
-            Map<String, Object> requestBody = Map.of("query", prompt, "message_history", lastMessages);
+            Map<String, Object> requestBody = Map.of("question", prompt);
 
             String aiAnswer = callAiApi(requestBody, chatId);
 
@@ -68,7 +68,7 @@ public class AiMessageListener {
     }
 
     private String callAiApi(Map<String, Object> requestBody, UUID chatId) {
-        AiResponse response = restClient.post().uri("http://api:9000/query/{chatId}", chatId)
+        AiResponse response = restClient.post().uri("http://medical-agent:8000/ask")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(requestBody)
                 .retrieve()

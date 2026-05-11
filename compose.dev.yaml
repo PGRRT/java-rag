@@ -132,6 +132,8 @@ services:
       - AGENT_PORT=8000
       - MAX_AGENT_STEPS=10
       - MAX_AGENT_CONTEXT_LENGTH=1000
+      - LLM_USERNAME=${PG_API_USERNAME}
+      - LLM_PASSWORD=${PG_API_PASSWORD}
     networks:
       - app_network
     depends_on:
