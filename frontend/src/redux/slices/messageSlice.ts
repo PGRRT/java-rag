@@ -77,7 +77,23 @@ const messagesSlice = createSlice({
         fetchMessagesAction.fulfilled,
         (state, action: PayloadAction<any>) => {
           state.isLoading = false;
-          state.messages = action.payload;
+          state.messages = action.payload.map((msg: MessageResponse) => {
+            if (msg.sender === "BOT") {
+              try {
+                const parsed = JSON.parse(msg.content);
+                if (parsed && typeof parsed === "object") {
+                  return {
+                    ...msg,
+                    ...parsed,
+                    content: parsed.final_response || msg.content,
+                  };
+                }
+              } catch (e) {
+                // Not JSON, keep as is
+              }
+            }
+            return msg;
+          });
         }
       )
    

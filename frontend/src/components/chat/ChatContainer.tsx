@@ -13,6 +13,8 @@ import type { UUID } from "@/types/global";
 import { useEffect, useRef } from "react";
 
 import SkeletonBlock from "@/components/chat/SkeletonBlock";
+import ExpandableThoughts from "@/components/chat/ExpandableThoughts";
+import MessageFormatter from "@/components/chat/MessageFormatter";
 
 export const AiInputHeight = 90;
 const chatPadding = 12;
@@ -65,6 +67,7 @@ const ChatContainer = ({ chatId }: { chatId: UUID }) => {
             customCss={css`
               border-radius: ${styles.borderRadius.medium};
               width: fit-content;
+              max-width: 100%;
               align-self: ${msg.sender === Sender.USER
                 ? "flex-end"
                 : "flex-start"};
@@ -85,9 +88,28 @@ const ChatContainer = ({ chatId }: { chatId: UUID }) => {
               `}
             `}
           >
-            <Markdown className="markdown" remarkPlugins={[remarkGfm]}>
-              {msg.content}
-            </Markdown>
+            <div
+              className={css`
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+              `}
+            >
+              {msg.sender === Sender.BOT && (
+                <ExpandableThoughts
+                  thoughts={msg.thoughts}
+                  step={msg.step}
+                  user_questions={msg.user_questions}
+                />
+              )}
+              {msg.sender === Sender.BOT ? (
+                <MessageFormatter content={msg.final_response || msg.content} />
+              ) : (
+                <Markdown className="markdown" remarkPlugins={[remarkGfm]}>
+                  {msg.content}
+                </Markdown>
+              )}
+            </div>
           </ContentWrapper>
         ))}
 

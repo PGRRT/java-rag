@@ -78,6 +78,19 @@ public class AiMessageListener {
                 })
                 .body(AiResponse.class);
 
-        return (response != null && response.success()) ? response.message() : "Error";
+        if (response != null && response.success()) {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            try {
+                return mapper.writeValueAsString(java.util.Map.of(
+                        "final_response", response.finalResponse() != null ? response.finalResponse() : "",
+                        "thoughts", response.thoughtsHistory() != null ? response.thoughtsHistory() : "",
+                        "step", String.valueOf(response.totalSteps())
+                ));
+            } catch (Exception e) {
+                log.error("Failed to serialize AI response for chatId {}", chatId, e);
+                return response.message();
+            }
+        }
+        return "Error";
     }
 }

@@ -11,14 +11,26 @@ const formMessage = ({
   id,
   content,
   sender,
+  user_questions,
+  final_response,
+  step,
+  thoughts,
 }: {
   id: string;
   content: string;
   sender: SenderType;
+  user_questions?: string | string[];
+  final_response?: string;
+  step?: string;
+  thoughts?: string;
 }): MessageResponse => ({
   id,
   content,
   sender,
+  user_questions,
+  final_response,
+  step,
+  thoughts,
 });
 
 const connectSse = ({
@@ -63,10 +75,28 @@ const connectSse = ({
 
     sse.addEventListener(ChatEvent.BOT_MESSAGE, (event) => {
       console.log("Bot message received:", event);
+
+      let parsedData: any = { content: event.data };
+      try {
+        const json = JSON.parse(event.data);
+        if (json && typeof json === "object") {
+          parsedData = {
+            content: json.final_response || event.data,
+            final_response: json.final_response,
+            thoughts: json.thoughts,
+            step: json.step,
+            user_questions: json.user_questions,
+          };
+        }
+      } catch (e) {
+        // Not JSON, use as standard text content
+      }
+
       const message: MessageResponse = formMessage({
         id: event.lastEventId,
-        content: event.data,
+        content: parsedData.content,
         sender: Sender.BOT,
+        ...parsedData,
       });
 
       addMessage(message);
