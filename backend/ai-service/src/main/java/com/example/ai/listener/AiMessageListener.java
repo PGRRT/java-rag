@@ -84,6 +84,7 @@ public class AiMessageListener {
                 return mapper.writeValueAsString(java.util.Map.of(
                         "final_response", response.finalResponse() != null ? response.finalResponse() : "",
                         "thoughts", response.thoughtsHistory() != null ? response.thoughtsHistory() : "",
+                        "messages", response.messagesHistory() != null ? response.messagesHistory() : List.of(),
                         "step", String.valueOf(response.totalSteps())
                 ));
             } catch (Exception e) {

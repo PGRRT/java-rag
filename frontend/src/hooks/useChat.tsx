@@ -15,6 +15,7 @@ const formMessage = ({
   final_response,
   step,
   thoughts,
+  messages,
 }: {
   id: string;
   content: string;
@@ -23,6 +24,7 @@ const formMessage = ({
   final_response?: string;
   step?: string;
   thoughts?: string;
+  messages?: any[];
 }): MessageResponse => ({
   id,
   content,
@@ -31,6 +33,7 @@ const formMessage = ({
   final_response,
   step,
   thoughts,
+  messages,
 });
 
 const connectSse = ({
@@ -84,6 +87,7 @@ const connectSse = ({
             content: json.final_response || event.data,
             final_response: json.final_response,
             thoughts: json.thoughts,
+            messages: json.messages,
             step: json.step,
             user_questions: json.user_questions,
           };

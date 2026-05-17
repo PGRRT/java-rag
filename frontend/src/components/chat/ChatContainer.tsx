@@ -98,6 +98,7 @@ const ChatContainer = ({ chatId }: { chatId: UUID }) => {
               {msg.sender === Sender.BOT && (
                 <ExpandableThoughts
                   thoughts={msg.thoughts}
+                  messages={msg.messages}
                   step={msg.step}
                   user_questions={msg.user_questions}
                 />

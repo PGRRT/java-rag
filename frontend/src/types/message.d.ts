@@ -9,6 +9,7 @@ export interface MessageResponse {
   final_response?: string;
   step?: string;
   thoughts?: string;
+  messages?: any[];
 }
 
 export interface CreateMessageResponse {
