@@ -52,7 +52,7 @@ public class AiMessageListener {
                     .map(msg -> msg.getSender() + ": " + msg.getContent())
                     .toList();
 
-            Map<String, Object> requestBody = Map.of("query", prompt, "message_history", lastMessages);
+            Map<String, Object> requestBody = Map.of("question", prompt);
 
             String aiAnswer = callAiApi(requestBody, chatId);
 
@@ -68,7 +68,7 @@ public class AiMessageListener {
     }
 
     private String callAiApi(Map<String, Object> requestBody, UUID chatId) {
-        AiResponse response = restClient.post().uri("http://api:9000/query/{chatId}", chatId)
+        AiResponse response = restClient.post().uri("http://medical-agent:8000/ask")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(requestBody)
                 .retrieve()
@@ -78,6 +78,20 @@ public class AiMessageListener {
                 })
                 .body(AiResponse.class);
 
-        return (response != null && response.success()) ? response.message() : "Error";
+        if (response != null && response.success()) {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            try {
+                return mapper.writeValueAsString(java.util.Map.of(
+                        "final_response", response.finalResponse() != null ? response.finalResponse() : "",
+                        "thoughts", response.thoughtsHistory() != null ? response.thoughtsHistory() : "",
+                        "messages", response.messagesHistory() != null ? response.messagesHistory() : List.of(),
+                        "step", String.valueOf(response.totalSteps())
+                ));
+            } catch (Exception e) {
+                log.error("Failed to serialize AI response for chatId {}", chatId, e);
+                return response.message();
+            }
+        }
+        return "Error";
     }
 }

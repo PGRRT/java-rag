@@ -99,17 +99,22 @@ restart-dev:
 	$(DEV) up
 
 restart-backend-dev:
-	$(DEV) restart user-service chat-service ai-service gateway 
+	$(DEV) restart user-service chat-service ai-service gateway hybrid-rag mcp-server medical-agent
 
 rebuild-user-dev:
 	$(DEV) stop user-service
 	$(DEV) build user-service
 	$(DEV) up user-service
 
-rebuild-api-dev:
-	$(DEV) stop api
-	$(DEV) build api
-	$(DEV) up api
+rebuild-medical-agent-dev:
+	$(DEV) stop medical-agent
+	$(DEV) build medical-agent
+	$(DEV) up medical-agent
+
+rebuild-hybrid-rag-dev:
+	$(DEV) stop hybrid-rag mcp-server medical-agent
+	$(DEV) build hybrid-rag mcp-server medical-agent
+	$(DEV) up hybrid-rag mcp-server medical-agent
 
 rebuild-frontend-dev:
 	$(DEV) stop frontend
@@ -117,9 +122,9 @@ rebuild-frontend-dev:
 	$(DEV) up frontend
 
 rebuild-backend-dev:
-	$(DEV) stop user-service chat-service ai-service gateway
-	$(DEV) build user-service chat-service ai-service gateway
-	$(DEV) up user-service chat-service ai-service gateway
+	$(DEV) stop user-service chat-service ai-service gateway hybrid-rag mcp-server medical-agent
+	$(DEV) build user-service chat-service ai-service gateway hybrid-rag mcp-server medical-agent
+	$(DEV) up user-service chat-service ai-service gateway hybrid-rag mcp-server medical-agent
 
 rebuild-dev:
 	$(DEV) down
@@ -150,14 +155,17 @@ rebuild-prod:
 config-dev:
 	$(DEV) config
 
-logs-api-dev:
-	$(DEV) logs -f api
+logs-medical-agent-dev:
+	$(DEV) logs -f medical-agent
+
+logs-hybrid-rag-dev:
+	$(DEV) logs -f hybrid-rag mcp-server medical-agent
 
 logs-frontend-dev:
 	$(DEV) logs -f frontend
 
 logs-backend-dev:
-	$(DEV) logs -f eureka user-service chat-service ai-service gateway
+	$(DEV) logs -f eureka user-service chat-service ai-service gateway hybrid-rag mcp-server medical-agent
 
 logs-dev-all:
 	$(DEV) logs -f

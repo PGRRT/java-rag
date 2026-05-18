@@ -41,7 +41,7 @@ services:
 
   standalone:
     container_name: milvus-standalone
-    image: milvusdb/milvus:v2.6.6
+    image: milvusdb/milvus:v2.6.14
     # command: [ "milvus", "run", "standalone" ]
     # command: ["milvus", "run", "standalone"]
     command: sh -c "milvus run standalone > /dev/null 2>&1"
@@ -71,46 +71,80 @@ services:
     networks:
       - app_network
 
-  api:
-    container_name: api
+  hybrid-rag:
+    container_name: hybrid-rag
     build:
-      context: ./api
-      dockerfile: docker/devCuda.Dockerfile
-      # dockerfile: docker/devPure.Dockerfile
-    env_file:
-        - .env
-        - .env.dev.local
+      context: ./Agent-Orchestrated-Hybrid-Rag/src/rag
     ports:
-      - 9000:9000
-    volumes:
-      - ./api:/app
+      - "8001:8000"
     environment:
-      - WATCHFILES_FORCE_POLLING=1  # This forces file watching (solves issues with hot reloading on windows)
-      - WATCHFILES_POLLING_INTERVAL=1  # Check every 1 second
-      - PYTHONUNBUFFERED=1
-      - PYTHONPATH=/app/app
-
-      - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - MILVUS_URL=http://standalone:19530
+      - RAG_HOST=0.0.0.0
+      - RAG_PORT=8000
+      - HF_HOME=/app/model_cache
+    volumes:
+      - ./Agent-Orchestrated-Hybrid-Rag/volumes/huggingface_cache:/app/model_cache
     networks:
       - app_network
-    restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/health"] 
-      interval: 30s
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/collections')"]
+      interval: 15s
       timeout: 10s
-      retries: 30
-      start_period: 40s
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+      retries: 10
+      start_period: 300s
     depends_on:
       standalone:
         condition: service_healthy
+
+  mcp-server:
+    container_name: mcp-server
+    build:
+      context: ./Agent-Orchestrated-Hybrid-Rag/src/mcp_server
+    ports:
+      - "8002:8000"
+    environment:
+      - RAG_URL=http://hybrid-rag:8000
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=8000
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; s = socket.socket(socket.AF_INET, socket.SOCK_STREAM); s.connect(('localhost', 8000))"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 300s
+    depends_on:
+      hybrid-rag:
+        condition: service_healthy
+      standalone:
+        condition: service_healthy
+
+  medical-agent:
+    container_name: medical-agent
+    build:
+      context: ./Agent-Orchestrated-Hybrid-Rag/src/agent
+    ports:
+      - "8003:8000"
+    environment:
+      - MCP_SERVER_URL=http://mcp-server:8000
+      - AGENT_HOST=0.0.0.0
+      - AGENT_PORT=8000
+      - MAX_AGENT_STEPS=10
+      - MAX_AGENT_CONTEXT_LENGTH=1000
+      - LLM_USERNAME=${PG_API_USERNAME}
+      - LLM_PASSWORD=${PG_API_PASSWORD}
+    networks:
+      - app_network
+    depends_on:
+      mcp-server:
+        condition: service_healthy
+      hybrid-rag:
+        condition: service_healthy
+    env_file:
+      - .env
+      - .env.dev.local
+      - ./Agent-Orchestrated-Hybrid-Rag/.env
 
   frontend:
     container_name: frontend
@@ -146,7 +180,6 @@ services:
       - 8761:8761
     volumes:
       - ./backend/eureka:/app
-      - ~/.m2:/root/.m2
     networks:
       - app_network
     healthcheck:
@@ -171,6 +204,8 @@ services:
     env_file:
       - .env
       - .env.dev.local
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-password}
     # ports:
       # - 8081:8081
     deploy: 
@@ -179,7 +214,6 @@ services:
     volumes:
       - ./backend/user-service:/app/user-service
       - ./backend/common-library:/app/common-library
-      - ~/.m2:/root/.m2
 
       # Isolates the build directory for each replica to prevent filesystem race conditions on the host
       - /app/user-service/target
@@ -194,6 +228,7 @@ services:
     depends_on:
       eureka:
         condition: service_healthy
+
   chat-service:
     # container_name: chat-service
     build:
@@ -211,7 +246,6 @@ services:
     volumes:
       - ./backend/chat-service:/app/chat-service
       - ./backend/common-library:/app/common-library
-      - ~/.m2:/root/.m2
 
       # Isolates the build directory for each replica to prevent filesystem race conditions on the host
       - /app/chat-service/target
@@ -242,7 +276,6 @@ services:
    volumes:
      - ./backend/ai-service:/app/ai-service
      - ./backend/common-library:/app/common-library
-     - ~/.m2:/root/.m2
 
     # Isolates the build directory for each replica to prevent filesystem race conditions on the host
      - /app/ai-service/target
@@ -266,11 +299,12 @@ services:
     env_file:
       - .env
       - .env.dev.local
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-password}
     ports:
       - 8080:8080
     volumes:
       - ./backend/gateway:/app
-      - ~/.m2:/root/.m2
     networks:
       - app_network
     healthcheck:
@@ -319,16 +353,16 @@ services:
      - .env.dev.local
     command: >
       redis-server 
-      --requirepass ${REDIS_PASSWORD} 
+      --requirepass ${REDIS_PASSWORD:-password} 
       --save "" 
       --appendonly no 
       --maxmemory 256mb 
       --maxmemory-policy allkeys-lru
-    # command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}", "--save", "", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    # command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:-password}", "--save", "", "--appendonly", "no", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
     networks:
       - app_network
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-password}", "ping"]
       interval: 10s
       timeout: 5s
       retries: 10

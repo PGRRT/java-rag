@@ -12,8 +12,8 @@ RUN dos2unix mvnw && chmod +x mvnw
 
 # Build and install common-library
 COPY common-library/pom.xml common-library/pom.xml
-RUN ./mvnw -f common-library/pom.xml clean install -DskipTests
 COPY common-library/src common-library/src
+RUN ./mvnw -f common-library/pom.xml clean install -DskipTests
 
 # Build and install user-service
 COPY ai-service/pom.xml ai-service/pom.xml
@@ -22,7 +22,7 @@ COPY ai-service/src ai-service/src
 
 # Copy entrypoint script
 COPY ai-service/entrypoint.sh entrypoint.sh
-RUN chmod +x entrypoint.sh
+RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
 
 EXPOSE 8082
 
