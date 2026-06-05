@@ -21,13 +21,17 @@ const ExpandableThoughts = ({
 }: ExpandableThoughtsProps) => {
   const [opened, setOpened] = useState(false);
 
+  const isDemoMode = import.meta.env.VITE_DEMO_MODE === "true";
+
+  if (isDemoMode) return null;
+
   if (!thoughts && !messages && !step && !user_questions) return null;
 
   const questions = Array.isArray(user_questions)
     ? user_questions
     : user_questions
-    ? [user_questions]
-    : [];
+      ? [user_questions]
+      : [];
 
   const renderMessage = (msg: any, index: number) => {
     const isTool = msg.type === "tool";

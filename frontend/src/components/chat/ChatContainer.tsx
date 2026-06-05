@@ -10,11 +10,12 @@ import { css, cx } from "@emotion/css";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { UUID } from "@/types/global";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import SkeletonBlock from "@/components/chat/SkeletonBlock";
 import ExpandableThoughts from "@/components/chat/ExpandableThoughts";
 import MessageFormatter from "@/components/chat/MessageFormatter";
+import DemoReasoningFlow from "@/components/chat/DemoReasoningFlow";
 
 export const AiInputHeight = 90;
 const chatPadding = 12;
@@ -23,13 +24,23 @@ const ChatContainer = ({ chatId }: { chatId: UUID }) => {
   const { messages } = useChat({ chatId });
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [demoRunId, setDemoRunId] = useState(0);
 
+  const isDemoMode = import.meta.env.VITE_DEMO_MODE === "true";
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+  useEffect(() => {
+    if (!isDemoMode || messages.length === 0) return;
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.sender === Sender.USER) {
+      setDemoRunId((prev) => prev + 1);
+    }
+  }, [isDemoMode, messages]);
 
   const isResponding =
     messages.length > 0 && messages[messages.length - 1]?.sender != Sender.BOT;
@@ -114,13 +125,15 @@ const ChatContainer = ({ chatId }: { chatId: UUID }) => {
           </ContentWrapper>
         ))}
 
-        {isResponding && (
-          <ContentWrapper direction="column" gap="20px">
-            <SkeletonBlock width="75%" height="60px" />
-            <SkeletonBlock width="55%" />
-            <SkeletonBlock width="85%" height="60px" />
-          </ContentWrapper>
-        )}
+        {isDemoMode
+          ? demoRunId > 0 && <DemoReasoningFlow key={demoRunId} />
+          : isResponding && (
+            <ContentWrapper direction="column" gap="20px">
+              <SkeletonBlock width="75%" height="60px" />
+              <SkeletonBlock width="55%" />
+              <SkeletonBlock width="85%" height="60px" />
+            </ContentWrapper>
+          )}
 
         {/* Scroll anchor for auto-scrolling to latest message */}
         <div ref={messagesEndRef} />
